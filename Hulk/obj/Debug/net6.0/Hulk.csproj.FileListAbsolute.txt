@@ -1,0 +1,12 @@
+C:\Users\Jossue\Cosas\proyectos y cosas\Proyectos de Programacion\H.U.L.K\Hulk\bin\Debug\net6.0\Hulk.deps.json
+C:\Users\Jossue\Cosas\proyectos y cosas\Proyectos de Programacion\H.U.L.K\Hulk\bin\Debug\net6.0\Hulk.dll
+C:\Users\Jossue\Cosas\proyectos y cosas\Proyectos de Programacion\H.U.L.K\Hulk\bin\Debug\net6.0\Hulk.pdb
+C:\Users\Jossue\Cosas\proyectos y cosas\Proyectos de Programacion\H.U.L.K\Hulk\obj\Debug\net6.0\Hulk.csproj.AssemblyReference.cache
+C:\Users\Jossue\Cosas\proyectos y cosas\Proyectos de Programacion\H.U.L.K\Hulk\obj\Debug\net6.0\Hulk.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Jossue\Cosas\proyectos y cosas\Proyectos de Programacion\H.U.L.K\Hulk\obj\Debug\net6.0\Hulk.AssemblyInfoInputs.cache
+C:\Users\Jossue\Cosas\proyectos y cosas\Proyectos de Programacion\H.U.L.K\Hulk\obj\Debug\net6.0\Hulk.AssemblyInfo.cs
+C:\Users\Jossue\Cosas\proyectos y cosas\Proyectos de Programacion\H.U.L.K\Hulk\obj\Debug\net6.0\Hulk.csproj.CoreCompileInputs.cache
+C:\Users\Jossue\Cosas\proyectos y cosas\Proyectos de Programacion\H.U.L.K\Hulk\obj\Debug\net6.0\Hulk.dll
+C:\Users\Jossue\Cosas\proyectos y cosas\Proyectos de Programacion\H.U.L.K\Hulk\obj\Debug\net6.0\refint\Hulk.dll
+C:\Users\Jossue\Cosas\proyectos y cosas\Proyectos de Programacion\H.U.L.K\Hulk\obj\Debug\net6.0\Hulk.pdb
+C:\Users\Jossue\Cosas\proyectos y cosas\Proyectos de Programacion\H.U.L.K\Hulk\obj\Debug\net6.0\ref\Hulk.dll
