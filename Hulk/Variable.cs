@@ -4,25 +4,25 @@ using System;
 public abstract class Variable
 {
 }
-public class Numbr: Variable
+public class HulkNumber: Variable
 {
-    public Numbr(double value)
+    public HulkNumber(double value)
     {
         Value = value;
     }
     public double Value { get; set;}
 }
-public class Booln: Variable
+public class HulkBoolean: Variable
 {
-    public Booln(bool value)
+    public HulkBoolean(bool value)
     {
         Value = value;
     }
     public bool Value { get; set;}
 }
-public class Strg : Variable
+public class HulkString : Variable
 {
-    public Strg(string value)
+    public HulkString(string value)
     {
         Value = value;
     }
