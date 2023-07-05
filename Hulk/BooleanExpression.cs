@@ -5,68 +5,67 @@ using System.Text.RegularExpressions;
 
 public class BooleanVariable: HulkExpression
 {
-	public BooleanVariable(string exp, bool val) 
+	public BooleanVariable(bool val) 
 	{
-        Expression = exp;
-        Value = new HulkBoolean(val);
+        Value = val;
 	}
 }
 #region Boolean Literals
 public class Negation : UnaryFunction
 {
-    public Negation(string expression, HulkExpression Arg) : base(expression, Arg)
+    public Negation(HulkExpression Arg) : base(Arg)
     {
     }
 
-    public override Variable Evaluate(Variable arg)
+    public override object Evaluate(object arg)
 	{
-        if (!(arg is HulkBoolean))
+        if (!(arg is bool))
         {
             throw new Exception("The \"!\" can only take a boolean as argument");
         }
         else
         {
-            HulkBoolean a = arg as HulkBoolean;
-            return new HulkBoolean(!a.Value);
+            bool a = (bool)arg;
+            return !a;
         }
     }
 }
 public class Conjunction : BinaryFunction
 {
-    public Conjunction(string expression, HulkExpression leftArgument, HulkExpression rightArgument) : base(expression, leftArgument, rightArgument)
+    public Conjunction(HulkExpression leftArgument, HulkExpression rightArgument) : base(leftArgument, rightArgument)
     {
     }
 
-    public override Variable Evaluate(Variable left, Variable right)
+    public override object Evaluate(object left, object right)
     {
-        if(!(left is HulkBoolean) || !(right is HulkBoolean))
+        if(!(left is bool) || !(right is bool))
         {
             throw new Exception("The \"&&\" can only take a boolean as argument");
         }
         else
         {
-            HulkBoolean a = left as HulkBoolean;
-            HulkBoolean b = right as HulkBoolean;
-            return new HulkBoolean(a.Value && b.Value);
+            bool a = (bool)left;
+            bool b = (bool)right;
+            return a && b;
         }
     }
 }
 public class Disjunction: BinaryFunction
 {
-    public Disjunction(string expression, HulkExpression leftArgument, HulkExpression rightArgument) : base(expression, leftArgument, rightArgument)
+    public Disjunction(HulkExpression leftArgument, HulkExpression rightArgument) : base(leftArgument, rightArgument)
     {
     }
-    public override Variable Evaluate(Variable left, Variable right)
+    public override object Evaluate(object left, object right)
     {
-        if (!(left is HulkBoolean) || !(right is HulkBoolean))
+        if (!(left is bool) || !(right is bool))
         {
             throw new Exception("The \"||\" can only take a boolean as argument");
         }
         else
         {
-            HulkBoolean a = left as HulkBoolean;
-            HulkBoolean b = right as HulkBoolean;
-            return new HulkBoolean(a.Value || b.Value);
+            bool a = (bool)left;
+            bool b = (bool)right;
+            return a || b;
         }
     }
 }
@@ -74,114 +73,104 @@ public class Disjunction: BinaryFunction
 #region Arithmetic comparison Operators
 public class LowerThan : BinaryFunction
 {
-    public LowerThan(string expression, HulkExpression leftArgument, HulkExpression rightArgument) : base(expression, leftArgument, rightArgument)
+    public LowerThan(HulkExpression leftArgument, HulkExpression rightArgument) : base(leftArgument, rightArgument)
     {
     }
 
-    public override Variable Evaluate(Variable left, Variable right)
+    public override object Evaluate(object left, object right)
     {
-        if (!(left is HulkNumber) || !(right is HulkNumber))
+        if (!(left is double) || !(right is double))
         {
             throw new Exception("The \"<\" can only take a number as argument");
         }
         else
         {
-            HulkNumber a = left as HulkNumber;
-            HulkNumber b = right as HulkNumber;
-            return new HulkBoolean(a.Value < b.Value);
+            double a = (double)left;
+            double b = (double)right;
+            return a < b;
         }
     }
 }
 public class GreaterThan : BinaryFunction
 {
-    public GreaterThan(string expression, HulkExpression leftArgument, HulkExpression rightArgument) : base(expression, leftArgument, rightArgument)
+    public GreaterThan( HulkExpression leftArgument, HulkExpression rightArgument) : base(leftArgument, rightArgument)
     {
     }
 
-    public override Variable Evaluate(Variable left, Variable right)
+    public override object Evaluate(object left, object right)
     {
-        if (!(left is HulkNumber) || !(right is HulkNumber))
+        if (!(left is double) || !(right is double))
         {
             throw new Exception("The \">\" can only take a number as argument");
         }
         else
         {
-            HulkNumber a = left as HulkNumber;
-            HulkNumber b = right as HulkNumber;
-            return new HulkBoolean(a.Value > b.Value);
+            double a = (double)left;
+            double b = (double)right;
+            return a > b;
         }
     }
 }
 public class LowerOrEqualThan: BinaryFunction
 {
-    public LowerOrEqualThan(string expression, HulkExpression leftArgument, HulkExpression rightArgument) : base(expression, leftArgument, rightArgument)
+    public LowerOrEqualThan(HulkExpression leftArgument, HulkExpression rightArgument) : base(leftArgument, rightArgument)
     {
     }
 
-    public override Variable Evaluate(Variable left, Variable right)
+    public override object Evaluate(object left, object right)
     {
-        if (!(left is HulkNumber) || !(right is HulkNumber))
+        if (!(left is double) || !(right is double))
         {
             throw new Exception("The \"<=\" can only take a number as argument");
         }
         else
         {
-            HulkNumber a = left as HulkNumber;
-            HulkNumber b = right as HulkNumber;
-            return new HulkBoolean(a.Value <= b.Value);
+            double a = (double)left;
+            double b = (double)right;
+            return a <= b;
         }
     }
 }
 public class GreaterOrEqualThan: BinaryFunction
 {
-    public GreaterOrEqualThan(string expression, HulkExpression leftArgument, HulkExpression rightArgument) : base(expression, leftArgument, rightArgument)
+    public GreaterOrEqualThan(HulkExpression leftArgument, HulkExpression rightArgument) : base(leftArgument, rightArgument)
     {
     }
 
-    public override Variable Evaluate(Variable left, Variable right)
+    public override object Evaluate(object left, object right)
     {
-        if (!(left is HulkNumber) || !(right is HulkNumber))
+        if (!(left is double) || !(right is double))
         {
             throw new Exception("The \">=\" can only take a number as argument");
         }
         else
         {
-            HulkNumber a = left as HulkNumber;
-            HulkNumber b = right as HulkNumber;
-            return new HulkBoolean(a.Value >= b.Value);
+            double a = (double)left;
+            double b = (double)right;
+            return a >= b;
         }
     }
 }
 public class Equal : BinaryFunction
 {
-    public Equal(string expression, HulkExpression leftArgument, HulkExpression rightArgument) : base(expression, leftArgument, rightArgument)
+    public Equal(HulkExpression leftArgument, HulkExpression rightArgument) : base(leftArgument, rightArgument)
     {
     }
-    public override Variable Evaluate(Variable left, Variable right)
-    {        
-        HulkNumber a = left as HulkNumber;
-        HulkNumber b = right as HulkNumber;
-        return new HulkBoolean(a.Value == b.Value);
+    public override object Evaluate(object left, object right)
+    {
+        
+        return left == right;
     }
 }
 public class UnEqual : BinaryFunction
 {
-    public UnEqual(string expression, HulkExpression leftArgument, HulkExpression rightArgument) : base(expression, leftArgument, rightArgument)
+    public UnEqual(HulkExpression leftArgument, HulkExpression rightArgument) : base(leftArgument, rightArgument)
     {
     }
 
-    public override Variable Evaluate(Variable left, Variable right)
+    public override object Evaluate(object left, object right)
     {
-        if (!(left is HulkNumber) || !(right is HulkNumber))
-        {
-            throw new Exception("The \"<\" can only take a number as argument");
-        }
-        else
-        {
-            HulkNumber a = left as HulkNumber;
-            HulkNumber b = right as HulkNumber;
-            return new HulkBoolean(a.Value != b.Value);
-        }
+        return left != right;
     }
 }
 #endregion

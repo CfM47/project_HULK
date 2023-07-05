@@ -3,227 +3,222 @@ using System;
 
 public class NumVariable : HulkExpression
 {
-    public NumVariable(string exp, double val)
+    public NumVariable(double val)
     {
-        Expression = exp;
-        Value = new HulkNumber(val);
+        Value = val;
     }
 }
 public class Addition : BinaryFunction
 {
-    public Addition(string expression, HulkExpression leftArgument, HulkExpression rightArgument) : base(expression, leftArgument, rightArgument)
+    public Addition(HulkExpression leftArgument, HulkExpression rightArgument) : base(leftArgument, rightArgument)
     {
-        if (leftArgument == null)
-            Value = new HulkNumber(0);
     }
 
-    public override Variable Evaluate(Variable left, Variable right)
+    public override object Evaluate(object left, object right)
     {
-        if (!(left is HulkNumber) || !(right is HulkNumber))
+        if (!(left is double) || !(right is double))
         {
             throw new Exception("The \"+\" can only take a number as argument");
         }
         else
         {
-            HulkNumber a = left as HulkNumber;
-            HulkNumber b = right as HulkNumber;
-            return new HulkNumber(a.Value + b.Value);
+            double a = (double)left;
+            double b = (double)right;
+            return a + b;
         }
     }
 }
 public class Subtraction: BinaryFunction
 {
-    public Subtraction(string expression, HulkExpression leftArgument, HulkExpression rightArgument) : base(expression, leftArgument, rightArgument)
+    public Subtraction(HulkExpression leftArgument, HulkExpression rightArgument) : base(leftArgument, rightArgument)
     {
-        if (leftArgument == null)
-            Value = new HulkNumber(0);
     }
 
-    public override Variable Evaluate(Variable left, Variable right)
+    public override object Evaluate(object left, object right)
     {
-        if (!(left is HulkNumber) || !(right is HulkNumber))
+        if (!(left is double) || !(right is double))
         {
             throw new Exception("The \"-\" can only take a number as argument");
         }
         else
         {
-            HulkNumber a = left as HulkNumber;
-            HulkNumber b = right as HulkNumber;
-            return new HulkNumber(a.Value - b.Value);
+            double a = (double)left;
+            double b = (double)right;
+            return a - b;
         }
     }
 }
 public class Multiplication : BinaryFunction
 {
-    public Multiplication(string expression, HulkExpression leftArgument, HulkExpression rightArgument) : base(expression, leftArgument, rightArgument)
+    public Multiplication(HulkExpression leftArgument, HulkExpression rightArgument) : base(leftArgument, rightArgument)
     {
     }
 
-    public override Variable Evaluate(Variable left, Variable right)
+    public override object Evaluate(object left, object right)
     {
-        if (!(left is HulkNumber) || !(right is HulkNumber))
+        if (!(left is double) || !(right is double))
         {
             throw new Exception("The \"+\" can only take a number as argument");
         }
         else
         {
-            HulkNumber a = left as HulkNumber;
-            HulkNumber b = right as HulkNumber;
-            return new HulkNumber(a.Value * b.Value);
+            double a = (double)left;
+            double b = (double)right;
+            return a * b;
         }
     }
 }
 public class Division : BinaryFunction
 {
-    public Division(string expression, HulkExpression leftArgument, HulkExpression rightArgument) : base(expression, leftArgument, rightArgument)
+    public Division(HulkExpression leftArgument, HulkExpression rightArgument) : base(leftArgument, rightArgument)
     {
     }
 
-    public override Variable Evaluate(Variable left, Variable right)
+    public override object Evaluate(object left, object right)
     {
-        if (!(left is HulkNumber) || !(right is HulkNumber))
+        if (!(left is double) || !(right is double))
         {
             throw new Exception("The \"/\" can only take a number as argument");
         }
         else
         {
-            HulkNumber a = left as HulkNumber;
-            HulkNumber b = right as HulkNumber;
-            if (b.Value == 0d)
+            double a = (double)left;
+            double b = (double)right;
+            if (b == 0d)
                 throw new Exception("Cannot divide by 0");
-            return new HulkNumber(a.Value / b.Value);
+            return a / b;
         }
     }
 }
 public class Module : BinaryFunction
 {
-    public Module(string expression, HulkExpression leftArgument, HulkExpression rightArgument) : base(expression, leftArgument, rightArgument)
+    public Module(HulkExpression leftArgument, HulkExpression rightArgument) : base(leftArgument, rightArgument)
     {
     }
-    public override Variable Evaluate(Variable left, Variable right)
+    public override object Evaluate(object left, object right)
     {
-        if (!(left is HulkNumber) || !(right is HulkNumber))
+        if (!(left is double) || !(right is double))
         {
             throw new Exception("The \"%\" can only take a number as argument");
         }
         else
         {
-            HulkNumber a = left as HulkNumber;
-            HulkNumber b = right as HulkNumber;
-            return new HulkNumber(a.Value % b.Value);
+            double a = (double)left;
+            double b = (double)right;
+            return a % b;
         }
     }
 }
 public class Power : BinaryFunction
 {
-    public Power(string expression, HulkExpression leftArgument, HulkExpression rightArgument) : base(expression, leftArgument, rightArgument)
+    public Power(HulkExpression leftArgument, HulkExpression rightArgument) : base(leftArgument, rightArgument)
     {
     }
 
-    public override Variable Evaluate(Variable left, Variable right)
+    public override object Evaluate(object left, object right)
     {
-        if (!(left is HulkNumber) || !(right is HulkNumber))
+        if (!(left is double) || !(right is double))
         {
             throw new Exception("The \"^\" can only take a number as argument");
         }
         else
         {
-            HulkNumber a = left as HulkNumber;
-            HulkNumber b = right as HulkNumber;
-            return new HulkNumber(Math.Pow(a.Value, b.Value));
+            double a = (double)left;
+            double b = (double)right;
+            return Math.Pow(a, b);
         }
     }
 }
 public class Logarithm : BinaryFunction
 {
-    public Logarithm(string expression, HulkExpression leftArgument, HulkExpression rightArgument) : base(expression, leftArgument, rightArgument)
+    public Logarithm(HulkExpression leftArgument, HulkExpression rightArgument) : base(leftArgument, rightArgument)
     {
     }
-    public override Variable Evaluate(Variable left, Variable right)
+    public override object Evaluate(object left, object right)
     {
-        if (!(left is HulkNumber) || !(right is HulkNumber))
+        if (!(left is double) || !(right is double))
         {
             throw new Exception("The \"log()\" can only take a number as argument");
         }
         else
         {
-            HulkNumber a = left as HulkNumber; //base
-            HulkNumber b = right as HulkNumber; //value
-            return new HulkNumber(Math.Log(b.Value, a.Value));
+            double a = (double)left; //base
+            double b = (double)right; //value
+            return Math.Log(b, a);
         }
     }
 }
 public class SquaredRoot : UnaryFunction
 {
-    public SquaredRoot(string expression, HulkExpression Arg) : base(expression, Arg)
+    public SquaredRoot(HulkExpression Arg) : base(Arg)
     {
     }
 
-    public override Variable Evaluate(Variable arg)
+    public override object Evaluate(object arg)
     {
-        if (!(arg is HulkNumber))
+        if (!(arg is double))
         {
             throw new Exception("The \"sqrt()\" can only take a number as argument");
         }
         else
         {
-            HulkNumber  a = arg as HulkNumber;
-            return new HulkNumber(Math.Sqrt(a.Value));
+            double a = (double)arg;
+            return Math.Sqrt(a);
         }
     }
 }
 public class Sine : UnaryFunction
 {
-    public Sine(string expression, HulkExpression Arg) : base(expression, Arg)
+    public Sine(HulkExpression Arg) : base(Arg)
     {
     }
 
-    public override Variable Evaluate(Variable arg)
+    public override object Evaluate(object arg)
     {
-        if (!(arg is HulkNumber))
+        if (!(arg is double))
         {
             throw new Exception("The \"sin()\" can only take a number as argument");
         }
         else
         {
-            HulkNumber a = arg as HulkNumber;
-            return new HulkNumber(Math.Sin(a.Value));
+            double a = (double)arg;
+            return Math.Sin(a);
         }
     }
 }
 public class Cosine : UnaryFunction
 {
-    public Cosine(string expression, HulkExpression Arg) : base(expression, Arg)
+    public Cosine(HulkExpression Arg) : base(Arg)
     {
     }
-    public override Variable Evaluate(Variable arg)
+    public override object Evaluate(object arg)
     {
-        if (!(arg is HulkNumber))
+        if (!(arg is double))
         {
             throw new Exception("The \"cos()\" can only take a number as argument");
         }
         else
         {
-            HulkNumber a = arg as HulkNumber;
-            return new HulkNumber(Math.Cos(a.Value));
+            double a = (double)arg;
+            return Math.Cos(a);
         }
     }
 }
 public class ERaised : UnaryFunction
 {
-    public ERaised(string expression, HulkExpression Arg) : base(expression, Arg)
+    public ERaised(HulkExpression Arg) : base(Arg)
     {
     }
-    public override Variable Evaluate(Variable arg)
+    public override object Evaluate(object arg)
     {
-        if (!(arg is HulkNumber))
+        if (!(arg is double))
         {
             throw new Exception("The \"exp()\" can only take a number as argument");
         }
         else
         {
-            HulkNumber a = arg as HulkNumber;
-            return new HulkNumber(Math.Exp(a.Value));
+            double a = (double)arg;
+            return Math.Exp(a);
         }
     }
 }
@@ -231,8 +226,7 @@ public class Rand : HulkExpression
 {
     public Rand(string expression)
     {
-        Expression = expression;
         Random random = new Random();
-        Value = new HulkNumber(random.NextDouble());
+        Value = random.NextDouble();
     }
 }

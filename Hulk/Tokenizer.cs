@@ -9,7 +9,7 @@ public class Tokenizer
 	}
 	public string[] GetTokens(string entry)
 	{
-		Regex pattern = new Regex(@"(\(|\+|-|\*|%|(log)|(sqrt)|(sin)|(cos)|(exp)|(<=)|(>=)|(<)|(>)|={2}|(!=)|/|\^|&{2}|\|{2}|!|\)|(true)|(false)|[^\(\)\+\-\*%<>=!&|\s]+)");
+		Regex pattern = new Regex(@"(\(|\+|-|\*|/|%|(<=)|(>=)|(<)|(>)|={2}|={1}|(!=)|\^|&{2}|\|{2}|!|\)|[^\(\)\+\-\*/\^%<>=!&|\s]+)");
 		MatchCollection collection = pattern.Matches(entry);
 		string[] tokens = new string[collection.Count];
 		for(int i = 0; i < tokens.Length; i++)
@@ -18,11 +18,55 @@ public class Tokenizer
 	}
     public HulkExpression Parse(string[] tokens, int start, int end)
     {
+        if (tokens.Length == 0)
+            return null;
         HulkExpression expr = null;
-        expr = ParseBoolean(tokens, start, end);
+        if (tokens[start] == "if")
+                expr = ParseIfElseStatement(tokens, start, end);
+        if (expr == null)
+            expr = ParseBoolean(tokens, start, end);
         if (expr == null)
             expr = ParseArithmetic(tokens, start, end);
         return expr;
+    }
+    private HulkExpression ParseIfElseStatement(string[] tokens, int start, int end)
+    {
+        HulkExpression result = null;
+        if (tokens[start] != "if")
+            throw new Exception();
+        else
+        {
+            HulkExpression condition = null;
+            HulkExpression IfDo = null;
+            HulkExpression ElseDo = null;
+            int conditionEnd;
+            if (tokens[start + 1] != "(")
+                throw new Exception();
+            else
+            {
+                conditionEnd = GoToNetParenthesis(start + 2, tokens);
+                if (conditionEnd == end)
+                    throw new Exception();
+                condition = Parse(tokens, start + 1, conditionEnd);
+                int ifDoEnd = GetIfDoEnd(tokens, start, end);
+                if (ifDoEnd == end - 1)
+                    throw new Exception();
+                IfDo = Parse(tokens, conditionEnd + 1, ifDoEnd);
+                if (ifDoEnd < end - 1)
+                    ElseDo = Parse(tokens, ifDoEnd + 2, end);
+                result = new IfElseStatement(condition, IfDo, ElseDo);
+            }
+        }
+        return result;
+    }
+    private int GetIfDoEnd(string[] tokens, int start, int end)
+    {
+        for(int i = start; i <= end; i++)
+        {
+            if (tokens[i] == "else")
+                return i - 1;
+        }
+        return end;
     }
 	public HulkExpression ParseBoolean(string[] tokens, int start, int end)
 	{
@@ -50,7 +94,7 @@ public class Tokenizer
                     : throw new Exception();
                 HulkExpression right = i != end ? ParseBoolean(tokens, i + 1, end)
                     : throw new Exception();
-                result = new Conjunction(tokens[i], left, right);
+                result = new Conjunction(left, right);
                 return result;
             }
             else if (tokens[i] == "||")
@@ -59,7 +103,7 @@ public class Tokenizer
                     : throw new Exception();
                 HulkExpression right = i != end ? ParseBoolean(tokens, i + 1, end)
                     : throw new Exception();
-                result = new Disjunction(tokens[i], left, right);
+                result = new Disjunction(left, right);
                 return result;
             }
             else if (tokens[i] == "==")
@@ -69,7 +113,7 @@ public class Tokenizer
                     : throw new Exception();
                 HulkExpression right = i != end ? Parse(tokens, i + 1, end)
                     : throw new Exception();
-                result = new Equal(tokens[i], left, right);
+                result = new Equal(left, right);
                 return result;
             }
             else if (tokens[i] == "!=")
@@ -78,7 +122,7 @@ public class Tokenizer
                     : throw new Exception();
                 HulkExpression right = i != end ? ParseArithmetic(tokens, i + 1, end)
                     : throw new Exception();
-                result = new UnEqual(tokens[i], left, right);
+                result = new UnEqual(left, right);
                 return result;
             }
         }
@@ -100,7 +144,7 @@ public class Tokenizer
                     : throw new Exception();
                 HulkExpression right = i != end ? ParseArithmetic(tokens, i + 1, end)
                     : throw new Exception();
-                result = new LowerThan(tokens[i], left, right);
+                result = new LowerThan(left, right);
                 return result;
             }
             else if (tokens[i] == ">")
@@ -109,7 +153,7 @@ public class Tokenizer
                     : throw new Exception();
                 HulkExpression right = i != end ? ParseArithmetic(tokens, i + 1, end)
                     : throw new Exception();
-                result = new GreaterThan(tokens[i], left, right);
+                result = new GreaterThan(left, right);
                 return result;
             }
             else if (tokens[i] == "<=")
@@ -119,7 +163,7 @@ public class Tokenizer
                     : throw new Exception();
                 HulkExpression right = i != end ? ParseArithmetic(tokens, i + 1, end)
                     : throw new Exception();
-                result = new LowerOrEqualThan(tokens[i], left, right);
+                result = new LowerOrEqualThan(left, right);
                 return result;
             }
             else if (tokens[i] == ">=")
@@ -128,7 +172,7 @@ public class Tokenizer
                     : throw new Exception();
                 HulkExpression right = i != end ? ParseArithmetic(tokens, i + 1, end)
                     : throw new Exception();
-                result = new GreaterOrEqualThan(tokens[i], left, right);
+                result = new GreaterOrEqualThan(left, right);
                 return result;
             }
         }
@@ -142,18 +186,22 @@ public class Tokenizer
 			result = start != end - 1 ? ParseBoolean(tokens, start + 1, end - 1)
                 : throw new Exception();
         else if (tokens[start] == "!")
-            result = start != end ? new Negation(tokens[start], ParseBoolean(tokens, start + 1, end))
+            result = start != end ? new Negation(ParseBoolean(tokens, start + 1, end))
                 : throw new Exception();
         else if (start == end)
         {
-            if (tokens[start] != "true" && tokens[start] != "false")
+            
+            if (tokens[start] != "true" && tokens[start] != "false" )
             {
-                result = new BooleanVariable(tokens[start], true);
+                double maybeNum = 0;
+                if (double.TryParse(tokens[start], out maybeNum))
+                    return null;
+                result = new BooleanVariable(true);
                 return result;
             }
             else
             {
-                result = new BooleanVariable(tokens[start], bool.Parse(tokens[start]));
+                result = new BooleanVariable(bool.Parse(tokens[start]));
                 return result;
             }
         }
@@ -185,20 +233,18 @@ public class Tokenizer
             else if (tokens[i] == "+")
             {
 
-                HulkExpression left = i != start ? ParseArithmetic(tokens, start, i - 1)
-                    : throw new Exception();
+                HulkExpression left = i != start ? ParseArithmetic(tokens, start, i - 1) : new NumVariable(0);
                 HulkExpression right = i != end ? ParseArithmetic(tokens, i + 1, end)
                     : throw new Exception();
-                result = new Addition(tokens[i], left, right);
+                result = new Addition(left, right);
                 return result;
             }
             else if (tokens[i] == "-")
             {
-                HulkExpression left = i != start ? ParseArithmetic(tokens, start, i - 1)
-                    : throw new Exception();
+                HulkExpression left = i != start ? ParseArithmetic(tokens, start, i - 1) : new NumVariable(0);
                 HulkExpression right = i != end ? ParseArithmetic(tokens, i + 1, end)
                     : throw new Exception();
-                result = new Subtraction(tokens[i], left, right);
+                result = new Subtraction(left, right);
                 return result;
             }
         }
@@ -220,7 +266,7 @@ public class Tokenizer
                     : throw new Exception();
                 HulkExpression right = i != end ? ParseArithmetic(tokens, i + 1, end)
                     : throw new Exception();
-                result = new Multiplication(tokens[i], left, right);
+                result = new Multiplication(left, right);
                 return result;
             }
             else if (tokens[i] == "/")
@@ -229,7 +275,7 @@ public class Tokenizer
                     : throw new Exception();
                 HulkExpression right = i != end ? ParseArithmetic(tokens, i + 1, end)
                     : throw new Exception();
-                result = new Division(tokens[i], left, right);
+                result = new Division(left, right);
                 return result;
             }
             else if (tokens[i] == "%")
@@ -238,7 +284,7 @@ public class Tokenizer
                     : throw new Exception();
                 HulkExpression right = i != end ? ParseArithmetic(tokens, i + 1, end)
                     : throw new Exception();
-                result = new Module(tokens[i], left, right);
+                result = new Module(left, right);
                 return result;
             }
         }
@@ -260,7 +306,7 @@ public class Tokenizer
                     : throw new Exception();
                 HulkExpression right = i != end ? ParseArithmetic(tokens, i + 1, end)
                     : throw new Exception();
-                result = new Power(tokens[i], left, right);
+                result = new Power(left, right);
                 return result;
             }
         }
@@ -277,37 +323,37 @@ public class Tokenizer
             if (tokens[start + 1] != "(" || tokens[end] != ")")
                 throw new Exception();
             else
-                result = new SquaredRoot(tokens[start], ParseArithmetic(tokens, start + 1, end));
+                result = new SquaredRoot(ParseArithmetic(tokens, start + 1, end));
         }
         else if (tokens[start] == "sin")
         {
             if (tokens[start + 1] != "(" || tokens[end] != ")")
                 throw new Exception();
             else
-                result = new Sine(tokens[start], ParseArithmetic(tokens, start + 1, end));
+                result = new Sine(ParseArithmetic(tokens, start + 1, end));
         }
         else if (tokens[start] == "cos")
         {
             if (tokens[start + 1] != "(" || tokens[end] != ")")
                 throw new Exception();
             else
-                result = new Cosine(tokens[start], ParseArithmetic(tokens, start + 1, end));
+                result = new Cosine(ParseArithmetic(tokens, start + 1, end));
         }
         else if (tokens[start] == "exp")
         {
             if (tokens[start + 1] != "(" || tokens[end] != ")")
                 throw new Exception();
             else
-                result = new SquaredRoot(tokens[start], ParseArithmetic(tokens, start + 1, end));
+                result = new ERaised(ParseArithmetic(tokens, start + 1, end));
         }
         else if (tokens[start] == "+")
         {
-            result = new Addition(tokens[start], new NumVariable("0", 0), ParseArithmetic(tokens, start + 1, end));
+            result = new Addition(new NumVariable(0), ParseArithmetic(tokens, start + 1, end));
             return result;
         }
         else if (tokens[start] == "-")
         {
-            result = new Subtraction(tokens[start], new NumVariable("0", 0), ParseArithmetic(tokens, start + 1, end));
+            result = new Subtraction(new NumVariable(0), ParseArithmetic(tokens, start + 1, end));
             return result;
         }
         else if (start == end)
@@ -316,12 +362,12 @@ public class Tokenizer
             bool isNumber = double.TryParse(tokens[start], out x);
             if (!isNumber)
             {
-                result = new NumVariable(tokens[start], 0d);
+                result = new NumVariable(0d);
                 return result;
             }
             else
             {
-                result = new NumVariable(tokens[start], x);
+                result = new NumVariable(x);
                 return result;
             }
         }
