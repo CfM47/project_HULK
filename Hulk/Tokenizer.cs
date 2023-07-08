@@ -1,14 +1,17 @@
 ﻿using Hulk;
+using System.Linq.Expressions;
 using System.Text.RegularExpressions;
 
 public class Tokenizer
 {
-    public Tokenizer()
+    public Dictionary<string, HulkExpression> Memory { get;}
+    public Tokenizer(Dictionary<string, HulkExpression> pila)
     {
+        Memory = pila;
     }
     public string[] GetTokens(string entry)
     {
-        Regex pattern = new Regex(@"(\(|\+|-|\*|/|%|(<=)|(>=)|(<)|(>)|={2}|={1}|(!=)|\^|&{2}|\|{2}|!|\)|[^\(\)\+\-\*/\^%<>=!&|\s]+)");
+        Regex pattern = new Regex(@"((\u0022(.)*\u0022)|\(|\+|-|\*|/|%|,|(=>)|(<=)|(>=)|(<)|(>)|={2}|={1}|(!=)|\^|&{2}|\|{2}|!|\)|[^\(\)\+\-\*/\^%<>=!&\|,\s]+)");
         MatchCollection collection = pattern.Matches(entry);
         string[] tokens = new string[collection.Count];
         for (int i = 0; i < tokens.Length; i++)
@@ -20,14 +23,59 @@ public class Tokenizer
         if (tokens.Length == 0)
             return null;
         HulkExpression expr = null;
-        if (tokens[start] == "if")
+        if (tokens[start] == "function")
+            expr = ParseFunctionDeclaration(tokens, start, end);
+        else if (tokens[start] == "if")
             expr = ParseIfElseStatement(tokens, start, end);
+        else if (tokens[start] == "number" || tokens[start] == "boolean" || tokens[start] == "string")
+            expr = ParseVarDeclaration(tokens, start, end);
         if (expr == null)
             expr = ParseBoolean(tokens, start, end);
         if (expr == null)
             expr = ParseArithmetic(tokens, start, end);
         return expr;
     }
+    #region Variable declaration Parsing
+    private HulkExpression ParseVarDeclaration(string[]tokens, int start, int end)
+    {
+        HulkExpression result = null;
+        if (tokens[start] != "number" && tokens[start] != "boolean" && tokens[start] != "string")
+            throw new Exception();
+        else
+        {
+            string type = tokens[start];
+            int declarationEnd = GetNameLimit(tokens, start + 1, end , "=");
+            List<string> names = GetCommaSeparatedTokens(tokens, start + 1, declarationEnd);
+            HulkExpression ValueExp = null;
+            if (declarationEnd < end)
+                ValueExp = Parse(tokens, declarationEnd + 2, end);
+            result = new VariableDeclaration(names, type, ValueExp);
+        }
+        return result;
+    }
+    #endregion
+    #region Function Declaration Parsing
+    public HulkExpression ParseFunctionDeclaration(string[] tokens, int start, int end)
+    {
+        HulkExpression result = null;
+        int declarationEnd = GetNameLimit(tokens, start , end , "=>");
+        if (tokens[start] != "function" || declarationEnd >= end - 1)
+            throw new Exception();
+        else
+        {
+            string funcName = tokens[start + 1];
+            if (tokens[start + 2] != "(")
+                throw new Exception();
+            else
+            {
+                List<string> ArgNames = GetCommaSeparatedTokens(tokens, start + 3, GoToNextParenthesis(start + 3, tokens) - 1);
+                HulkExpression DefExpression = Parse(tokens, declarationEnd + 2, end);
+                result = new FunctionDeclaration(funcName, ArgNames, DefExpression);
+            }
+        }
+        return result;
+    }
+    #endregion
     #region If-Else parsing
     private HulkExpression ParseIfElseStatement(string[] tokens, int start, int end)
     {
@@ -206,7 +254,14 @@ public class Tokenizer
                         double maybeNum = 0;
                         if (double.TryParse(tokens[start], out maybeNum))
                             return null;
-                        result = new BooleanVariable(true);
+                        try
+                        {
+                            result = Memory[tokens[start]];
+                        }
+                        catch
+                        {
+                            throw new Exception();
+                        }                        
                         return result;
                     }
                     else
@@ -250,7 +305,7 @@ public class Tokenizer
                         HulkExpression left = null;
                         if (i != start)
                         {
-                            Regex regex = new Regex(@"(\(|\+|-|\*|/|%|=|\^)");
+                            Regex regex = new Regex(@"(\(|\+|-|\*|/|%|=|\^|,)");
                             left = !regex.Match(tokens[i - 1]).Success ? ParseArithmetic(tokens, start, i - 1) : null;
                         }
                         else
@@ -265,7 +320,7 @@ public class Tokenizer
                         HulkExpression left = null;
                         if (i != start)
                         {
-                            Regex regex = new Regex(@"(\(|\+|-|\*|/|%|=|\^|)");
+                            Regex regex = new Regex(@"(\(|\+|-|\*|/|%|=|\^|,)");
                             left = !regex.Match(tokens[i - 1]).Success ? ParseArithmetic(tokens, start, i - 1) : null;
                         }
                         else
@@ -383,7 +438,25 @@ public class Tokenizer
                     else
                         result = new ERaised(ParseArithmetic(tokens, start + 1, end));
                     return result;
-                }                
+                }
+            case "log":
+                {
+                    if (tokens[start + 1] != "(" || tokens[end] != ")")
+                        throw new Exception();
+                    else
+                    {
+                        List<HulkExpression> Args = GetComaSeparatedExpressions(tokens, start + 2, end - 1);
+                        if (Args.Count != 2)
+                            throw new Exception();
+                        else
+                        {
+                            HulkExpression left = Args[0].Value is double? Args[0]: throw new Exception();
+                            HulkExpression right = Args[1].Value is double ? Args[1] : throw new Exception();
+                            result = new Logarithm(left, right);
+                        }
+                    }                        
+                    return result;
+                }
         }
         if (start == end)
         {
@@ -391,7 +464,14 @@ public class Tokenizer
             bool isNumber = double.TryParse(tokens[start], out x);
             if (!isNumber)
             {
-                result = new NumVariable(0d);
+                try
+                {
+                    result = Memory[tokens[start]];
+                }
+                catch
+                {
+                    throw new Exception();
+                }
                 return result;
             }
             else
@@ -403,6 +483,50 @@ public class Tokenizer
         return result;
     }
     #endregion
+    private List<HulkExpression> GetComaSeparatedExpressions(string[] tokens, int start, int end)
+    {
+        List<HulkExpression> result = new List<HulkExpression>();
+        if (tokens[start] == "," || tokens[end] == ",")
+                throw new Exception();
+        int argStart = start;
+        for (int i = start; i <= end; i++)
+        {
+            if (tokens[i] == ",") 
+            {
+                result.Add(Parse(tokens, argStart, i - 1));
+                argStart = i + 1;
+            }                
+            else if (i == end)
+            {
+                result.Add(Parse(tokens, argStart, i));
+                argStart = i + 1;
+            }
+        }
+        return result;
+    }
+    private List<string> GetCommaSeparatedTokens(string[] tokens, int start, int end)
+    {
+        List<string> result = new List<string>();
+        if (tokens[start] == "," || tokens[end] == ",")
+            throw new Exception();
+        for (int i = start; i <= end; i++)
+        {
+            if (tokens[i] != ",")
+                result.Add(tokens[i]);
+        }
+        return result;
+    }
+    private int GetNameLimit(string[] tokens, int start, int end, string delimiter)
+    {
+        int result = start;
+        for(int i = start; i < end; i++)
+        {
+            if (tokens[i + 1] == delimiter)
+                break;
+            result++;
+        }
+        return result;
+    }
     private int GoToNextParenthesis(int index, string[] tokens)
     {
         for (int i = index; i < tokens.Length; i++)

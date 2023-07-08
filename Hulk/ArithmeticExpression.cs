@@ -7,6 +7,12 @@ public class NumVariable : HulkExpression
     {
         Value = val;
     }
+    public NumVariable(double val, string name)
+    {
+        Value = val;
+        Name = name;
+    }
+    public string Name { get; protected set; }
 }
 public class Addition : BinaryFunction
 {

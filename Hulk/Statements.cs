@@ -29,15 +29,16 @@ public class IfElseStatement : HulkExpression
                     return null;
                 return ElseExp.Value;
         }
-        return null;
     }
 }
 public enum Types { number, boolean, hstring }
 public class VariableDeclaration : HulkExpression
 {
-    public VariableDeclaration(List<string> name, string type, HulkExpression ValueExp)
+    public VariableDeclaration(List<string> names, string type, HulkExpression ValueExp)
     {
-        SetValue(ValueExp.Value);
+        Names = names;
+        SetType(type);
+        Value = ValueExp == null ? null : GetValue(ValueExp.Value);
     }
     private void SetType(string type)
     {
@@ -54,33 +55,40 @@ public class VariableDeclaration : HulkExpression
                 break;
             default:
                 throw new Exception();
-
         }
     }
-    private void SetValue(object val)
+    private object GetValue(object val)
     {
-        if (Type == Types.number)
+        switch (Type)
         {
-            if (Value is double)
-                Value = val;
-            else
-                throw new Exception();
-        }
-        else if (Type == Types.boolean)
-        {
-            if (Value is bool)
-                Value = val;
-            else
-                throw new Exception();
-        }
-        else
-        {
-            if (Value is string)
-                Value = val;
-            else
+            case Types.number:
+                if (val is double)
+                    return val;
+                else
+                    throw new Exception();
+            case Types.boolean:
+                if (val is bool)
+                    return val;
+                else
+                    throw new Exception();
+            case Types.hstring:
+                if (val is string)
+                    return val;
+                else
+                    throw new Exception();
+            default :
                 throw new Exception();
         }
     }
-    public List<string> Name { get;}
+    public List<string> Names { get;}
     public Types Type { get; private set; }
+}
+public class FunctionDeclaration: HulkExpression
+{
+    public FunctionDeclaration(string name, List<string> argNames, HulkExpression DefinitionExp)
+    {
+        Value = null;
+    }
+    public string FunctionName { get; private set; }
+    public List<HulkExpression> Arguments { get; private set; }
 }

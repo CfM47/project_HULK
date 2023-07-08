@@ -8,7 +8,14 @@ public class BooleanVariable: HulkExpression
 	public BooleanVariable(bool val) 
 	{
         Value = val;
+        Name = null;
 	}
+    public BooleanVariable(bool val, string name)
+    {
+        Value = val;
+        Name = name;
+    }
+    public string? Name { get; protected set; }
 }
 #region Boolean Literals
 public class Negation : UnaryFunction
