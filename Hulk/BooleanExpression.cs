@@ -1,15 +1,12 @@
 ﻿using Hulk;
-using System;
-using System.Linq.Expressions;
-using System.Text.RegularExpressions;
 
-public class BooleanVariable: HulkExpression
+public class BooleanVariable : HulkExpression
 {
-	public BooleanVariable(bool val) 
-	{
+    public BooleanVariable(bool val)
+    {
         Value = val;
         Name = null;
-	}
+    }
     public BooleanVariable(bool val, string name)
     {
         Value = val;
@@ -25,7 +22,7 @@ public class Negation : UnaryFunction
     }
 
     public override object Evaluate(object arg)
-	{
+    {
         if (!(arg is bool))
         {
             throw new Exception("The \"!\" can only take a boolean as argument");
@@ -45,7 +42,7 @@ public class Conjunction : BinaryFunction
 
     public override object Evaluate(object left, object right)
     {
-        if(!(left is bool) || !(right is bool))
+        if (!(left is bool) || !(right is bool))
         {
             throw new Exception("The \"&&\" can only take a boolean as argument");
         }
@@ -57,7 +54,7 @@ public class Conjunction : BinaryFunction
         }
     }
 }
-public class Disjunction: BinaryFunction
+public class Disjunction : BinaryFunction
 {
     public Disjunction(HulkExpression leftArgument, HulkExpression rightArgument) : base(leftArgument, rightArgument)
     {
@@ -100,7 +97,7 @@ public class LowerThan : BinaryFunction
 }
 public class GreaterThan : BinaryFunction
 {
-    public GreaterThan( HulkExpression leftArgument, HulkExpression rightArgument) : base(leftArgument, rightArgument)
+    public GreaterThan(HulkExpression leftArgument, HulkExpression rightArgument) : base(leftArgument, rightArgument)
     {
     }
 
@@ -118,7 +115,7 @@ public class GreaterThan : BinaryFunction
         }
     }
 }
-public class LowerOrEqualThan: BinaryFunction
+public class LowerOrEqualThan : BinaryFunction
 {
     public LowerOrEqualThan(HulkExpression leftArgument, HulkExpression rightArgument) : base(leftArgument, rightArgument)
     {
@@ -138,7 +135,7 @@ public class LowerOrEqualThan: BinaryFunction
         }
     }
 }
-public class GreaterOrEqualThan: BinaryFunction
+public class GreaterOrEqualThan : BinaryFunction
 {
     public GreaterOrEqualThan(HulkExpression leftArgument, HulkExpression rightArgument) : base(leftArgument, rightArgument)
     {
@@ -165,7 +162,7 @@ public class Equal : BinaryFunction
     }
     public override object Evaluate(object left, object right)
     {
-        
+
         return left == right;
     }
 }

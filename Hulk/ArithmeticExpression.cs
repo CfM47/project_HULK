@@ -1,5 +1,4 @@
 ﻿using Hulk;
-using System;
 
 public class NumVariable : HulkExpression
 {
@@ -34,7 +33,7 @@ public class Addition : BinaryFunction
         }
     }
 }
-public class Subtraction: BinaryFunction
+public class Subtraction : BinaryFunction
 {
     public Subtraction(HulkExpression leftArgument, HulkExpression rightArgument) : base(leftArgument, rightArgument)
     {

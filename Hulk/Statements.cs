@@ -1,7 +1,4 @@
 ﻿using Hulk;
-using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Net.Http.Headers;
 
 public class IfElseStatement : HulkExpression
 {
@@ -17,7 +14,7 @@ public class IfElseStatement : HulkExpression
     public HulkExpression ElseExpression { get; protected set; }
     private object Result(HulkExpression Cond, HulkExpression IfExp, HulkExpression ElseExp)
     {
-        if(Cond.Value is not bool)
+        if (Cond.Value is not bool)
             throw new Exception("Boolean expression expected");
         else
         {
@@ -27,7 +24,7 @@ public class IfElseStatement : HulkExpression
             if (IfExp != null)
                 if (ElseExp == null)
                     return null;
-                return ElseExp.Value;
+            return ElseExp.Value;
         }
     }
 }
@@ -76,19 +73,30 @@ public class VariableDeclaration : HulkExpression
                     return val;
                 else
                     throw new Exception();
-            default :
+            default:
                 throw new Exception();
         }
     }
-    public List<string> Names { get;}
+    public List<string> Names { get; }
     public Types Type { get; private set; }
 }
-public class FunctionDeclaration: HulkExpression
+public class FunctionDeclaration : HulkExpression
 {
-    public FunctionDeclaration(string name, List<string> argNames, HulkExpression DefinitionExp)
+    public FunctionDeclaration(string name, List<string> argNames)
     {
         Value = null;
+        SetArgs(argNames);
+    }
+    public void Define(HulkExpression definition)
+    {
+        Definition = definition;
+    }
+    private void SetArgs(List<string> argNames)
+    {
+        foreach (string arg in argNames)
+            Arguments.Add(new Variable(arg, default));
     }
     public string FunctionName { get; private set; }
-    public List<HulkExpression> Arguments { get; private set; }
+    public List<Variable> Arguments { get; private set; }
+    public HulkExpression Definition { get; private set; }
 }
