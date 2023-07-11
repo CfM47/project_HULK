@@ -1,19 +1,19 @@
 ﻿using Hulk;
 
-public class BooleanVariable : HulkExpression
-{
-    public BooleanVariable(bool val)
-    {
-        Value = val;
-        Name = null;
-    }
-    public BooleanVariable(bool val, string name)
-    {
-        Value = val;
-        Name = name;
-    }
-    public string? Name { get; protected set; }
-}
+//public class BooleanVariable : HulkExpression
+//{
+//    public BooleanVariable(bool val)
+//    {
+//        GetValue = val;
+//        Name = null;
+//    }
+//    public BooleanVariable(bool val, string name)
+//    {
+//        GetValue = val;
+//        Name = name;
+//    }
+//    public string? Name { get; protected set; }
+//}
 #region Boolean Literals
 public class Negation : UnaryFunction
 {
@@ -162,7 +162,10 @@ public class Equal : BinaryFunction
     }
     public override object Evaluate(object left, object right)
     {
-
+        if(left is double && right is double)
+            return (double)left == (double)right;
+        else if(left is bool && right is bool)
+            return (bool)left == (bool)right;
         return left == right;
     }
 }

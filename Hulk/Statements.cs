@@ -4,27 +4,31 @@ public class IfElseStatement : HulkExpression
 {
     public IfElseStatement(HulkExpression Cond, HulkExpression IfExp, HulkExpression ElseExp)
     {
-        Condtion = Cond;
+        Condition = Cond;
         IfExpression = IfExp;
         ElseExpression = ElseExp;
-        Value = Result(Cond, IfExp, ElseExp);
+        
     }
-    public HulkExpression Condtion { get; protected set; }
+    public override object GetValue()
+    {
+        return Result(Condition, IfExpression, ElseExpression);
+    }
+    public HulkExpression Condition { get; protected set; }
     public HulkExpression IfExpression { get; protected set; }
     public HulkExpression ElseExpression { get; protected set; }
     private object Result(HulkExpression Cond, HulkExpression IfExp, HulkExpression ElseExp)
     {
-        if (Cond.Value is not bool)
+        if (Cond.GetValue() is not bool)
             throw new Exception("Boolean expression expected");
         else
         {
-            var condition = (bool)Cond.Value;
+            var condition = (bool)Cond.GetValue();
             if (condition)
-                return IfExp.Value;
+                return IfExp.GetValue();
             if (IfExp != null)
                 if (ElseExp == null)
                     return null;
-            return ElseExp.Value;
+            return ElseExp.GetValue();
         }
     }
 }
@@ -35,8 +39,9 @@ public class VariableDeclaration : HulkExpression
     {
         Names = names;
         SetType(type);
-        Value = ValueExp == null ? null : GetValue(ValueExp.Value);
+        Value = ValueExp == null ? null : SetValue(ValueExp.GetValue());
     }
+    public object Value { get; set; }
     private void SetType(string type)
     {
         switch (type)
@@ -54,7 +59,7 @@ public class VariableDeclaration : HulkExpression
                 throw new Exception();
         }
     }
-    private object GetValue(object val)
+    private object SetValue(object val)
     {
         switch (Type)
         {
@@ -77,6 +82,10 @@ public class VariableDeclaration : HulkExpression
                 throw new Exception();
         }
     }
+    public override object GetValue()
+    {
+        return Value;
+    }
     public List<string> Names { get; }
     public Types Type { get; private set; }
 }
@@ -84,8 +93,32 @@ public class FunctionDeclaration : HulkExpression
 {
     public FunctionDeclaration(string name, List<string> argNames)
     {
-        Value = null;
-        SetArgs(argNames);
+        FunctionName = name;
+        ArgumentNames = argNames;
+        Arguments = new Dictionary<string, Variable>();
+        SetArgs(ArgumentNames);
+    }
+    public override object GetValue()
+    {
+        return null;
+    }
+    public object Evaluate(List<HulkExpression> Args)
+    {
+        if (Args.Count != Arguments.Count)
+            throw new Exception();
+        else 
+        {
+            for (int i = 0; i < Args.Count; i++)
+            {
+                string key = ArgumentNames[i];
+                Variable v = Arguments[key];
+                v.Value = Args[i].GetValue();
+            }
+            var result = Definition.GetValue();
+            foreach (var arg in Arguments.Values)
+                arg.Value = default;
+            return result;
+        }        
     }
     public void Define(HulkExpression definition)
     {
@@ -94,9 +127,10 @@ public class FunctionDeclaration : HulkExpression
     private void SetArgs(List<string> argNames)
     {
         foreach (string arg in argNames)
-            Arguments.Add(new Variable(arg, default));
+            Arguments.Add(arg, new Variable(arg, default));
     }
+    public List<string> ArgumentNames { get; }
     public string FunctionName { get; private set; }
-    public List<Variable> Arguments { get; private set; }
+    public Dictionary<string, Variable> Arguments { get; private set; }
     public HulkExpression Definition { get; private set; }
 }
