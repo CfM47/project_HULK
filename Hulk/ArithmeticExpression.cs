@@ -22,15 +22,23 @@
 
         public override object Evaluate(object left, object right)
         {
-            if (!(left is double) || !(right is double))
+            //if (!(left is double) || !(right is double))
+            //{
+            //    throw new Exception("The \"+\" can only take a number as argument");
+            //}
+            //else
+            //{
+            //    double a = (double)left;
+            //    double b = (double)right;
+            //    return a + b;
+            //}
+            try
             {
-                throw new Exception("The \"+\" can only take a number as argument");
+                return (dynamic)left + (dynamic)right;
             }
-            else
+            catch
             {
-                double a = (double)left;
-                double b = (double)right;
-                return a + b;
+                throw new Exception();
             }
         }
     }
@@ -44,14 +52,11 @@
         {
             if (!(left is double) || !(right is double))
             {
-                throw new Exception("The \"-\" can only take a number as argument");
+                    throw new Exception("The \"-\" can only take a number as argument");
             }
-            else
-            {
-                double a = (double)left;
-                double b = (double)right;
-                return a - b;
-            }
+            double a = (double)left;
+            double b = (double)right;
+            return a - b;
         }
     }
     public class Multiplication : BinaryFunction

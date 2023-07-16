@@ -108,15 +108,21 @@ public class FunctionDeclaration : HulkExpression
             throw new Exception();
         else 
         {
+            List<object> OldValues = new List<object>();
             for (int i = 0; i < Args.Count; i++)
             {
                 string key = ArgumentNames[i];
                 Variable v = Arguments[key];
+                OldValues.Add(v.Value);
                 v.Value = Args[i].GetValue();
             }
             var result = Definition.GetValue();
-            foreach (var arg in Arguments.Values)
-                arg.Value = default;
+            for(int i = 0; i < OldValues.Count; i++)
+            {
+                string key = ArgumentNames[i];
+                Variable v = Arguments[key];
+                v.Value = OldValues[i];
+            }
             return result;
         }        
     }
