@@ -1,5 +1,5 @@
 ﻿using Hulk;
-
+public enum Types { number, boolean, hstring , dynamic}
 public class IfElseStatement : HulkExpression
 {
     public IfElseStatement(HulkExpression Cond, HulkExpression IfExp, HulkExpression ElseExp)
@@ -32,7 +32,6 @@ public class IfElseStatement : HulkExpression
         }
     }
 }
-public enum Types { number, boolean, hstring }
 public class VariableDeclaration : HulkExpression
 {
     public VariableDeclaration(List<string> names, string type, HulkExpression ValueExp)
@@ -133,10 +132,28 @@ public class FunctionDeclaration : HulkExpression
     private void SetArgs(List<string> argNames)
     {
         foreach (string arg in argNames)
-            Arguments.Add(arg, new Variable(arg, default));
+            Arguments.Add(arg, new Variable(arg, default, Types.dynamic));
     }
     public List<string> ArgumentNames { get; }
     public string FunctionName { get; private set; }
     public Dictionary<string, Variable> Arguments { get; private set; }
     public HulkExpression Definition { get; private set; }
+}
+public class LetInStatement : HulkExpression
+{
+    public LetInStatement(List<Dictionary<string, Variable>> Storage, Dictionary<string, Variable> Variables)
+    {
+        VariableStorage = Storage;
+        VariableStorage.Add(Variables);
+    }
+    public override object GetValue()
+    {
+        return Body.GetValue();
+    }
+    public void Define(HulkExpression Definition)
+    {
+        Body = Definition;
+    }
+    public List<Dictionary<string, Variable>> VariableStorage { get; private set;}
+    public HulkExpression Body { get; private set; }
 }

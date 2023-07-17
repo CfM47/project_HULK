@@ -27,10 +27,14 @@ namespace Hulk
             HulkExpression expr = null;
             if (tokens[start] == "function")
                 expr = ParseFunctionDeclaration(tokens, start, end);
+            else if (tokens[start] == "let")
+                expr = ParseLetInExpression(tokens, start, end);
             else if (tokens[start] == "if")
                 expr = ParseIfElseStatement(tokens, start, end);
             else if (tokens[start] == "number" || tokens[start] == "boolean" || tokens[start] == "string")
                 expr = ParseVarDeclaration(tokens, start, end);
+            if (expr == null)
+                expr = TryPrintFunction(tokens, start, end);
             if (expr == null)
                 expr = TryAsignment(tokens, start, end);
             if (expr == null)
@@ -38,9 +42,7 @@ namespace Hulk
             if (expr == null)
                 expr = ParseArithmetic(tokens, start, end);
             if (expr == null)
-                expr = TryString(tokens, start, end);
-            if (expr == null)
-                expr = TryPrintFunction(tokens, start, end);
+                expr = TryString(tokens, start, end);            
             if (expr == null)
                 expr = TryFunctionCall(tokens, start, end);
             return expr;
@@ -73,7 +75,7 @@ namespace Hulk
         #region Function Declaration Parsing
         public HulkExpression ParseFunctionDeclaration(string[] tokens, int start, int end)
         {
-            HulkExpression result = null;
+            FunctionDeclaration result = null;
             int declarationEnd = GetNameLimit(tokens, start, end, "=>");
             if (tokens[start] != "function" || declarationEnd >= end - 1)
                 throw new Exception();
@@ -97,8 +99,40 @@ namespace Hulk
                 ParsingExp = result;
                 HulkExpression DefExpression = Parse(tokens, declarationEnd + 2, end);
                 ParsingExp = null;
-                ((FunctionDeclaration)result).Define(DefExpression);
+                result.Define(DefExpression);
             }
+            return result;
+        }
+        #endregion
+        #region Let In parsing
+        private HulkExpression ParseLetInExpression(string[] tokens, int start, int end)
+        {
+            LetInStatement result;
+            if (tokens[start] != "let")
+                return null;
+            int declarationEnd = GetNameLimit(tokens, start, end, "in");
+            if (declarationEnd >= end - 1)
+                throw new Exception();
+            List<HulkExpression> Args = GetComaSeparatedExpressions(tokens, start + 1, declarationEnd);
+            Dictionary<string, Variable> LayerVariables = new Dictionary<string, Variable>();
+            foreach (HulkExpression arg in Args)
+            {
+                if (arg is not VariableDeclaration)
+                    throw new Exception();
+                var Vars = arg as VariableDeclaration;
+                foreach (string name in Vars.Names)
+                    LayerVariables.Add(name, new Variable(name, Vars.GetValue(), Vars.Type));
+            }
+            List<Dictionary<string, Variable>> Storage;
+            if(ParsingExp is LetInStatement)
+                Storage = ((LetInStatement)ParsingExp).VariableStorage;
+            else
+                Storage = new List<Dictionary<string, Variable>>();
+            result = new LetInStatement(Storage, LayerVariables);
+            ParsingExp = result;
+            HulkExpression DefExpression = Parse(tokens, declarationEnd + 2, end);
+            ParsingExp = null;
+            result.Define(DefExpression);
             return result;
         }
         #endregion
@@ -261,8 +295,11 @@ namespace Hulk
             {
                 case "(":
                     {
-                        result = start != end - 1 ? Parse(tokens, start + 1, end - 1)
-                                : throw new Exception();
+                        int i = GoToNextParenthesis(start, end, tokens);
+                        if (i != end)
+                            result = null;
+                        else
+                            result = start != end - 1 ? Parse(tokens, start + 1, end - 1) : throw new Exception();
                         return result;
                     }
                 case "!":
@@ -282,23 +319,8 @@ namespace Hulk
                         return null;
                     if (Regex.Match(tokens[start], @"\u0022(.)*\u0022").Success)
                         return null;
-                    
-                    if (ParsingExp is FunctionDeclaration)
-                    {
-                        var Exp = ParsingExp as FunctionDeclaration;
-                        result = Exp.Arguments[tokens[start]];
-                    }
-                    else
-                    {
-                        try
-                        {
-                            result = Memoria.VariablesStorage[tokens[start]];
-                        }
-                        catch
-                        {
-                            throw new Exception();
-                        }
-                    }
+
+                    result = TryVariable(tokens[start]);
                     return result;
                 }
                 else
@@ -501,22 +523,7 @@ namespace Hulk
                 bool isNumber = double.TryParse(tokens[start],NumberStyles.Any, new CultureInfo("en-US"), out x);
                 if (!isNumber)
                 {
-                    if (ParsingExp is FunctionDeclaration)
-                    {
-                        var Exp = ParsingExp as FunctionDeclaration;
-                        result = Exp.Arguments[tokens[start]];
-                    }
-                    else
-                    {
-                        try
-                        {
-                            result = Memoria.VariablesStorage[tokens[start]];
-                        }
-                        catch
-                        {
-                            throw new Exception();
-                        }
-                    }
+                    result = TryVariable(tokens[start]);
                     return result;
                 }
                 else
@@ -533,7 +540,9 @@ namespace Hulk
             HulkExpression result = null;
             for (int i = start; i <= end; i++)
             {
-                if (tokens[i] == "=")
+                if (tokens[i] == "(")
+                    i = GoToNextParenthesis(i, end, tokens);
+                else if (tokens[i] == "=")
                 { 
                     List<HulkExpression> left = i != start ? GetComaSeparatedExpressions(tokens, start, i - 1) : throw new Exception();
                     HulkExpression right = i != end ? Parse(tokens, i + 1, end) : throw new Exception();
@@ -607,6 +616,36 @@ namespace Hulk
             }
             return result;
         }
+        private HulkExpression TryVariable(string varName)
+        {
+            HulkExpression result;
+            Dictionary<string, Variable> VarLocation = null;
+            if (ParsingExp is FunctionDeclaration)
+            {
+                var Exp = ParsingExp as FunctionDeclaration;
+                VarLocation = Exp.Arguments;
+            }
+            else if (ParsingExp is LetInStatement)
+            {
+                var Exp = ParsingExp as LetInStatement;
+                for (int i = Exp.VariableStorage.Count - 1; i >= 0; i--)
+                {
+                    Dictionary<string, Variable> Loc = Exp.VariableStorage[i];
+                    if (Loc.ContainsKey(varName))
+                    {
+                        VarLocation = Loc;
+                        break;
+                    }
+                }
+            }
+            if (VarLocation == null)
+                VarLocation = Memoria.VariablesStorage;
+            if(VarLocation.ContainsKey(varName))
+                result = VarLocation[varName];
+            else
+                throw new Exception();
+            return result;
+        }
         private List<HulkExpression> GetComaSeparatedExpressions(string[] tokens, int start, int end)
         {
             List<HulkExpression> result = new List<HulkExpression>();
@@ -648,7 +687,7 @@ namespace Hulk
             {
                 if (tokens[i] != ",") 
                 {
-                    if (i % 2 == 1)
+                    if (i % 2 == 1 || start == end)
                         result.Add(tokens[i]);
                     else
                         throw new Exception();

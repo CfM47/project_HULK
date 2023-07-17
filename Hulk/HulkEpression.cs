@@ -75,9 +75,25 @@
         }
         public Variable(string name, object value)
         {
-            Name = name;
             Value = value;
             SetType();
+        }
+        public Variable(string name, object value, Types type)
+        {
+            Name = name;
+            //Value = value;
+            //SetType();
+            bool matchNumber = value is double && type == Types.number;
+            bool matchBool = value is bool && type == Types.boolean;
+            bool matchString = value is string && type == Types.hstring;
+            if (matchNumber || matchBool || matchString || value == null || type == Types.dynamic)
+            {
+                Value = value;
+                Type = type;
+            }
+            else 
+                throw new Exception();
+
         }
         public object Value { get; set; }
         public override object GetValue()
