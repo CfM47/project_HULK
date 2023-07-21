@@ -40,6 +40,13 @@ public class VariableDeclaration : HulkExpression
         SetType(type);
         Value = ValueExp == null ? null : SetValue(ValueExp.GetValue());
     }
+    public VariableDeclaration(List<string> names, HulkExpression ValueExp)
+    {
+        Names = names;
+        SetType(ValueExp.GetValue());
+        Value = SetValue(ValueExp.GetValue());
+    }
+
     public object Value { get; set; }
     private void SetType(string type)
     {
@@ -57,6 +64,19 @@ public class VariableDeclaration : HulkExpression
             default:
                 throw new Exception();
         }
+    }
+    private void SetType(object value) 
+    {
+        if (value is double)
+            Type = Types.number;
+        else if (value is bool)
+            Type = Types.boolean;
+        else if (value is string)
+            Type = Types.hstring;
+        else if (value == null)
+            throw new Exception();
+        else
+            throw new Exception();
     }
     private object SetValue(object val)
     {

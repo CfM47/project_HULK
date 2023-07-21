@@ -72,6 +72,40 @@ namespace Hulk
             }
             return result;
         }
+        private HulkExpression ParseVarDeclaration(string[] tokens, int start, int end, VariableDeclarationParsingOptions parsingOptions) 
+        {
+            if(parsingOptions == VariableDeclarationParsingOptions.Usual)
+                return ParseVarDeclaration(tokens, start, end);
+            else
+            {
+                VariableDeclaration result;
+                string type = null;
+                string name;
+                int declarationEnd = GetNameLimit(tokens, start + 1, end, "=");
+                if (tokens[start] == "number" || tokens[start] == "boolean" || tokens[start] == "string")
+                {
+                    type = tokens[start];
+                    name = tokens[start + 1];
+                }
+                else
+                {
+                    name = tokens[start];
+                    declarationEnd = GetNameLimit(tokens, start, end, "=");
+                }
+                List<string> VariableName = new List<string>();
+
+                double x = 0;
+                if (HulkInfo.KeyWords.Contains(name) || double.TryParse(name, out x))
+                    throw new Exception();
+
+                VariableName.Add(name);
+                HulkExpression ValueExp = null;
+                if (declarationEnd < end)
+                    ValueExp = Parse(tokens, declarationEnd + 2, end);
+                return new VariableDeclaration(VariableName, ValueExp);
+            }
+        }
+        private enum VariableDeclarationParsingOptions { Usual, AsLetInExpressionArguments }
         public HulkExpression ParseFunctionDeclaration(string[] tokens, int start, int end)
         {
             FunctionDeclaration result = null;
@@ -110,7 +144,7 @@ namespace Hulk
             int declarationEnd = GetNameLimit(tokens, start, end, "in");
             if (declarationEnd >= end - 1)
                 throw new Exception();
-            List<HulkExpression> Args = GetComaSeparatedExpressions(tokens, start + 1, declarationEnd);
+            List<HulkExpression> Args = GetComaSeparatedDeclarations(tokens, start + 1, declarationEnd, VariableDeclarationParsingOptions.AsLetInExpressionArguments);
             Dictionary<string, Variable> LayerVariables = new Dictionary<string, Variable>();
             foreach (HulkExpression arg in Args)
             {
@@ -675,6 +709,39 @@ namespace Hulk
                 {
                     var exp = Parse(tokens, argStart, i);
                     if (exp == null)
+                        throw new Exception();
+                    result.Add(exp);
+                }
+            }
+            return result;
+        }
+        private List<HulkExpression> GetComaSeparatedDeclarations(string[] tokens, int start, int end, VariableDeclarationParsingOptions options)
+        {
+            List<HulkExpression> result = new List<HulkExpression>();
+            if (tokens[start] == "," || tokens[end] == ",")
+                throw new Exception();
+            int argStart = start;
+            for (int i = start; i <= end; i++)
+            {
+                if (tokens[i] == "(")
+                {
+                    i = GoToNextParenthesis(i, end, tokens);
+                    //continue;
+                }
+
+                if (tokens[i] == ",")
+                {
+                    
+                    var exp = ParseVarDeclaration(tokens, argStart, i - 1, options);
+                    if (exp == null || exp is not VariableDeclaration)
+                        throw new Exception();
+                    result.Add(exp);
+                    argStart = i + 1;
+                }
+                else if (i == end)
+                {
+                    var exp = ParseVarDeclaration(tokens, argStart, i, options);
+                    if (exp == null || exp is not VariableDeclaration)
                         throw new Exception();
                     result.Add(exp);
                 }
