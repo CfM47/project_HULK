@@ -5,11 +5,12 @@ namespace Hulk
 {
     public class Tokenizer
     {
-        HulkExpression ParsingExp;
+        Stack<HulkExpression> ParsingExp;
         public Memory Memoria { get; }
         public Tokenizer(Memory Mem)
         {
             Memoria = Mem;
+            ParsingExp = new Stack<HulkExpression>();
         }
         public string[] GetTokens(string entry)
         {
@@ -47,7 +48,7 @@ namespace Hulk
                 expr = TryFunctionCall(tokens, start, end);
             return expr;
         }
-        #region Variable declaration Parsing
+        #region Statements Parsing
         private HulkExpression ParseVarDeclaration(string[] tokens, int start, int end)
         {
             HulkExpression result = null;
@@ -71,8 +72,6 @@ namespace Hulk
             }
             return result;
         }
-        #endregion
-        #region Function Declaration Parsing
         public HulkExpression ParseFunctionDeclaration(string[] tokens, int start, int end)
         {
             FunctionDeclaration result = null;
@@ -96,15 +95,13 @@ namespace Hulk
                         throw new Exception();
                 }
                 result = new FunctionDeclaration(funcName, ArgNames);
-                ParsingExp = result;
+                ParsingExp.Push(result);
                 HulkExpression DefExpression = Parse(tokens, declarationEnd + 2, end);
-                ParsingExp = null;
+                ParsingExp.Pop();
                 result.Define(DefExpression);
             }
             return result;
         }
-        #endregion
-        #region Let In parsing
         private HulkExpression ParseLetInExpression(string[] tokens, int start, int end)
         {
             LetInStatement result;
@@ -123,20 +120,20 @@ namespace Hulk
                 foreach (string name in Vars.Names)
                     LayerVariables.Add(name, new Variable(name, Vars.GetValue(), Vars.Type));
             }
-            List<Dictionary<string, Variable>> Storage;
-            if(ParsingExp is LetInStatement)
-                Storage = ((LetInStatement)ParsingExp).VariableStorage;
-            else
-                Storage = new List<Dictionary<string, Variable>>();
+            List<Dictionary<string, Variable>> Storage = new List<Dictionary<string, Variable>>();
+            HulkExpression PExp = null;
+            if (ParsingExp.TryPeek(out PExp))
+            {
+                if (PExp is LetInStatement)
+                    Storage.AddRange(((LetInStatement)PExp).VariableStorage);
+            }
             result = new LetInStatement(Storage, LayerVariables);
-            ParsingExp = result;
+            ParsingExp.Push(result);
             HulkExpression DefExpression = Parse(tokens, declarationEnd + 2, end);
-            ParsingExp = null;
+            ParsingExp.Pop();
             result.Define(DefExpression);
             return result;
         }
-        #endregion
-        #region If-Else parsing
         private HulkExpression ParseIfElseStatement(string[] tokens, int start, int end)
         {
             HulkExpression result = null;
@@ -598,10 +595,12 @@ namespace Hulk
                 {
                     //la siguiente linea tiene cara de que me van a romper el programa
                     FunctionDeclaration Definition;
+                    HulkExpression PExp;
+                    ParsingExp.TryPeek(out PExp);
                     if (Memoria.FunctionsStorage.ContainsKey(tokens[start]))
                         Definition = Memoria.FunctionsStorage[tokens[start]];
-                    else if (tokens[start] == ((FunctionDeclaration)ParsingExp).FunctionName)
-                        Definition = ParsingExp as FunctionDeclaration;
+                    else if (tokens[start] == ((FunctionDeclaration)PExp).FunctionName)
+                        Definition = PExp as FunctionDeclaration;
                     else
                         throw new Exception();
                     string name = tokens[start];
@@ -620,21 +619,25 @@ namespace Hulk
         {
             HulkExpression result;
             Dictionary<string, Variable> VarLocation = null;
-            if (ParsingExp is FunctionDeclaration)
+            HulkExpression PExp;
+            if (ParsingExp.TryPeek(out PExp))
             {
-                var Exp = ParsingExp as FunctionDeclaration;
-                VarLocation = Exp.Arguments;
-            }
-            else if (ParsingExp is LetInStatement)
-            {
-                var Exp = ParsingExp as LetInStatement;
-                for (int i = Exp.VariableStorage.Count - 1; i >= 0; i--)
+                if (PExp is FunctionDeclaration)
                 {
-                    Dictionary<string, Variable> Loc = Exp.VariableStorage[i];
-                    if (Loc.ContainsKey(varName))
+                    var Exp = PExp as FunctionDeclaration;
+                    VarLocation = Exp.Arguments;
+                }
+                else if (PExp is LetInStatement)
+                {
+                    var Exp = PExp as LetInStatement;
+                    for (int i = Exp.VariableStorage.Count - 1; i >= 0; i--)
                     {
-                        VarLocation = Loc;
-                        break;
+                        Dictionary<string, Variable> Loc = Exp.VariableStorage[i];
+                        if (Loc.ContainsKey(varName))
+                        {
+                            VarLocation = Loc;
+                            break;
+                        }
                     }
                 }
             }
