@@ -14,6 +14,30 @@
     //    }
     //    public string Name { get; protected set; }
     //}
+    public class Positive : UnaryFunction
+    {
+        public Positive(HulkExpression Arg) : base(Arg)
+        {
+        }
+        public override object Evaluate(object arg)
+        {
+            if (arg is not double)
+                throw new Exception();
+            return arg;
+        }
+    }
+    public class Negative : UnaryFunction 
+    {
+        public Negative(HulkExpression Arg) : base(Arg)
+        {
+        }
+        public override object Evaluate(object arg)
+        {
+            if (arg is not double)
+                throw new Exception();
+            return -(double)arg;
+        }
+    }
     public class Addition : BinaryFunction
     {
         public Addition(HulkExpression leftArgument, HulkExpression rightArgument) : base(leftArgument, rightArgument)
@@ -22,24 +46,10 @@
 
         public override object Evaluate(object left, object right)
         {
-            //if (!(left is double) || !(right is double))
-            //{
-            //    throw new Exception("The \"+\" can only take a number as argument");
-            //}
-            //else
-            //{
-            //    double a = (double)left;
-            //    double b = (double)right;
-            //    return a + b;
-            //}
-            try
-            {
+            if (left.GetType() == right.GetType())
                 return (dynamic)left + (dynamic)right;
-            }
-            catch
-            {
-                throw new Exception();
-            }
+            else
+                throw new Exception();            
         }
     }
     public class Subtraction : BinaryFunction

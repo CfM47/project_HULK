@@ -115,9 +115,9 @@ public class GreaterThan : BinaryFunction
         }
     }
 }
-public class LowerOrEqualThan : BinaryFunction
+public class LowerEqualThan : BinaryFunction
 {
-    public LowerOrEqualThan(HulkExpression leftArgument, HulkExpression rightArgument) : base(leftArgument, rightArgument)
+    public LowerEqualThan(HulkExpression leftArgument, HulkExpression rightArgument) : base(leftArgument, rightArgument)
     {
     }
 
@@ -135,9 +135,9 @@ public class LowerOrEqualThan : BinaryFunction
         }
     }
 }
-public class GreaterOrEqualThan : BinaryFunction
+public class GreaterEqualThan : BinaryFunction
 {
-    public GreaterOrEqualThan(HulkExpression leftArgument, HulkExpression rightArgument) : base(leftArgument, rightArgument)
+    public GreaterEqualThan(HulkExpression leftArgument, HulkExpression rightArgument) : base(leftArgument, rightArgument)
     {
     }
 

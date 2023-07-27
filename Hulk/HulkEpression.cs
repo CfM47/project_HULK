@@ -109,10 +109,10 @@
                 Type = Types.boolean;
             else if (Value is string)
                 Type = Types.hstring;
-            else
-                Type = null;
+            //else
+            //    Type = null;
         }
-        public Types? Type { get; protected set; }
+        public Types Type { get; protected set; }
     }
     public class FunctionCall : HulkExpression
     {
@@ -129,10 +129,6 @@
         public string Name { get; protected set; }
         public List<HulkExpression> Arguments { get; protected set; }
         public FunctionDeclaration Definition { get; protected set; }
-    }
-    public static class HulkInfo
-    {
-        public static string[] KeyWords = { "+","-","*","/","^","&&","&","|","||","=","(",")",",", "function", "number", "boolean", "string", "let", "in", "=>", "else", "if" };
     }
     public class PrintFunc : HulkExpression
     {

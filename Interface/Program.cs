@@ -11,42 +11,51 @@ namespace Interface
             while (true)
             {
                 Console.Write(">");
-                string[] s = tokenizer.GetTokens(Console.ReadLine());
-                try
+                var input = Console.ReadLine();
+                string[] s = tokenizer.GetTokens(input);
+                if (input != null)
                 {
-                    HulkExpression exp = tokenizer.Parse(s, 0, s.Length - 1);
-                    if (exp is VariableDeclaration)
+                    try
                     {
-                        VariableDeclaration Vars = (VariableDeclaration)exp;
-
-                        foreach (string name in Vars.Names)
+                        HulkExpression exp = tokenizer.Parse(s);
+                        if (exp is VariableDeclaration)
                         {
-                            Memoria.AddNewVariable(name, new Variable(name, Vars.GetValue(), Vars.Type));                               
+                            VariableDeclaration Vars = (VariableDeclaration)exp;
+                            foreach (string name in Vars.Names)
+                            {
+                                Memoria.AddNewVariable(name, new Variable(name, Vars.GetValue(), Vars.Type));
+                            }
+                        }
+                        else if (exp is FunctionDeclaration)
+                        {
+                            FunctionDeclaration Function = (FunctionDeclaration)exp;
+                            Memoria.AddNewFunction(Function.FunctionName, Function);
+                        }
+                        else
+                        {
+                            try
+                            {
+                                exp.GetValue();
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine(ex.Message);
+                            }
                         }
                     }
-                    else if (exp is FunctionDeclaration)
+                    catch (Exception ex)
                     {
-                        FunctionDeclaration Function = (FunctionDeclaration)exp;
-                        Memoria.AddNewFunction(Function.FunctionName, Function);
-                    }
-                    else
-                    {
-                        try
-                        {
-                            exp.GetValue();
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine(ex.Message);
-                        }
+                        Console.WriteLine(ex.Message);
                     }
                 }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex.Message);
-                }
-                
             }
+        }
+    }
+    public static class ExtString
+    {
+        public static string algo(this String arg)
+        {
+            return "el blue label de jhonny walker";
         }
     }
 }

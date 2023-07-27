@@ -38,16 +38,21 @@ public class VariableDeclaration : HulkExpression
     {
         Names = names;
         SetType(type);
-        Value = ValueExp == null ? null : SetValue(ValueExp.GetValue());
+        //SetValue(ValueExp.GetValue());
+        ValueExpression = ValueExp;
     }
     public VariableDeclaration(List<string> names, HulkExpression ValueExp)
     {
         Names = names;
-        SetType(ValueExp.GetValue());
-        Value = SetValue(ValueExp.GetValue());
+        if (ValueExp is Variable)
+            Type = ((Variable)ValueExp).Type;
+        else
+            SetType(ValueExp.GetValue());
+        ValueExpression = ValueExp;
+        //SetValue(ValueExp.GetValue());
     }
-
-    public object Value { get; set; }
+    public HulkExpression ValueExpression { get; private set; }
+    public object Value { get; set; } 
     private void SetType(string type)
     {
         switch (type)
@@ -78,32 +83,38 @@ public class VariableDeclaration : HulkExpression
         else
             throw new Exception();
     }
-    private object SetValue(object val)
+    private void SetValue(object val)
     {
         switch (Type)
         {
             case Types.number:
                 if (val is double)
-                    return val;
+                    Value = val;
                 else
                     throw new Exception();
+                break;
             case Types.boolean:
                 if (val is bool)
-                    return val;
+                    Value = val;
                 else
                     throw new Exception();
+                break;
             case Types.hstring:
                 if (val is string)
-                    return val;
+                    Value = val;
                 else
                     throw new Exception();
+                break;
+            case Types.dynamic:
+                Value = val;
+                break;
             default:
                 throw new Exception();
         }
     }
     public override object GetValue()
     {
-        return Value;
+        return ValueExpression.GetValue(); ;
     }
     public List<string> Names { get; }
     public Types Type { get; private set; }
