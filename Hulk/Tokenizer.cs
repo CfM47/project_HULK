@@ -745,6 +745,7 @@ namespace Hulk
                 VariableDeclaration result;
                 string type = null;
                 string name;
+                // la siguiente linea se puede poner dentro del bloque if
                 int declarationEnd = GetNameLimit(tokens, start + 1, end, "=");
                 if (tokens[start] == "number" || tokens[start] == "boolean" || tokens[start] == "string")
                 {
@@ -827,14 +828,7 @@ namespace Hulk
                         LayerVariables.Add(name, new Variable(name, Vars.GetValue(), Vars.Type));
                 }
             }
-            List<Dictionary<string, Variable>> Storage = new List<Dictionary<string, Variable>>();
-            HulkExpression PExp = null;
-            if (ParsingExp.TryPeek(out PExp))
-            {
-                if (PExp is LetInStatement)
-                    Storage.AddRange(((LetInStatement)PExp).VariableStorage);
-            }
-            result = new LetInStatement(Storage, LayerVariables);
+            result = new LetInStatement(LayerVariables);
             ParsingExp.Push(result);
             HulkExpression DefExpression = ParseInternal(tokens, declarationEnd + 2, end);
             ParsingExp.Pop();
@@ -914,7 +908,6 @@ namespace Hulk
         }
         private HulkExpression TryVariable(string varName)
         {
-            Dictionary<string, Variable> VarLocation = null;
             switch (varName) 
             {
                 case "PI":
@@ -922,35 +915,24 @@ namespace Hulk
                 case "E":
                     return new Variable(Math.E);
             }
-            HulkExpression PExp;
-            if (ParsingExp.TryPeek(out PExp))
+            Stack<HulkExpression> PosibleLocations = new Stack<HulkExpression>(ParsingExp);
+            HulkExpression exp;
+            Dictionary<string, Variable> Location = new Dictionary<string, Variable>();
+            while (PosibleLocations.TryPop(out exp))
             {
-                if (PExp is FunctionDeclaration)
-                {
-                    var Exp = PExp as FunctionDeclaration;
-                    VarLocation = Exp.Arguments;
-                }
-                else if (PExp is LetInStatement)
-                {
-                    var Exp = PExp as LetInStatement;
-                    for (int i = Exp.VariableStorage.Count - 1; i >= 0; i--)
-                    {
-                        Dictionary<string, Variable> Loc = Exp.VariableStorage[i];
-                        if (Loc.ContainsKey(varName))
-                        {
-                            VarLocation = Loc;
-                            break;
-                        }
-                    }
-                }
+                if (exp is FunctionDeclaration)
+                    Location = ((FunctionDeclaration)exp).Arguments;
+                else if (exp is LetInStatement)
+                    Location = ((LetInStatement)exp).StoredVariables;
+
+                if (Location.ContainsKey(varName))
+                    return Location[varName];
             }
-            if (VarLocation == null)
-                VarLocation = Memoria.VariablesStorage;
-            if (VarLocation.ContainsKey(varName))
-                return VarLocation[varName];
-            if(Memoria.VariablesStorage.ContainsKey(varName))
-                return Memoria.VariablesStorage[varName];
-            throw new Exception();
+            Location = Memoria.VariablesStorage;
+            if (Location.ContainsKey(varName))
+                return Location[varName];
+            else
+                throw new Exception("no se encontro la variable");
         }
         private HulkExpression BinaryFunctionMaker (string[] tokens, int start, int end, int opPos, Type type) 
         {

@@ -46,10 +46,15 @@
 
         public override object Evaluate(object left, object right)
         {
-            if (left.GetType() == right.GetType())
-                return (dynamic)left + (dynamic)right;
-            else
-                throw new Exception();            
+            bool bothNumber = (left is double) && (right is double);
+            bool bothString = (left is string) && (right is string);
+            if (!bothNumber || !bothString)
+            {
+                throw new Exception("The \"+\" can only take arguments both of type number of string");
+            }
+            double a = (double)left;
+            double b = (double)right;
+            return a + b;
         }
     }
     public class Subtraction : BinaryFunction

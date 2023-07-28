@@ -114,7 +114,7 @@ public class VariableDeclaration : HulkExpression
     }
     public override object GetValue()
     {
-        return ValueExpression.GetValue(); ;
+        return ValueExpression == null? null : ValueExpression.GetValue();
     }
     public List<string> Names { get; }
     public Types Type { get; private set; }
@@ -172,10 +172,9 @@ public class FunctionDeclaration : HulkExpression
 }
 public class LetInStatement : HulkExpression
 {
-    public LetInStatement(List<Dictionary<string, Variable>> Storage, Dictionary<string, Variable> Variables)
+    public LetInStatement(Dictionary<string, Variable> Variables)
     {
-        VariableStorage = Storage;
-        VariableStorage.Add(Variables);
+        StoredVariables = Variables;
     }
     public override object GetValue()
     {
@@ -185,6 +184,6 @@ public class LetInStatement : HulkExpression
     {
         Body = Definition;
     }
-    public List<Dictionary<string, Variable>> VariableStorage { get; private set;}
+    public Dictionary<string, Variable> StoredVariables { get; private set;}
     public HulkExpression Body { get; private set; }
 }
