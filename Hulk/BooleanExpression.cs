@@ -1,19 +1,5 @@
 ﻿using Hulk;
 
-//public class BooleanVariable : HulkExpression
-//{
-//    public BooleanVariable(bool val)
-//    {
-//        GetValue = val;
-//        Name = null;
-//    }
-//    public BooleanVariable(bool val, string name)
-//    {
-//        GetValue = val;
-//        Name = name;
-//    }
-//    public string? Name { get; protected set; }
-//}
 #region Boolean Literals
 public class Negation : UnaryFunction
 {

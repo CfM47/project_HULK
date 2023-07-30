@@ -23,7 +23,11 @@ namespace Interface
                             VariableDeclaration Vars = (VariableDeclaration)exp;
                             foreach (string name in Vars.Names)
                             {
-                                Memoria.AddNewVariable(name, new Variable(name, Vars.GetValue(), Vars.Type));
+                                var options = Variable.VariableOptions.InitializedVariable;
+                                if (Vars.ValueExpression == null)
+                                    options = Variable.VariableOptions.NonInitialized;
+                                var newVar = new Variable(name, Vars.ValueExpression.GetValue(false), Vars.Type, options);
+                                Memoria.AddNewVariable(name, newVar);
                             }
                         }
                         else if (exp is FunctionDeclaration)
@@ -35,7 +39,7 @@ namespace Interface
                         {
                             try
                             {
-                                exp.GetValue();
+                                exp.GetValue(true);
                             }
                             catch (Exception ex)
                             {

@@ -48,13 +48,24 @@
         {
             bool bothNumber = (left is double) && (right is double);
             bool bothString = (left is string) && (right is string);
-            if (!bothNumber || !bothString)
+            bool bothNull = (left is null) && (right is null);
+            bool case1 = (left is null) && (right is double);
+            bool case2 = (left is double) && (right is null);
+            if (bothNumber)
             {
-                throw new Exception("The \"+\" can only take arguments both of type number of string");
+                double a = (double)left;
+                double b = (double)right;
+                return a + b;
             }
-            double a = (double)left;
-            double b = (double)right;
-            return a + b;
+            if (bothString)
+            {
+                string a = (string)left;
+                string b = (string)right;
+                return a + b;
+            }
+            if (bothNull || case1 || case2)
+                return (dynamic)left + (dynamic)right;
+            throw new Exception("The \"+\" can only take arguments both of type number or string");
         }
     }
     public class Subtraction : BinaryFunction
@@ -62,7 +73,6 @@
         public Subtraction(HulkExpression leftArgument, HulkExpression rightArgument) : base(leftArgument, rightArgument)
         {
         }
-
         public override object Evaluate(object left, object right)
         {
             if (!(left is double) || !(right is double))
@@ -253,7 +263,7 @@
         public Rand()
         {
         }
-        public override object GetValue()
+        public override object GetValue(bool execute)
         {
             Random random = new Random();
             return random.NextDouble();

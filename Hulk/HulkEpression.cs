@@ -2,18 +2,25 @@
 {
     public abstract class HulkExpression
     {
-        public abstract object GetValue();
+        public abstract object GetValue(bool execute);
+        public bool IsDependent { get; protected set; }
+    }
+    public class EmptyReturn 
+    {
+        public EmptyReturn() { }
     }
     public abstract class BinaryFunction : HulkExpression
     {
         public BinaryFunction(HulkExpression leftArgument, HulkExpression rightArgument)
         {
+            if (leftArgument.IsDependent || rightArgument.IsDependent)
+                IsDependent = true;
             LeftArgument = leftArgument;
             RightArgument = rightArgument;
         }
-        public override object GetValue()
+        public override object GetValue(bool execute)
         {
-            return Evaluate(LeftArgument.GetValue(), RightArgument.GetValue());
+            return Evaluate(LeftArgument.GetValue(execute), RightArgument.GetValue(execute));
         }
         public HulkExpression LeftArgument { get; protected set; }
         public HulkExpression RightArgument { get; protected set; }
@@ -23,12 +30,13 @@
     {
         public UnaryFunction(HulkExpression Arg)
         {
+            if (Arg.IsDependent)
+                IsDependent = true;
             Argument = Arg;
-
         }
-        public override object GetValue()
+        public override object GetValue(bool execute)
         {
-            return Evaluate(Argument.GetValue());
+            return Evaluate(Argument.GetValue(execute));
         }
         public HulkExpression Argument { get; protected set; }
         public abstract object Evaluate(object arg);
@@ -38,51 +46,70 @@
         public Asignment(List<Variable> Vars, HulkExpression ValueExp)
         {
             Variables = Vars;
+            CheckValue(ValueExp);
             ValueExpression = ValueExp;
-            ChangeValues();
         }
-        private void ChangeValues()
+        private void CheckValue(HulkExpression ValueExp)
         {
             Types type = default;
-            var val = ValueExpression.GetValue();
+            var val = ValueExp.GetValue(false);
             if (val is double)
                 type = Types.number;
             else if (val is bool)
                 type = Types.boolean;
             else if (val is string)
                 type = Types.hstring;
+            else if (val is EmptyReturn)
+                type = Types.Void;
             foreach (Variable v in Variables)
             {
                 if (v.Type != type)
-                    throw new Exception();
-                else
-                    v.Value = val;
+                    throw new Exception("Cannot asign value of type " + type + " to "+ v.Type + " variable");
             }
         }
-        public override object GetValue()
+        private void ChangeValues()
         {
-            return null;
+            var val = ValueExpression.GetValue(false);
+            foreach (Variable v in Variables)
+            {
+                v.Value = val;
+                v.Options = Variable.VariableOptions.InitializedVariable;
+            }
+        }
+        public override object GetValue(bool execute)
+        {
+            if(execute)
+                ChangeValues();
+            return new EmptyReturn();
         }
         public List<Variable> Variables{ get; protected set; }
         public HulkExpression ValueExpression { get; protected set; }
     }
     public class Variable : HulkExpression
     {
+        //constructor para cuando te encuentras numeros, valores de verdad o strings en lo salvaje
         public Variable(object value)
         {
             Value = value;
-            SetType();
-        }
-        public Variable(string name, object value)
-        {
-            Value = value;
+            Options = VariableOptions.Value;
             SetType();
         }
         public Variable(string name, object value, Types type)
         {
             Name = name;
+            Value = value;
+            Options = VariableOptions.InitializedVariable;
+            SetType();
+        }
+        //constructor para las declaraciones de variable con tipo
+        public Variable(string name, object value, Types type, VariableOptions options)
+        {
+            Name = name;
             //Value = value;
             //SetType();
+            Options = options;
+            if (options == VariableOptions.Dependent || options == VariableOptions.FunctionArgument)
+                IsDependent = true;
             bool matchNumber = value is double && type == Types.number;
             bool matchBool = value is bool && type == Types.boolean;
             bool matchString = value is string && type == Types.hstring;
@@ -95,9 +122,19 @@
                 throw new Exception();
 
         }
+        public VariableOptions Options { get;  set; }
         public object Value { get; set; }
-        public override object GetValue()
-        {
+        public override object GetValue(bool execute)
+        {            
+            switch (Options)
+            {
+                case VariableOptions.NonInitialized:
+                    throw new Exception("Use of unasigned variable");
+                case VariableOptions.FunctionArgument:
+                    return Value;
+            }
+            if (IsDependent)
+                return ((HulkExpression)Value).GetValue(execute);
             return Value;
         }
         public string? Name { get; protected set; }
@@ -113,18 +150,24 @@
             //    Type = null;
         }
         public Types Type { get; protected set; }
+        public enum VariableOptions { Value, InitializedVariable, NonInitialized, FunctionArgument, Dependent}
     }
     public class FunctionCall : HulkExpression
     {
         public FunctionCall(string name, List<HulkExpression> Args, FunctionDeclaration Def)
         {
+            foreach(var arg in Args)
+            {
+                if (arg.IsDependent)
+                    IsDependent = true;
+            }
             Name = name;
             Arguments = Args;
             Definition = Def;
         }
-        public override object GetValue()
+        public override object GetValue(bool execute)
         {
-            return Definition.Evaluate(Arguments);
+            return Definition.Evaluate(Arguments, execute);
         }
         public string Name { get; protected set; }
         public List<HulkExpression> Arguments { get; protected set; }
@@ -137,10 +180,11 @@
             Argument = Arg;                
         }
         public HulkExpression Argument { get; }
-        public override object GetValue()
+        public override object GetValue(bool execute)
         {
-            Console.WriteLine(Argument.GetValue());
-            return null;
+            if(execute)
+                Console.WriteLine(Argument.GetValue(false));
+            return new EmptyReturn();
         }
     }
 }

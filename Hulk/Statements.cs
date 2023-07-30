@@ -1,34 +1,36 @@
 ﻿using Hulk;
-public enum Types { number, boolean, hstring , dynamic}
+public enum Types { Void, number, boolean, hstring , dynamic}
 public class IfElseStatement : HulkExpression
 {
     public IfElseStatement(HulkExpression Cond, HulkExpression IfExp, HulkExpression ElseExp)
     {
+        if(Cond.IsDependent || IfExp.IsDependent || ElseExp.IsDependent)
+            IsDependent = true;
         Condition = Cond;
         IfExpression = IfExp;
         ElseExpression = ElseExp;
         
     }
-    public override object GetValue()
+    public override object GetValue(bool execute)
     {
-        return Result(Condition, IfExpression, ElseExpression);
+        return Result(Condition, IfExpression, ElseExpression, execute);
     }
     public HulkExpression Condition { get; protected set; }
     public HulkExpression IfExpression { get; protected set; }
     public HulkExpression ElseExpression { get; protected set; }
-    private object Result(HulkExpression Cond, HulkExpression IfExp, HulkExpression ElseExp)
+    private object Result(HulkExpression Cond, HulkExpression IfExp, HulkExpression ElseExp, bool execute)
     {
-        if (Cond.GetValue() is not bool)
+        if (Cond.GetValue(execute) is not bool)
             throw new Exception("Boolean expression expected");
         else
         {
-            var condition = (bool)Cond.GetValue();
+            var condition = (bool)Cond.GetValue(execute);
             if (condition)
-                return IfExp.GetValue();
+                return IfExp.GetValue(execute);
             if (IfExp != null)
                 if (ElseExp == null)
                     return null;
-            return ElseExp.GetValue();
+            return ElseExp.GetValue(execute);
         }
     }
 }
@@ -38,21 +40,19 @@ public class VariableDeclaration : HulkExpression
     {
         Names = names;
         SetType(type);
-        //SetValue(ValueExp.GetValue());
+        bool valueOk = ValueExp == null? true : IsOkValue(ValueExp.GetValue(false));
+        if (!valueOk)
+            throw new Exception("value expression does not match " + type);
         ValueExpression = ValueExp;
     }
     public VariableDeclaration(List<string> names, HulkExpression ValueExp)
     {
-        Names = names;
-        if (ValueExp is Variable)
-            Type = ((Variable)ValueExp).Type;
-        else
-            SetType(ValueExp.GetValue());
+        Names = names;        
+        SetType(ValueExp.GetValue(false));
         ValueExpression = ValueExp;
-        //SetValue(ValueExp.GetValue());
     }
     public HulkExpression ValueExpression { get; private set; }
-    public object Value { get; set; } 
+    public object Value { get => ValueExpression == null? null : ValueExpression.GetValue(false); set { }}
     private void SetType(string type)
     {
         switch (type)
@@ -79,42 +79,22 @@ public class VariableDeclaration : HulkExpression
         else if (value is string)
             Type = Types.hstring;
         else if (value == null)
-            throw new Exception();
+            Type = Types.dynamic;
         else
             throw new Exception();
     }
-    private void SetValue(object val)
+    private bool IsOkValue(object val)
     {
-        switch (Type)
-        {
-            case Types.number:
-                if (val is double)
-                    Value = val;
-                else
-                    throw new Exception();
-                break;
-            case Types.boolean:
-                if (val is bool)
-                    Value = val;
-                else
-                    throw new Exception();
-                break;
-            case Types.hstring:
-                if (val is string)
-                    Value = val;
-                else
-                    throw new Exception();
-                break;
-            case Types.dynamic:
-                Value = val;
-                break;
-            default:
-                throw new Exception();
-        }
+        bool okNumber = (val is double) && (Type == Types.number);
+        bool okBoolean = (val is bool) && (Type == Types.boolean);
+        bool okString = (val is string) && (Type == Types.hstring);
+        if (okNumber || okBoolean || okString || val == null)
+            return true;
+        return false;
     }
-    public override object GetValue()
+    public override object GetValue(bool execute)
     {
-        return ValueExpression == null? null : ValueExpression.GetValue();
+        return new EmptyReturn();
     }
     public List<string> Names { get; }
     public Types Type { get; private set; }
@@ -128,11 +108,11 @@ public class FunctionDeclaration : HulkExpression
         Arguments = new Dictionary<string, Variable>();
         SetArgs(ArgumentNames);
     }
-    public override object GetValue()
+    public override object GetValue(bool execute)
     {
-        return null;
+        return new EmptyReturn();
     }
-    public object Evaluate(List<HulkExpression> Args)
+    public object Evaluate(List<HulkExpression> Args, bool execute)
     {
         if (Args.Count != Arguments.Count)
             throw new Exception();
@@ -144,9 +124,9 @@ public class FunctionDeclaration : HulkExpression
                 string key = ArgumentNames[i];
                 Variable v = Arguments[key];
                 OldValues.Add(v.Value);
-                v.Value = Args[i].GetValue();
+                v.Value = Args[i].GetValue(false);
             }
-            var result = Definition.GetValue();
+            var result = Definition.GetValue(execute);
             for(int i = 0; i < OldValues.Count; i++)
             {
                 string key = ArgumentNames[i];
@@ -161,9 +141,12 @@ public class FunctionDeclaration : HulkExpression
         Definition = definition;
     }
     private void SetArgs(List<string> argNames)
-    {
+    {        
         foreach (string arg in argNames)
-            Arguments.Add(arg, new Variable(arg, default, Types.dynamic));
+        {
+            object val = default;
+            Arguments.Add(arg, new Variable(arg, val, Types.dynamic, Variable.VariableOptions.FunctionArgument));
+        }
     }
     public List<string> ArgumentNames { get; }
     public string FunctionName { get; private set; }
@@ -176,9 +159,9 @@ public class LetInStatement : HulkExpression
     {
         StoredVariables = Variables;
     }
-    public override object GetValue()
+    public override object GetValue(bool execute)
     {
-        return Body.GetValue();
+        return Body.GetValue(execute);
     }
     public void Define(HulkExpression Definition)
     {

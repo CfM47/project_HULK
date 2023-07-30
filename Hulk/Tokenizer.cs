@@ -34,421 +34,6 @@ namespace Hulk
                 throw;
             }
         }
-        //#region Parsing(Old)
-        //public HulkExpression Parse(string[] tokens, int start, int end)
-        //{
-        //    if (tokens.Length == 0)
-        //        return null;
-        //    HulkExpression expr = null;
-        //    if (tokens[start] == "function")
-        //        expr = ParseFunctionDeclaration(tokens, start, end);
-        //    else if (tokens[start] == "let")
-        //        expr = ParseLetInExpression(tokens, start, end);
-        //    else if (tokens[start] == "if")
-        //        expr = ParseIfElseStatement(tokens, start, end);
-        //    else if (tokens[start] == "number" || tokens[start] == "boolean" || tokens[start] == "string")
-        //        expr = ParseVarDeclaration(tokens, start, end);
-        //    if (expr == null)
-        //        expr = TryPrintFunction(tokens, start, end);
-        //    if (expr == null)
-        //        expr = TryAsignment(tokens, start, end);
-        //    if (expr == null)
-        //        expr = ParseBoolean(tokens, start, end);
-        //    if (expr == null)
-        //        expr = ParseArithmetic(tokens, start, end);
-        //    if (expr == null)
-        //        expr = TryString(tokens, start, end);            
-        //    if (expr == null)
-        //        expr = TryFunctionCall(tokens, start, end);
-        //    return expr;
-        //}
-
-        //#region Boolean Expressions Parsing
-        //public HulkExpression ParseBoolean(string[] tokens, int start, int end)
-        //{
-        //    HulkExpression result = null;
-        //    result = TryBinaryFirstLevelBoolExpr(tokens, start, end);
-        //    if (result == null)
-        //        result = TryUnaryBooleanExpression(tokens, start, end);
-        //    if (result == null)
-        //        result = TryBinarySecondLevelExpr(tokens, start, end);
-        //    return result;
-        //}
-        //private HulkExpression? TryBinaryFirstLevelBoolExpr(string[] tokens, int start, int end)
-        //{
-        //    HulkExpression result = null;
-        //    for (int i = start; i <= end; i++)
-        //    {
-        //        switch (tokens[i])
-        //        {
-        //            case "(":
-        //                {
-        //                    i = GoToNextParenthesis(i, end, tokens);
-        //                    break;
-        //                }
-        //            case "&&":
-        //                {
-        //                    HulkExpression left = i != start ? Parse(tokens, start, i - 1) : throw new Exception();
-        //                    HulkExpression right = i != end ? Parse(tokens, i + 1, end) : throw new Exception();
-        //                    result = new Conjunction(left, right);
-        //                    return result;
-        //                }
-        //            case "||":
-        //                {
-        //                    HulkExpression left = i != start ? Parse(tokens, start, i - 1) : throw new Exception();
-        //                    HulkExpression right = i != end ? Parse(tokens, i + 1, end) : throw new Exception();
-        //                    result = new Disjunction(left, right);
-        //                    return result;
-        //                }
-
-        //        }
-        //    }
-        //    return result;
-        //}
-        //private HulkExpression? TryBinarySecondLevelExpr(string[] tokens, int start, int end)
-        //{
-        //    HulkExpression result = null;
-        //    for (int i = start; i <= end; i++)
-        //    {
-        //        switch (tokens[i])
-        //        {
-        //            case "(":
-        //                i = GoToNextParenthesis(i, end, tokens);
-        //                break;
-        //            case "==":
-        //                {
-        //                    HulkExpression left = i != start ? Parse(tokens, start, i - 1) : throw new Exception();
-        //                    HulkExpression right = i != end ? Parse(tokens, i + 1, end) : throw new Exception();
-        //                    result = new Equal(left, right);
-        //                    return result;
-        //                }
-        //            case "!=":
-        //                {
-        //                    HulkExpression left = i != start ? Parse(tokens, start, i - 1) : throw new Exception();
-        //                    HulkExpression right = i != end ? Parse(tokens, i + 1, end) : throw new Exception();
-        //                    result = new UnEqual(left, right);
-        //                    return result;
-        //                }
-        //            case "<":
-        //                {
-
-        //                    HulkExpression left = i != start ? Parse(tokens, start, i - 1)
-        //                        : throw new Exception();
-        //                    HulkExpression right = i != end ? Parse(tokens, i + 1, end)
-        //                        : throw new Exception();
-        //                    result = new LowerThan(left, right);
-        //                    return result;
-        //                }
-
-        //            case ">":
-        //                {
-        //                    HulkExpression left = i != start ? Parse(tokens, start, i - 1)
-        //                        : throw new Exception();
-        //                    HulkExpression right = i != end ? Parse(tokens, i + 1, end)
-        //                        : throw new Exception();
-        //                    result = new GreaterThan(left, right);
-        //                    return result;
-        //                }
-
-        //            case "<=":
-        //                {
-
-        //                    HulkExpression left = i != start ? Parse(tokens, start, i - 1)
-        //                        : throw new Exception();
-        //                    HulkExpression right = i != end ? Parse(tokens, i + 1, end)
-        //                        : throw new Exception();
-        //                    result = new LowerEqualThan(left, right);
-        //                    return result;
-        //                }
-
-        //            case ">=":
-        //                {
-        //                    HulkExpression left = i != start ? Parse(tokens, start, i - 1)
-        //                        : throw new Exception();
-        //                    HulkExpression right = i != end ? Parse(tokens, i + 1, end)
-        //                        : throw new Exception();
-        //                    result = new GreaterEqualThan(left, right);
-        //                    return result;
-        //                }
-        //        }
-        //    }
-        //    return null;
-        //}
-        //private HulkExpression? TryUnaryBooleanExpression(string[] tokens, int start, int end)
-        //{
-        //    HulkExpression result = null;
-        //    switch (tokens[start])
-        //    {
-        //        case "(":
-        //            {
-        //                int i = GoToNextParenthesis(start, end, tokens);
-        //                if (i != end)
-        //                    result = null;
-        //                else
-        //                    result = start != end - 1 ? Parse(tokens, start + 1, end - 1) : throw new Exception();
-        //                return result;
-        //            }
-        //        case "!":
-        //            {
-        //                result = start != end ? new Negation(Parse(tokens, start + 1, end)): throw new Exception();
-        //                return result;
-        //            }                
-        //    }
-        //    if (start == end)
-        //    {
-
-        //        if (tokens[start] != "true" && tokens[start] != "false")
-        //        {
-        //            double maybeNum;
-        //            if (double.TryParse(tokens[start], out maybeNum))
-        //                return null;
-        //            if (Regex.Match(tokens[start], @"\u0022(.)*\u0022").Success)
-        //                return null;
-
-        //            result = TryVariable(tokens[start]);
-        //            return result;
-        //        }
-        //        else
-        //        {
-        //            result = new Variable(bool.Parse(tokens[start]));
-        //            return result;
-        //        }
-        //    }
-        //    return result;
-        //}
-        //#endregion
-        //#region Aritmethic Expression Parsing
-        //public HulkExpression ParseArithmetic(string[] tokens, int start, int end)
-        //{
-        //    HulkExpression result = null;
-        //    result = TryFirstLevelArithmeticExpr(tokens, start, end);
-        //    if (result == null)
-        //        result = TrySecondLevelArithmeticExpr(tokens, start, end);
-        //    if (result == null)
-        //        result = TryThirdLevelArithmeticExpr(tokens, start, end);
-        //    if (result == null)
-        //        result = TryArithmeticFunc(tokens, start, end);
-        //    return result;
-        //}
-        //public HulkExpression? TryFirstLevelArithmeticExpr(string[] tokens, int start, int end)
-        //{
-        //    HulkExpression result = null;
-        //    for (int i = end; i >= start; i--)
-        //    {
-        //        switch (tokens[i])
-        //        {
-        //            case ")":
-        //                {
-        //                    i = GoToPreviousParenthesis(i, start, tokens);
-        //                    break;
-        //                }
-        //            case "+":
-        //                {
-        //                    HulkExpression left = null;
-        //                    if (i != start)
-        //                    {
-        //                        Regex regex = new Regex(@"(\(|\+|-|\*|/|%|=|\^|,)");
-        //                        left = !regex.Match(tokens[i - 1]).Success ? Parse(tokens, start, i - 1) : null;
-        //                    }
-        //                    else
-        //                        left = new Variable(0d);
-        //                    HulkExpression right = i != end ? Parse(tokens, i + 1, end) : throw new Exception();
-        //                    if (left != null && right != null)
-        //                        result = new Addition(left, right);
-        //                    return result;
-        //                }
-        //            case "-":
-        //                {
-        //                    HulkExpression left = null;
-        //                    if (i != start)
-        //                    {
-        //                        Regex regex = new Regex(@"(\(|\+|-|\*|/|%|=|\^|,)");
-        //                        left = !regex.Match(tokens[i - 1]).Success ? Parse(tokens, start, i - 1) : null;
-        //                    }
-        //                    else
-        //                        left = new Variable(0d);
-        //                    HulkExpression right = i != end ? Parse(tokens, i + 1, end) : throw new Exception();
-        //                    if (left != null && right != null)
-        //                        result = new Subtraction(left, right);
-        //                    return result;
-        //                }
-        //        }
-        //    }
-        //    return null;
-        //}
-        //public HulkExpression? TrySecondLevelArithmeticExpr(string[] tokens, int start, int end)
-        //{
-        //    HulkExpression result = null;
-        //    for (int i = end; i >= start; i--)
-        //    {
-        //        switch (tokens[i])
-        //        {
-        //            case ")":
-        //                {
-        //                    i = GoToPreviousParenthesis(i, start, tokens);
-        //                    break;
-        //                }
-        //            case "*":
-        //                {
-        //                    HulkExpression left = i != start ? Parse(tokens, start, i - 1) : throw new Exception();
-        //                    HulkExpression right = i != end ? Parse(tokens, i + 1, end) : throw new Exception();
-        //                    result = new Multiplication(left, right);
-        //                    return result;
-        //                }
-        //            case "/":
-        //                {
-        //                    HulkExpression left = i != start ? Parse(tokens, start, i - 1) : throw new Exception();
-        //                    HulkExpression right = i != end ? Parse(tokens, i + 1, end) : throw new Exception();
-        //                    result = new Division(left, right);
-        //                    return result;
-        //                }
-        //            case "%":
-        //                {
-        //                    HulkExpression left = i != start ? Parse(tokens, start, i - 1) : throw new Exception();
-        //                    HulkExpression right = i != end ? Parse(tokens, i + 1, end) : throw new Exception();
-        //                    result = new Module(left, right);
-        //                    return result;
-        //                }
-        //        }
-        //    }
-        //    return null;
-        //}
-        //public HulkExpression? TryThirdLevelArithmeticExpr(string[] tokens, int start, int end)
-        //{
-        //    HulkExpression result = null;
-        //    for (int i = start; i <= end; i++)
-        //    {
-        //        switch (tokens[i])
-        //        {
-        //            case "(":
-        //                {
-        //                    i = GoToNextParenthesis(i, end, tokens);
-        //                    break;
-        //                }
-        //            case "^":
-        //                {
-
-        //                    HulkExpression left = i != start ? Parse(tokens, start, i - 1)
-        //                        : throw new Exception();
-        //                    HulkExpression right = i != end ? Parse(tokens, i + 1, end)
-        //                        : throw new Exception();
-        //                    result = new Power(left, right);
-        //                    return result;
-        //                }
-        //        }
-        //    }
-        //    return null;
-        //}
-        //public HulkExpression? TryArithmeticFunc(string[] tokens, int start, int end)
-        //{
-        //    HulkExpression result = null;
-        //    switch (tokens[start])
-        //    {
-        //        case "(":
-        //            {
-        //                result = start != end - 1 ? Parse(tokens, start + 1, end - 1) : throw new Exception();
-        //                return result;
-        //            }
-        //        case "sqrt":
-        //            {
-        //                if (tokens[start + 1] != "(" || tokens[end] != ")")
-        //                    throw new Exception();
-        //                else
-        //                    result = new SquaredRoot(Parse(tokens, start + 1, end));
-        //                return result;
-        //            }
-        //        case "sin":
-        //            {
-        //                if (tokens[start + 1] != "(" || tokens[end] != ")")
-        //                    throw new Exception();
-        //                else
-        //                    result = new Sine(Parse(tokens, start + 1, end));
-        //                return result;
-        //            }
-        //        case "cos":
-        //            {
-        //                if (tokens[start + 1] != "(" || tokens[end] != ")")
-        //                    throw new Exception();
-        //                else
-        //                    result = new Cosine(Parse(tokens, start + 1, end));
-        //                return result;
-        //            }
-        //        case "exp":
-        //            {
-        //                if (tokens[start + 1] != "(" || tokens[end] != ")")
-        //                    throw new Exception();
-        //                else
-        //                    result = new ERaised(Parse(tokens, start + 1, end));
-        //                return result;
-        //            }
-        //        case "log":
-        //            {
-        //                if (tokens[start + 1] != "(" || tokens[end] != ")")
-        //                    throw new Exception();
-        //                else
-        //                {
-        //                    List<HulkExpression> Args = GetComaSeparatedExpressions(tokens, start + 2, end - 1);
-        //                    if (Args.Count != 2)
-        //                        throw new Exception();
-        //                    else
-        //                    {
-        //                        HulkExpression left = Args[0].GetValue() is double ? Args[0] : throw new Exception();
-        //                        HulkExpression right = Args[1].GetValue() is double ? Args[1] : throw new Exception();
-        //                        result = new Logarithm(left, right);
-        //                    }
-        //                }
-        //                return result;
-        //            }
-        //    }
-        //    if (start == end)
-        //    {
-        //        if (Regex.Match(tokens[start], @"\u0022(.)*\u0022").Success)
-        //            return null;
-        //        double x;
-        //        bool isNumber = double.TryParse(tokens[start],NumberStyles.Any, new CultureInfo("en-US"), out x);
-        //        if (!isNumber)
-        //        {
-        //            result = TryVariable(tokens[start]);
-        //            return result;
-        //        }
-        //        else
-        //        {
-        //            result = new Variable(x);
-        //            return result;
-        //        }
-        //    }
-        //    return result;
-        //}
-        //#endregion        
-        //private HulkExpression TryString(string[] tokens, int start, int end)
-        //{
-        //    HulkExpression result = null;
-        //    if (start != end)
-        //        return null;
-        //    if (Regex.Match(tokens[start], @"\u0022(.)*\u0022").Success)
-        //    {
-        //        string arg = tokens[start].Replace("\\", "");
-        //        arg = arg.Substring(1, arg.Length - 2);
-        //        result = new Variable(arg);
-        //    }
-        //    return result;
-
-        //}
-        //private HulkExpression TryPrintFunction(string[] tokens, int start, int end)
-        //{
-        //    HulkExpression result = null;
-        //    if (tokens[start] != "print")
-        //        return result;
-        //    if (tokens[start + 1] != "(")
-        //        throw new Exception();
-        //    if (tokens[end] != ")")
-        //        throw new Exception();
-        //    var Arg = Parse(tokens, start + 2, end - 1);
-
-        //    result = new PrintFunc(Arg);
-        //    return result;
-        //}
-        //#endregion
         private HulkExpression ParseInternal(string[] tokens, int start, int end)
         {
             if (tokens.Length == 0)
@@ -487,6 +72,7 @@ namespace Hulk
             return expr;
         }
         #region Parsing(new)
+        //Info:
         //en esta region se implementaran los metodos para parasear los operadores. Estos tienen un nivel de prioridad,
         //me estoy guiando por la prioridad de C#. Para ver la lista detallada del orden de las operaciones ir a
         //https://learn.microsoft.com/es-es/dotnet/csharp/language-reference/operators/ 
@@ -711,7 +297,6 @@ namespace Hulk
             }
         }
         #endregion
-        #region Operands Parsing templates
         #region Statements Parsing
         private HulkExpression ParseVarDeclaration(string[] tokens, int start, int end)
         {
@@ -736,9 +321,9 @@ namespace Hulk
             }
             return result;
         }
-        private HulkExpression ParseVarDeclaration(string[] tokens, int start, int end, VariableDeclarationParsingOptions parsingOptions)
+        private HulkExpression ParseVarDeclaration(string[] tokens, int start, int end, VarDecParseOptions parsingOptions)
         {
-            if (parsingOptions == VariableDeclarationParsingOptions.Usual)
+            if (parsingOptions == VarDecParseOptions.Usual)
                 return ParseVarDeclaration(tokens, start, end);
             else
             {
@@ -770,7 +355,7 @@ namespace Hulk
                 return new VariableDeclaration(VariableName, ValueExp);
             }
         }
-        private enum VariableDeclarationParsingOptions { Usual, AsLetInExpressionArguments }
+        private enum VarDecParseOptions { Usual, LetInArgs }
         public HulkExpression ParseFunctionDeclaration(string[] tokens, int start, int end)
         {
             FunctionDeclaration result = null;
@@ -809,24 +394,31 @@ namespace Hulk
             int declarationEnd = GetNameLimit(tokens, start, end, "in");
             if (declarationEnd >= end - 1)
                 throw new Exception();
-            List<HulkExpression> Args = GetComaSeparatedDeclarations(tokens, start + 1, declarationEnd, VariableDeclarationParsingOptions.AsLetInExpressionArguments);
+            List<HulkExpression> Args = GetComaSeparatedDeclarations(tokens, start + 1, declarationEnd, VarDecParseOptions.LetInArgs);
             Dictionary<string, Variable> LayerVariables = new Dictionary<string, Variable>();
             foreach (HulkExpression arg in Args)
             {
                 if (arg is not VariableDeclaration)
                     throw new Exception();
                 var Vars = arg as VariableDeclaration;
-                if (Vars.ValueExpression is Variable)
+                //if (Vars.ValueExpression is Variable)
+                //{
+                //    var var = (Variable)Vars.ValueExpression;
+                //    foreach (string name in Vars.Names)
+                //        LayerVariables.Add(name, var);
+                //}
+                //else
+                //{
+                foreach (string name in Vars.Names)
                 {
-                    var var = (Variable)Vars.ValueExpression;
-                    foreach (string name in Vars.Names)
-                        LayerVariables.Add(name, var);
+                    if (Vars.ValueExpression is null)
+                        throw new Exception("let-in statements args must be initialized");
+                    var LetVariable = new Variable(name, Vars.ValueExpression.GetValue(false), Vars.Type);
+                    if (Vars.ValueExpression.IsDependent)
+                        LetVariable = new Variable(name, Vars.ValueExpression, Vars.Type, Variable.VariableOptions.Dependent);
+                    LayerVariables.Add(name, LetVariable);
                 }
-                else
-                {
-                    foreach (string name in Vars.Names)
-                        LayerVariables.Add(name, new Variable(name, Vars.GetValue(), Vars.Type));
-                }
+                //}
             }
             result = new LetInStatement(LayerVariables);
             ParsingExp.Push(result);
@@ -854,7 +446,7 @@ namespace Hulk
                     if (conditionEnd == end)
                         throw new Exception();
                     condition = ParseInternal(tokens, start + 1, conditionEnd);
-                    int ifDoEnd = GetIfDoEnd(tokens, start, end);
+                    int ifDoEnd = GetNameLimit(tokens, start, end, "else");
                     if (ifDoEnd == end - 1)
                         throw new Exception();
                     IfDo = ParseInternal(tokens, conditionEnd + 1, ifDoEnd);
@@ -865,16 +457,8 @@ namespace Hulk
             }
             return result;
         }
-        private int GetIfDoEnd(string[] tokens, int start, int end)
-        {
-            for (int i = start; i <= end; i++)
-            {
-                if (tokens[i] == "else")
-                    return i - 1;
-            }
-            return end;
-        }
         #endregion
+        #region Operands Parsing templates
         private HulkExpression TryFunctionCall(string[] tokens, int start, int end)
         {
             HulkExpression result = null;
@@ -915,7 +499,7 @@ namespace Hulk
                 case "E":
                     return new Variable(Math.E);
             }
-            Stack<HulkExpression> PosibleLocations = new Stack<HulkExpression>(ParsingExp);
+            Stack<HulkExpression> PosibleLocations = new Stack<HulkExpression>(new Stack<HulkExpression>(ParsingExp));
             HulkExpression exp;
             Dictionary<string, Variable> Location = new Dictionary<string, Variable>();
             while (PosibleLocations.TryPop(out exp))
@@ -996,7 +580,7 @@ namespace Hulk
             }
             return result;
         }
-        private List<HulkExpression> GetComaSeparatedDeclarations(string[] tokens, int start, int end, VariableDeclarationParsingOptions options)
+        private List<HulkExpression> GetComaSeparatedDeclarations(string[] tokens, int start, int end, VarDecParseOptions options)
         {
             List<HulkExpression> result = new List<HulkExpression>();
             if (tokens[start] == "," || tokens[end] == ",")
