@@ -307,7 +307,20 @@ namespace Hulk
             {
                 string type = tokens[start];
                 int declarationEnd = GetNameLimit(tokens, start + 1, end, "=");
-                List<string> names = GetCommaSeparatedTokens(tokens, start + 1, declarationEnd);
+                if (tokens[start + 1] == "=")
+                    throw new SyntaxError("variable name", "variable declaration");
+                List<string> names;
+                try
+                {
+                    names = GetCommaSeparatedTokens(tokens, start + 1, declarationEnd);
+                }
+                catch
+                {
+                    string invalid = "";
+                    for (int i = start + 1; i <= declarationEnd; i++)
+                        invalid += tokens[i] + ", ";
+                    throw new LexicalError(invalid, "declaration name");
+                }
                 foreach (string name in names)
                 {
                     double x = 0;
@@ -337,6 +350,8 @@ namespace Hulk
                 if (tokens[start] == "number" || tokens[start] == "boolean" || tokens[start] == "string")
                 {
                     type = tokens[start];
+                    if (tokens[start + 1] == "=")
+                        throw new SyntaxError("variable name", "variable declaration"); 
                     name = tokens[start + 1];
                 }
                 else
@@ -354,7 +369,7 @@ namespace Hulk
                 HulkExpression ValueExp = null;
                 if (declarationEnd < end - 1)
                     ValueExp = ParseInternal(tokens, declarationEnd + 2, end);
-                else if (declarationEnd == end - 1)
+                else if (declarationEnd >= end - 1)
                     throw new SyntaxError("value expression", "variable declaration");
                 return new VariableDeclaration(VariableName, ValueExp);
             }
@@ -366,6 +381,8 @@ namespace Hulk
             int declarationEnd = GetNameLimit(tokens, start, end, "=>");
             if (tokens[start] != "function") 
                 throw new LexicalError(tokens[start], "function declaration start");
+            if (tokens[start + 1] == "=>")
+                throw new SyntaxError("function name", "function declaration");
             if (declarationEnd >= end - 1)
                 throw new SyntaxError("function declaration body", "function declaration");
 
@@ -376,10 +393,22 @@ namespace Hulk
                 if (HulkInfo.KeyWords.Contains(funcName) || double.TryParse(funcName, out x) || Char.IsDigit(funcName[0]))
                     throw new LexicalError(funcName, "function name");
                 if (tokens[start + 2] != "(")
-                    throw new SyntaxError("(", "function declaration arguments");
+                    throw new SyntaxError("(", "function declaration after function name");
                 if (tokens[declarationEnd] != ")")
                     throw new SyntaxError(")", "function declaration arguments");
-                List<string> ArgNames = GetCommaSeparatedTokens(tokens, start + 3, declarationEnd - 1);
+                List<string> ArgNames;
+                try
+                {
+                    ArgNames = GetCommaSeparatedTokens(tokens, start + 3, declarationEnd - 1);
+                }
+                catch
+                {
+                    string invalid = "";
+                    for (int i = start + 3; i <= declarationEnd-1; i++)
+                        invalid += tokens[i] + ", ";
+                    throw new LexicalError(invalid, "function arguments");
+                }
+                
                 foreach (string name in ArgNames)
                 {
                     if (HulkInfo.KeyWords.Contains(name) || double.TryParse(name, out x) || Char.IsDigit(name[0]))

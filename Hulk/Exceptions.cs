@@ -13,7 +13,8 @@ public class LexicalError : HulkException
 	{
 		MessageStart = "! LEXICAL ERROR :";
 		InvalidToken = invalidToken;
-		
+		ExpectedToken = "token";
+        MessageDefinition = $"`{InvalidToken}` is not a valid {ExpectedToken}";
 
     }
 	public LexicalError(string invalidToken, string expectedToken) 
@@ -21,7 +22,7 @@ public class LexicalError : HulkException
         MessageStart = "! LEXICAL ERROR :";
         InvalidToken = invalidToken;
         ExpectedToken = expectedToken;
-        MessageDefinition = $"{InvalidToken} is not a valid {ExpectedToken}";
+        MessageDefinition = $"`{InvalidToken}` is not a valid {ExpectedToken}";
     }
 	public string InvalidToken { get; }
 	public string ExpectedToken { get; }
