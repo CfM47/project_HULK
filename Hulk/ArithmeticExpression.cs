@@ -1,19 +1,5 @@
 ﻿namespace Hulk
 {
-
-    //public class NumVariable : HulkExpression
-    //{
-    //    public NumVariable(double val)
-    //    {
-    //        GetValue = val;
-    //    }
-    //    public NumVariable(double val, string name)
-    //    {
-    //        GetValue = val;
-    //        Name = name;
-    //    }
-    //    public string Name { get; protected set; }
-    //}
     public class Positive : UnaryFunction
     {
         public Positive(HulkExpression Arg) : base(Arg)
@@ -22,7 +8,8 @@
         public override object Evaluate(object arg)
         {
             if (arg is not double)
-                throw new Exception();
+                throw new SemanticError("Operator `+`", "`number`", arg.GetType().Name);
+                
             return arg;
         }
     }
@@ -34,7 +21,7 @@
         public override object Evaluate(object arg)
         {
             if (arg is not double)
-                throw new Exception();
+                throw new SemanticError("Operator `-`", "`number`", arg.GetType().Name);
             return -(double)arg;
         }
     }
@@ -65,7 +52,7 @@
             }
             if (bothNull || case1 || case2)
                 return (dynamic)left + (dynamic)right;
-            throw new Exception("The \"+\" can only take arguments both of type number or string");
+            throw new Exception($"Cannot perform operation `+` between `{left.GetType().Name}` and `{right.GetType().Name}`");
         }
     }
     public class Subtraction : BinaryFunction
@@ -77,7 +64,8 @@
         {
             if (!(left is double) || !(right is double))
             {
-                    throw new Exception("The \"-\" can only take a number as argument");
+                var conflictiveType = !(left is double) ? left.GetType().Name : right.GetType().Name;
+                throw new SemanticError("Operator `-`", "number", conflictiveType);
             }
             double a = (double)left;
             double b = (double)right;
@@ -94,7 +82,8 @@
         {
             if (!(left is double) || !(right is double))
             {
-                throw new Exception("The \"+\" can only take a number as argument");
+                var conflictiveType = !(left is double) ? left.GetType().Name : right.GetType().Name;
+                throw new SemanticError("Operator `*`", "number", conflictiveType);
             }
             else
             {
@@ -109,12 +98,12 @@
         public Division(HulkExpression leftArgument, HulkExpression rightArgument) : base(leftArgument, rightArgument)
         {
         }
-
         public override object Evaluate(object left, object right)
         {
             if (!(left is double) || !(right is double))
             {
-                throw new Exception("The \"/\" can only take a number as argument");
+                var conflictiveType = !(left is double) ? left.GetType().Name : right.GetType().Name;
+                throw new SemanticError("Operator `/`", "number", conflictiveType);
             }
             else
             {
@@ -135,7 +124,8 @@
         {
             if (!(left is double) || !(right is double))
             {
-                throw new Exception("The \"%\" can only take a number as argument");
+                var conflictiveType = !(left is double) ? left.GetType().Name : right.GetType().Name;
+                throw new SemanticError("Operator `%`", "number", conflictiveType);
             }
             else
             {
@@ -150,12 +140,12 @@
         public Power(HulkExpression leftArgument, HulkExpression rightArgument) : base(leftArgument, rightArgument)
         {
         }
-
         public override object Evaluate(object left, object right)
         {
             if (!(left is double) || !(right is double))
             {
-                throw new Exception("The \"^\" can only take a number as argument");
+                var conflictiveType = !(left is double) ? left.GetType().Name : right.GetType().Name;
+                throw new SemanticError("Operator `^`", "number", conflictiveType);
             }
             else
             {
@@ -174,7 +164,8 @@
         {
             if (!(left is double) || !(right is double))
             {
-                throw new Exception("The \"log()\" can only take a number as argument");
+                var conflictiveType = !(left is double) ? left.GetType().Name : right.GetType().Name;
+                throw new SemanticError("Function `log`", "number", conflictiveType);
             }
             else
             {
@@ -189,12 +180,11 @@
         public SquaredRoot(HulkExpression Arg) : base(Arg)
         {
         }
-
         public override object Evaluate(object arg)
         {
             if (!(arg is double))
             {
-                throw new Exception("The \"sqrt()\" can only take a number as argument");
+                throw new SemanticError("Function `sqrt()`", "number", arg.GetType().Name);
             }
             else
             {
@@ -208,12 +198,11 @@
         public Sine(HulkExpression Arg) : base(Arg)
         {
         }
-
         public override object Evaluate(object arg)
         {
             if (!(arg is double))
             {
-                throw new Exception("The \"sin()\" can only take a number as argument");
+                throw new SemanticError("Function `sin()`", "number", arg.GetType().Name);
             }
             else
             {
@@ -231,7 +220,7 @@
         {
             if (!(arg is double))
             {
-                throw new Exception("The \"cos()\" can only take a number as argument");
+                throw new SemanticError("Function `cos()`", "number", arg.GetType().Name);
             }
             else
             {
@@ -249,7 +238,7 @@
         {
             if (!(arg is double))
             {
-                throw new Exception("The \"exp()\" can only take a number as argument");
+                throw new SemanticError("Function `sqrt()`", "number", arg.GetType().Name);
             }
             else
             {

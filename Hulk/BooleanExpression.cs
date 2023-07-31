@@ -11,7 +11,7 @@ public class Negation : UnaryFunction
     {
         if (!(arg is bool))
         {
-            throw new Exception("The \"!\" can only take a boolean as argument");
+            throw new SemanticError("Operator `!`", "boolean", arg.GetType().Name);
         }
         else
         {
@@ -30,7 +30,8 @@ public class Conjunction : BinaryFunction
     {
         if (!(left is bool) || !(right is bool))
         {
-            throw new Exception("The \"&&\" can only take a boolean as argument");
+            var conflictiveType = !(left is bool) ? left.GetType().Name : right.GetType().Name;
+            throw new SemanticError("Operator `&&`", "boolean", conflictiveType);
         }
         else
         {
@@ -49,7 +50,8 @@ public class Disjunction : BinaryFunction
     {
         if (!(left is bool) || !(right is bool))
         {
-            throw new Exception("The \"||\" can only take a boolean as argument");
+            var conflictiveType = !(left is bool) ? left.GetType().Name : right.GetType().Name;
+            throw new SemanticError("Operator `&&`", "boolean", conflictiveType);
         }
         else
         {
@@ -71,7 +73,8 @@ public class LowerThan : BinaryFunction
     {
         if (!(left is double) || !(right is double))
         {
-            throw new Exception("The \"<\" can only take a number as argument");
+            var conflictiveType = !(left is double) ? left.GetType().Name : right.GetType().Name;
+            throw new SemanticError("Operator `<`", "number", conflictiveType);
         }
         else
         {
@@ -91,7 +94,8 @@ public class GreaterThan : BinaryFunction
     {
         if (!(left is double) || !(right is double))
         {
-            throw new Exception("The \">\" can only take a number as argument");
+            var conflictiveType = !(left is double) ? left.GetType().Name : right.GetType().Name;
+            throw new SemanticError("Operator `>`", "number", conflictiveType);
         }
         else
         {
@@ -111,7 +115,8 @@ public class LowerEqualThan : BinaryFunction
     {
         if (!(left is double) || !(right is double))
         {
-            throw new Exception("The \"<=\" can only take a number as argument");
+            var conflictiveType = !(left is double) ? left.GetType().Name : right.GetType().Name;
+            throw new SemanticError("Operator `<=`", "number", conflictiveType);
         }
         else
         {
@@ -131,7 +136,8 @@ public class GreaterEqualThan : BinaryFunction
     {
         if (!(left is double) || !(right is double))
         {
-            throw new Exception("The \">=\" can only take a number as argument");
+            var conflictiveType = !(left is double) ? left.GetType().Name : right.GetType().Name;
+            throw new SemanticError("Operator `>=`", "number", conflictiveType);
         }
         else
         {
@@ -148,10 +154,6 @@ public class Equal : BinaryFunction
     }
     public override object Evaluate(object left, object right)
     {
-        if(left is double && right is double)
-            return (double)left == (double)right;
-        else if(left is bool && right is bool)
-            return (bool)left == (bool)right;
         return left == right;
     }
 }

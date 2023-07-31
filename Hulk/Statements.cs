@@ -21,7 +21,7 @@ public class IfElseStatement : HulkExpression
     private object Result(HulkExpression Cond, HulkExpression IfExp, HulkExpression ElseExp, bool execute)
     {
         if (Cond.GetValue(execute) is not bool)
-            throw new Exception("Boolean expression expected");
+            throw new SemanticError("if-else condition", "boolean", Cond.GetValue(execute).GetType().Name);
         else
         {
             var condition = (bool)Cond.GetValue(execute);
@@ -42,7 +42,7 @@ public class VariableDeclaration : HulkExpression
         SetType(type);
         bool valueOk = ValueExp == null? true : IsOkValue(ValueExp.GetValue(false));
         if (!valueOk)
-            throw new Exception("value expression does not match " + type);
+            throw new SemanticError("Variable declaration", type, ValueExp.GetValue(false).GetType().Name);
         ValueExpression = ValueExp;
     }
     public VariableDeclaration(List<string> names, HulkExpression ValueExp)
@@ -115,7 +115,7 @@ public class FunctionDeclaration : HulkExpression
     public object Evaluate(List<HulkExpression> Args, bool execute)
     {
         if (Args.Count != Arguments.Count)
-            throw new Exception();
+            throw new SemanticError($"Function `{FunctionName}`", $"{Arguments.Count} argument(s)", $"{ Args.Count } argument(s)");
         else 
         {
             List<object> OldValues = new List<object>();

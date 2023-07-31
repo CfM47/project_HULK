@@ -24,9 +24,15 @@ namespace Interface
                             foreach (string name in Vars.Names)
                             {
                                 var options = Variable.VariableOptions.InitializedVariable;
+                                Variable newVar;
                                 if (Vars.ValueExpression == null)
+                                {
                                     options = Variable.VariableOptions.NonInitialized;
-                                var newVar = new Variable(name, Vars.ValueExpression.GetValue(false), Vars.Type, options);
+                                    newVar = new Variable(name, null, Vars.Type, options);
+
+                                }
+                                else
+                                    newVar = new Variable(name, Vars.ValueExpression.GetValue(false), Vars.Type, options);
                                 Memoria.AddNewVariable(name, newVar);
                             }
                         }

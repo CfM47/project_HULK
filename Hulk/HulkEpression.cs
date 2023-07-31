@@ -119,7 +119,7 @@
                 Type = type;
             }
             else 
-                throw new Exception();
+                throw new SemanticError($"Variable `{Name}`", $"{Type}", value.GetType().Name);
 
         }
         public VariableOptions Options { get;  set; }
@@ -167,7 +167,14 @@
         }
         public override object GetValue(bool execute)
         {
-            return Definition.Evaluate(Arguments, execute);
+            try
+            {
+                return Definition.Evaluate(Arguments, execute);
+            }
+            catch (SemanticError ex)
+            {
+                throw new SemanticError($"Function `{Name}`", ex.ExpressionExpected, ex.ExpressionReceived);
+            }
         }
         public string Name { get; protected set; }
         public List<HulkExpression> Arguments { get; protected set; }
