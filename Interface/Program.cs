@@ -15,51 +15,85 @@ namespace Interface
                 string[] s = tokenizer.GetTokens(input);
                 if (input != null)
                 {
-                    try
+                    var Instructions = GetInstructions(s);
+                    foreach (string[] instruction in Instructions)
                     {
-                        HulkExpression exp = tokenizer.Parse(s);
-                        if (exp is VariableDeclaration)
+                        try
                         {
-                            VariableDeclaration Vars = (VariableDeclaration)exp;
-                            foreach (string name in Vars.Names)
+                            HulkExpression exp = tokenizer.Parse(instruction);
+                            if (exp is VariableDeclaration)
                             {
-                                var options = Variable.VariableOptions.InitializedVariable;
-                                Variable newVar;
-                                if (Vars.ValueExpression == null)
+                                VariableDeclaration Vars = (VariableDeclaration)exp;
+                                foreach (string name in Vars.Names)
                                 {
-                                    options = Variable.VariableOptions.NonInitialized;
-                                    newVar = new Variable(name, null, Vars.Type, options);
+                                    var options = Variable.VariableOptions.InitializedVariable;
+                                    Variable newVar;
+                                    if (Vars.ValueExpression == null)
+                                    {
+                                        options = Variable.VariableOptions.NonInitialized;
+                                        newVar = new Variable(name, null, Vars.Type, options);
 
+                                    }
+                                    else
+                                        newVar = new Variable(name, Vars.ValueExpression.GetValue(false), Vars.Type, options);
+                                    Memoria.AddNewVariable(name, newVar);
                                 }
-                                else
-                                    newVar = new Variable(name, Vars.ValueExpression.GetValue(false), Vars.Type, options);
-                                Memoria.AddNewVariable(name, newVar);
                             }
-                        }
-                        else if (exp is FunctionDeclaration)
-                        {
-                            FunctionDeclaration Function = (FunctionDeclaration)exp;
-                            Memoria.AddNewFunction(Function.FunctionName, Function);
-                        }
-                        else
-                        {
-                            try
+                            else if (exp is FunctionDeclaration)
                             {
-                                exp.GetValue(false);
-                                exp.GetValue(true);
+                                FunctionDeclaration Function = (FunctionDeclaration)exp;
+                                Memoria.AddNewFunction(Function.FunctionName, Function);
                             }
-                            catch (Exception ex)
+                            else
                             {
-                                Console.WriteLine(ex.Message);
+                                try
+                                {
+                                    exp.GetValue(false);
+                                    exp.GetValue(true);
+                                }
+                                catch (Exception ex)
+                                {
+                                    Console.WriteLine(ex.Message);
+                                }
                             }
                         }
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex.Message);
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.Message);
+                        }
                     }
                 }
             }
+        }
+
+
+
+        public static List<string[]> GetInstructions(string[] inputTokens)
+        {
+            List<string[]> result = new List<string[]>();
+            if (inputTokens[0] == ";")
+                throw new Exception("code Lines cannot start with a semicolon");
+            if (inputTokens[inputTokens.Length - 1] != ";")
+                throw new Exception("code lines must end with a semicolon");
+            int start = 0;
+            for (int i = 0; i < inputTokens.Length; i++)
+            {
+                if (inputTokens[i] == ";")
+                {
+                    string[] instruction = new string[i-start];
+                    for (int j = 0; j < i - start; j++)
+                    {
+                        instruction[j] = inputTokens[j + start];
+                    }
+                    result.Add(instruction);
+                    if(i != inputTokens.Length - 1)
+                    {
+                        if (inputTokens[i + 1] != ";")
+                            start = i + 1;
+                    }
+                }                
+            }
+            return result;
         }
     }
 }

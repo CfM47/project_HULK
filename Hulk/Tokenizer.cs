@@ -14,7 +14,7 @@ namespace Hulk
         }
         public string[] GetTokens(string entry)
         {
-            Regex pattern = new Regex(@"(\u0022([^\u0022\\]|\\.)*\u0022)|\(|\+|-|\*|/|%|,|(=>)|(<=)|(>=)|(<)|(>)|={2}|={1}|(!=)|\^|&{2}|\|{2}|!|\)|[^\(\)\+\-\*/\^%<>=!&\|,\s]+");
+            Regex pattern = new Regex(@";|(\u0022([^\u0022\\]|\\.)*\u0022)|\(|\+|-|\*|/|%|,|(=>)|(<=)|(>=)|(<)|(>)|={2}|={1}|(!=)|\^|&{2}|\|{2}|!|\)|[^\(\)\+\-\*/\^%<>=!&\|,;\s]+");
             MatchCollection collection = pattern.Matches(entry);
             string[] tokens = new string[collection.Count];
             for (int i = 0; i < tokens.Length; i++)
@@ -68,7 +68,7 @@ namespace Hulk
             if (expr == null)
                 expr = TryPrincipal(tokens, start, end);
             if (expr == null)
-                throw new Exception("Invalid Expression");
+                throw new Exception("Invalid Expression, missing semicolon?");
             return expr;
         }
         #region Parsing(new)
