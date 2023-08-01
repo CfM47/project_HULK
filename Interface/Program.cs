@@ -45,6 +45,7 @@ namespace Interface
                         {
                             try
                             {
+                                exp.GetValue(false);
                                 exp.GetValue(true);
                             }
                             catch (Exception ex)
@@ -59,13 +60,6 @@ namespace Interface
                     }
                 }
             }
-        }
-    }
-    public static class ExtString
-    {
-        public static string algo(this String arg)
-        {
-            return "el blue label de jhonny walker";
         }
     }
 }

@@ -9,15 +9,11 @@ public class Negation : UnaryFunction
 
     public override object Evaluate(object arg)
     {
-        if (!(arg is bool))
-        {
-            throw new SemanticError("Operator `!`", "boolean", arg.GetType().Name);
-        }
-        else
-        {
-            bool a = (bool)arg;
-            return !a;
-        }
+        if (arg is bool)
+            return (bool)arg;
+        if (arg == null)
+            return default(bool);
+        throw new SemanticError("Operator `+`", "number", arg.GetHulkTypeAsString());
     }
 }
 public class Conjunction : BinaryFunction
@@ -28,17 +24,16 @@ public class Conjunction : BinaryFunction
 
     public override object Evaluate(object left, object right)
     {
-        if (!(left is bool) || !(right is bool))
-        {
-            var conflictiveType = !(left is bool) ? left.GetType().Name : right.GetType().Name;
-            throw new SemanticError("Operator `&&`", "boolean", conflictiveType);
-        }
-        else
-        {
-            bool a = (bool)left;
-            bool b = (bool)right;
-            return a && b;
-        }
+        if (left == null)
+            left = right;
+        if (right == null)
+            right = left;
+        if (left == null && right == null)
+            return default(bool);
+        if ((left is bool && right is bool))
+            return (dynamic)left && (dynamic)right;
+        var conflictiveType = !(left is bool) ? left.GetType().Name : right.GetType().Name;
+        throw new SemanticError("Operator `&&`", "boolean", conflictiveType);
     }
 }
 public class Disjunction : BinaryFunction
@@ -48,17 +43,16 @@ public class Disjunction : BinaryFunction
     }
     public override object Evaluate(object left, object right)
     {
-        if (!(left is bool) || !(right is bool))
-        {
-            var conflictiveType = !(left is bool) ? left.GetType().Name : right.GetType().Name;
-            throw new SemanticError("Operator `&&`", "boolean", conflictiveType);
-        }
-        else
-        {
-            bool a = (bool)left;
-            bool b = (bool)right;
-            return a || b;
-        }
+        if (left == null)
+            left = right;
+        if (right == null)
+            right = left;
+        if (left == null && right == null)
+            return default(bool);
+        if ((left is bool && right is bool))
+            return (dynamic)left || (dynamic)right;
+        var conflictiveType = !(left is bool) ? left.GetType().Name : right.GetType().Name;
+        throw new SemanticError("Operator `||`", "boolean", conflictiveType);
     }
 }
 #endregion
@@ -71,17 +65,16 @@ public class LowerThan : BinaryFunction
 
     public override object Evaluate(object left, object right)
     {
-        if (!(left is double) || !(right is double))
-        {
-            var conflictiveType = !(left is double) ? left.GetType().Name : right.GetType().Name;
-            throw new SemanticError("Operator `<`", "number", conflictiveType);
-        }
-        else
-        {
-            double a = (double)left;
-            double b = (double)right;
-            return a < b;
-        }
+        if (left == null)
+            left = right;
+        if (right == null)
+            right = left;
+        if (left == null && right == null)
+            return default(bool);
+        if ((left is double && right is double))
+            return (dynamic)left < (dynamic)right;
+        var conflictiveType = !(left is double) ? left.GetType().Name : right.GetType().Name;
+        throw new SemanticError("Operator `<`", "number", conflictiveType);
     }
 }
 public class GreaterThan : BinaryFunction
@@ -92,17 +85,16 @@ public class GreaterThan : BinaryFunction
 
     public override object Evaluate(object left, object right)
     {
-        if (!(left is double) || !(right is double))
-        {
-            var conflictiveType = !(left is double) ? left.GetType().Name : right.GetType().Name;
-            throw new SemanticError("Operator `>`", "number", conflictiveType);
-        }
-        else
-        {
-            double a = (double)left;
-            double b = (double)right;
-            return a > b;
-        }
+        if (left == null)
+            left = right;
+        if (right == null)
+            right = left;
+        if (left == null && right == null)
+            return default(bool);
+        if ((left is double && right is double))
+            return (dynamic)left > (dynamic)right;
+        var conflictiveType = !(left is double) ? left.GetType().Name : right.GetType().Name;
+        throw new SemanticError("Operator `>`", "number", conflictiveType);
     }
 }
 public class LowerEqualThan : BinaryFunction
@@ -113,17 +105,16 @@ public class LowerEqualThan : BinaryFunction
 
     public override object Evaluate(object left, object right)
     {
-        if (!(left is double) || !(right is double))
-        {
-            var conflictiveType = !(left is double) ? left.GetType().Name : right.GetType().Name;
-            throw new SemanticError("Operator `<=`", "number", conflictiveType);
-        }
-        else
-        {
-            double a = (double)left;
-            double b = (double)right;
-            return a <= b;
-        }
+        if (left == null)
+            left = right;
+        if (right == null)
+            right = left;
+        if (left == null && right == null)
+            return default(bool);
+        if ((left is double && right is double))
+            return (dynamic)left <= (dynamic)right;
+        var conflictiveType = !(left is double) ? left.GetType().Name : right.GetType().Name;
+        throw new SemanticError("Operator `<=`", "number", conflictiveType);
     }
 }
 public class GreaterEqualThan : BinaryFunction
@@ -134,17 +125,16 @@ public class GreaterEqualThan : BinaryFunction
 
     public override object Evaluate(object left, object right)
     {
-        if (!(left is double) || !(right is double))
-        {
-            var conflictiveType = !(left is double) ? left.GetType().Name : right.GetType().Name;
-            throw new SemanticError("Operator `>=`", "number", conflictiveType);
-        }
-        else
-        {
-            double a = (double)left;
-            double b = (double)right;
-            return a >= b;
-        }
+        if (left == null)
+            left = right;
+        if (right == null)
+            right = left;
+        if (left == null && right == null)
+            return default(bool);
+        if ((left is double && right is double))
+            return (dynamic)left >= (dynamic)right;
+        var conflictiveType = !(left is double) ? left.GetType().Name : right.GetType().Name;
+        throw new SemanticError("Operator `>=`", "number", conflictiveType);
     }
 }
 public class Equal : BinaryFunction
@@ -154,7 +144,7 @@ public class Equal : BinaryFunction
     }
     public override object Evaluate(object left, object right)
     {
-        return left == right;
+        return (dynamic)left == (dynamic)right;
     }
 }
 public class UnEqual : BinaryFunction
@@ -165,7 +155,7 @@ public class UnEqual : BinaryFunction
 
     public override object Evaluate(object left, object right)
     {
-        return left != right;
+        return (dynamic)left != (dynamic)right;
     }
 }
 #endregion

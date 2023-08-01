@@ -1,9 +1,28 @@
-﻿namespace Hulk
+﻿using System.Runtime.CompilerServices;
+
+namespace Hulk
 {
     public abstract class HulkExpression
     {
         public abstract object GetValue(bool execute);
         public bool IsDependent { get; protected set; }
+    }
+    public static class ExtObject
+    {
+        public static string GetHulkTypeAsString (this Object arg)
+        {
+            var type = arg.GetType();
+            if (type == typeof(double))
+                return "number";
+            else if (type == typeof(bool))
+                return "boolean";
+            else if (type == typeof(string))
+                return "string";
+            else if (type == typeof(EmptyReturn))
+                return "void";
+            else
+                return "type";
+        }
     }
     public class EmptyReturn 
     {
@@ -21,6 +40,29 @@
         public override object GetValue(bool execute)
         {
             return Evaluate(LeftArgument.GetValue(execute), RightArgument.GetValue(execute));
+        }
+        protected bool ArgsOk(object left, object right, List<Type> AdmitedTypesName)
+        {
+            foreach(var type in AdmitedTypesName)
+            {
+                if (left == null || right == null) 
+                {
+                    if(left == null && right != null)
+                    {
+                        if (right.GetType() == type)
+                            return true;
+                    }
+                    else if(right == null && left != null)
+                    {
+                        if (left.GetType() == type)
+                            return true;
+                    }
+                    return true;                        
+                }
+                if(left.GetType()==right.GetType() && left.GetType()==type)
+                    return true;
+            }
+            return false;
         }
         public HulkExpression LeftArgument { get; protected set; }
         public HulkExpression RightArgument { get; protected set; }
@@ -119,7 +161,7 @@
                 Type = type;
             }
             else 
-                throw new SemanticError($"Variable `{Name}`", $"{Type}", value.GetType().Name);
+                throw new SemanticError($"Variable `{Name}`", $"{Type}", value.GetHulkTypeAsString());
 
         }
         public VariableOptions Options { get;  set; }
