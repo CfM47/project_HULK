@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using System.Text.RegularExpressions;
+using System.Xml.Linq;
 
 namespace Hulk
 {
@@ -68,7 +69,7 @@ namespace Hulk
             if (expr == null)
                 expr = TryPrincipal(tokens, start, end);
             if (expr == null)
-                throw new Exception("Invalid Expression, missing semicolon?");
+                throw new DefaultError("Invalid Expression, missing semicolon?");
             return expr;
         }
         #region Parsing(new)
@@ -323,8 +324,8 @@ namespace Hulk
                 }
                 foreach (string name in names)
                 {
-                    double x = 0;
-                    if (HulkInfo.KeyWords.Contains(name) || double.TryParse(name, out x) || Char.IsDigit(name[0]))
+                    bool correct = HulkInfo.IsCorrectName(name);
+                    if(!correct)
                         throw new LexicalError(name, "variable name");
                 }
                 HulkExpression ValueExp = null;
@@ -351,7 +352,7 @@ namespace Hulk
                 {
                     type = tokens[start];
                     if (tokens[start + 1] == "=")
-                        throw new SyntaxError("variable name", "variable declaration"); 
+                        throw new SyntaxError("variable name", "variable declaration");
                     name = tokens[start + 1];
                 }
                 else
@@ -361,8 +362,8 @@ namespace Hulk
                 }
                 List<string> VariableName = new List<string>();
 
-                double x = 0;
-                if (HulkInfo.KeyWords.Contains(name) || double.TryParse(name, out x) || Char.IsDigit(name[0]))
+                bool correct = HulkInfo.IsCorrectName(name);
+                if (!correct)
                     throw new LexicalError(name, "variable name");
 
                 VariableName.Add(name);
@@ -379,7 +380,7 @@ namespace Hulk
         {
             FunctionDeclaration result = null;
             int declarationEnd = GetNameLimit(tokens, start, end, "=>");
-            if (tokens[start] != "function") 
+            if (tokens[start] != "function")
                 throw new LexicalError(tokens[start], "function declaration start");
             if (tokens[start + 1] == "=>")
                 throw new SyntaxError("function name", "function declaration");
@@ -389,8 +390,8 @@ namespace Hulk
             else
             {
                 string funcName = tokens[start + 1];
-                double x = 0;
-                if (HulkInfo.KeyWords.Contains(funcName) || double.TryParse(funcName, out x) || Char.IsDigit(funcName[0]))
+                ;
+                if (!HulkInfo.IsCorrectName(funcName))
                     throw new LexicalError(funcName, "function name");
                 if (tokens[start + 2] != "(")
                     throw new SyntaxError("(", "function declaration after function name");
@@ -404,14 +405,15 @@ namespace Hulk
                 catch
                 {
                     string invalid = "";
-                    for (int i = start + 3; i <= declarationEnd-1; i++)
+                    for (int i = start + 3; i <= declarationEnd - 1; i++)
                         invalid += tokens[i] + ", ";
                     throw new LexicalError(invalid, "function arguments");
                 }
-                
+
                 foreach (string name in ArgNames)
                 {
-                    if (HulkInfo.KeyWords.Contains(name) || double.TryParse(name, out x) || Char.IsDigit(name[0]))
+                    bool correct = HulkInfo.IsCorrectName(name);
+                    if (!correct)
                         throw new LexicalError(name, "variable name");
                 }
                 result = new FunctionDeclaration(funcName, ArgNames);
@@ -508,14 +510,14 @@ namespace Hulk
                         if (tokens[start] == BaseExp.FunctionName)
                             Definition = BaseExp;
                         else
-                            throw new Exception($"function {tokens[start]} not found");
+                            throw new DefaultError($"function {tokens[start]} not found", "reference");
                     }
                     catch
                     {
-                        throw new Exception($"function {tokens[start]} not found");
+                        throw new DefaultError($"function {tokens[start]} not found", "reference");
                     }
                 }
-                
+
                 string name = tokens[start];
                 //var Args = GetComaSeparatedExpressions(tokens, start + 2, GoToNextParenthesis(start + 2, tokens) - 1);
                 var Args = GetComaSeparatedExpressions(tokens, start + 2, end - 1);
@@ -549,7 +551,7 @@ namespace Hulk
             if (Location.ContainsKey(varName))
                 return Location[varName];
             else
-                throw new Exception($"variable {varName} not found");
+                throw new DefaultError($"variable {varName} not found", "reference");
         }
         private HulkExpression BinaryFunctionMaker(string[] tokens, int start, int end, int opPos, Type type)
         {
@@ -585,7 +587,7 @@ namespace Hulk
         {
             List<HulkExpression> result = new List<HulkExpression>();
             if (tokens[start] == "," || tokens[end] == ",")
-                throw new Exception("incorrect comma separation");
+                throw new DefaultError("incorrect comma separation");
             int argStart = start;
             for (int i = start; i <= end; i++)
             {
@@ -616,7 +618,7 @@ namespace Hulk
         {
             List<HulkExpression> result = new List<HulkExpression>();
             if (tokens[start] == "," || tokens[end] == ",")
-                throw new Exception("incorrect comma separation");
+                throw new DefaultError("incorrect comma separation");
             int argStart = start;
             for (int i = start; i <= end; i++)
             {
@@ -649,7 +651,7 @@ namespace Hulk
         {
             List<string> result = new List<string>();
             if (tokens[start] == "," || tokens[end] == ",")
-                throw new Exception("incorrect comma separation");
+                throw new DefaultError("incorrect comma separation");
             for (int i = start; i <= end; i++)
             {
                 if (tokens[i] != ",")

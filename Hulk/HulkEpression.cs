@@ -106,7 +106,7 @@ namespace Hulk
             foreach (Variable v in Variables)
             {
                 if (v.Type != type)
-                    throw new Exception("Cannot asign value of type " + type + " to "+ v.Type + " variable");
+                    throw new DefaultError("Cannot asign value of type " + type + " to "+ v.Type + " variable", "asignment");
             }
         }
         private void ChangeValues()
@@ -174,7 +174,7 @@ namespace Hulk
             switch (Options)
             {
                 case VariableOptions.NonInitialized:
-                    throw new Exception("Use of unasigned variable");
+                    throw new DefaultError("Use of unasigned variable");
                 case VariableOptions.FunctionArgument:
                     return Value;
             }

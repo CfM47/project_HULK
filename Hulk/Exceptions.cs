@@ -1,29 +1,41 @@
-﻿using System;
-using static LexicalError;
-
+﻿using System.Globalization;
 public abstract class HulkException : Exception
 {
 	public override string Message { get => MessageStart + MessageDefinition; }
 	public string MessageStart { get; protected set; }
 	public string MessageDefinition { get; protected set; }
 }
+public class DefaultError : HulkException
+{
+	public DefaultError(string message)
+	{
+		MessageStart = "! ERROR : ";
+		MessageDefinition = message;
+	}
+	public DefaultError(string message, string errorEspecification)
+	{
+		errorEspecification = errorEspecification.ToUpper(new CultureInfo("en-US"));
+		MessageStart = $"! {errorEspecification} ERROR :";
+		MessageDefinition = message;
+	}
+}
 public class LexicalError : HulkException
 {
 	public LexicalError(string invalidToken)
 	{
-		MessageStart = "! LEXICAL ERROR :";
+		MessageStart = "! LEXICAL ERROR : ";
 		InvalidToken = invalidToken;
 		ExpectedToken = "token";
-        MessageDefinition = $"`{InvalidToken}` is not a valid {ExpectedToken}";
+		MessageDefinition = $"`{InvalidToken}` is not a valid {ExpectedToken}";
 
-    }
-	public LexicalError(string invalidToken, string expectedToken) 
+	}
+	public LexicalError(string invalidToken, string expectedToken)
 	{
-        MessageStart = "! LEXICAL ERROR :";
-        InvalidToken = invalidToken;
-        ExpectedToken = expectedToken;
-        MessageDefinition = $"`{InvalidToken}` is not a valid {ExpectedToken}";
-    }
+		MessageStart = "! LEXICAL ERROR : ";
+		InvalidToken = invalidToken;
+		ExpectedToken = expectedToken;
+		MessageDefinition = $"`{InvalidToken}` is not a valid {ExpectedToken}";
+	}
 	public string InvalidToken { get; }
 	public string ExpectedToken { get; }
 }
@@ -31,20 +43,20 @@ public class SyntaxError : HulkException
 {
 	public SyntaxError(string missingPart, string place)
 	{
-        MessageStart = "! SYNTAX ERROR :";
+		MessageStart = "! SYNTAX ERROR : ";
 		MissingPart = missingPart;
 		MissingPlace = place;
 		MessageDefinition = $"Missing {MissingPart} in {MissingPlace}";
 	}
-    public string MissingPart { get; }
+	public string MissingPart { get; }
 	public string MissingPlace { get; }
 
 }
-public class SemanticError: HulkException
+public class SemanticError : HulkException
 {
-	public SemanticError(string expression, string expected, string received )
+	public SemanticError(string expression, string expected, string received)
 	{
-		MessageStart = "! SEMANTIC ERROR :";
+		MessageStart = "! SEMANTIC ERROR : ";
 		Expression = expression;
 		ExpressionReceived = received;
 		ExpressionExpected = expected;
@@ -58,15 +70,15 @@ public class OperationSemanticError : HulkException
 {
 	public OperationSemanticError(string operation, string leftArg, string rightArg, string expected)
 	{
-        MessageStart = "! SEMANTIC ERROR :";
+		MessageStart = "! SEMANTIC ERROR : ";
 		Operation = operation;
 		LeftArgument = leftArg;
 		RightArgument = rightArg;
 		Expected = expected;
 		MessageDefinition = $"Operation `{Operation}` cannot be used between `{leftArg}` and `{rightArg}`";
-    }
-    public string Operation { get; }
-    public string LeftArgument { get; }
-    public string RightArgument { get; }
+	}
+	public string Operation { get; }
+	public string LeftArgument { get; }
+	public string RightArgument { get; }
 	public string Expected { get; }
 }

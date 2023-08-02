@@ -4,10 +4,10 @@ namespace Interface
 {
     internal class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
-            Memory Memoria = new Memory();
-            Tokenizer tokenizer = new Tokenizer(Memoria);
+            Memory Memoria = new();
+            Tokenizer tokenizer = new(Memoria);
             while (true)
             {
                 Console.Write(">");
@@ -15,7 +15,7 @@ namespace Interface
                 if (input.Length == 0)
                     continue;
                 string[] s = tokenizer.GetTokens(input);
-                List<string[]> Instructions = new List<string[]>();
+                List<string[]> Instructions;
                 try
                 {
                     Instructions = GetInstructions(s);
@@ -32,9 +32,8 @@ namespace Interface
                     try
                     {
                         HulkExpression exp = tokenizer.Parse(instruction);
-                        if (exp is VariableDeclaration)
+                        if (exp is VariableDeclaration Vars)
                         {
-                            VariableDeclaration Vars = (VariableDeclaration)exp;
                             foreach (string name in Vars.Names)
                             {
                                 var options = Variable.VariableOptions.InitializedVariable;
@@ -50,9 +49,8 @@ namespace Interface
                                 Memoria.AddNewVariable(name, newVar);
                             }
                         }
-                        else if (exp is FunctionDeclaration)
+                        else if (exp is FunctionDeclaration Function)
                         {
-                            FunctionDeclaration Function = (FunctionDeclaration)exp;
                             Memoria.AddNewFunction(Function.FunctionName, Function);
                         }
                         else
@@ -73,11 +71,9 @@ namespace Interface
 
         public static List<string[]> GetInstructions(string[] inputTokens)
         {
-            List<string[]> result = new List<string[]>();
-            if (inputTokens[0] == ";")
-                throw new Exception("code Lines cannot start with a semicolon");
-            if (inputTokens[inputTokens.Length - 1] != ";")
-                throw new Exception("code lines must end with a semicolon");
+            List<string[]> result = new();
+            if (inputTokens[^1] != ";")
+                throw new DefaultError("code lines must end with a semicolon");
             int start = 0;
             for (int i = 0; i < inputTokens.Length; i++)
             {
@@ -89,7 +85,6 @@ namespace Interface
                         instruction[j] = inputTokens[j + start];
                     }
                     result.Add(instruction);
-                    //if(i != inputTokens.Length - 1)
                     start = i + 1;
                 }
             }

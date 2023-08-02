@@ -1,6 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-
-namespace Hulk
+﻿namespace Hulk
 {
     public class Positive : UnaryFunction
     {
@@ -16,7 +14,7 @@ namespace Hulk
             throw new SemanticError("Operator `+`", "number", arg.GetHulkTypeAsString());
         }
     }
-    public class Negative : UnaryFunction 
+    public class Negative : UnaryFunction
     {
         public Negative(HulkExpression Arg) : base(Arg)
         {
@@ -104,7 +102,7 @@ namespace Hulk
             if ((left is double && right is double))
             {
                 if ((double)right == 0)
-                    throw new Exception("! ARITHMETIC ERROR : atempted to divide by 0");
+                    throw new DefaultError("Atempted to divide by 0", "arithmetic");
                 return (dynamic)left / (dynamic)right;
             }
             var conflictiveType = !(left is double) ? left.GetType().Name : right.GetType().Name;
@@ -124,10 +122,10 @@ namespace Hulk
                 right = left;
             if (left == null && right == null)
                 return 5d;
-            if ((left is double && right is double)) 
+            if ((left is double && right is double))
             {
                 if ((double)right == 0)
-                    throw new Exception("! ARITHMETIC ERROR : atempted to divide by 0");
+                    throw new DefaultError("Atempted to divide by 0", "arithmetic");
                 return (dynamic)left % (dynamic)right;
             }
             var conflictiveType = !(left is double) ? left.GetType().Name : right.GetType().Name;
@@ -148,7 +146,7 @@ namespace Hulk
             if (left == null && right == null)
                 return 5d;
             if ((left is double && right is double))
-                return Math.Pow((dynamic)left,(dynamic)right);
+                return Math.Pow((dynamic)left, (dynamic)right);
             var conflictiveType = !(left is double) ? left.GetType().Name : right.GetType().Name;
             throw new SemanticError("Operator `^`", "number", conflictiveType);
         }
