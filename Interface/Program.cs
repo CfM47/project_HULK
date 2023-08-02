@@ -7,18 +7,18 @@ namespace Interface
         static void Main()
         {
             Memory Memoria = new();
-            Tokenizer tokenizer = new(Memoria);
+            Parser tokenizer = new(Memoria);
             while (true)
             {
                 Console.Write(">");
                 var input = Console.ReadLine();
                 if (input.Length == 0)
                     continue;
-                string[] s = tokenizer.GetTokens(input);
+                string[] s = Tokenizer.GetTokens(input);
                 List<string[]> Instructions;
                 try
                 {
-                    Instructions = GetInstructions(s);
+                    Instructions = Tokenizer.GetInstructions(s);
                 }
                 catch (Exception ex)
                 {
@@ -48,30 +48,6 @@ namespace Interface
                     }
                 }
             }
-        }
-
-
-
-        public static List<string[]> GetInstructions(string[] inputTokens)
-        {
-            List<string[]> result = new();
-            if (inputTokens[^1] != ";")
-                throw new DefaultError("code lines must end with a semicolon");
-            int start = 0;
-            for (int i = 0; i < inputTokens.Length; i++)
-            {
-                if (inputTokens[i] == ";")
-                {
-                    string[] instruction = new string[i - start];
-                    for (int j = 0; j < i - start; j++)
-                    {
-                        instruction[j] = inputTokens[j + start];
-                    }
-                    result.Add(instruction);
-                    start = i + 1;
-                }
-            }
-            return result;
         }
     }
 }

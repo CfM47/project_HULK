@@ -38,7 +38,7 @@
   <Class Name="Hulk.FunctionCall" Collapsed="true">
     <Position X="0.5" Y="4" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAIAAACAAAAAAAAAQAAAAAAAAAIAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAIAAACAAAEAAAAAQAAAAAAAAAIAAAAAAAAAA=</HashCode>
       <FileName>HulkEpression.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -52,7 +52,7 @@
   <Class Name="LetInStatement" Collapsed="true">
     <Position X="0.5" Y="8.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAIAAAAAAAAAABAAAAAAAAAAAAAAAQAAAABAA=</HashCode>
+      <HashCode>AAAAAAAAIEAAAAAAAAABAAAAAAAAAAAAAAAQAAAABAA=</HashCode>
       <FileName>Statements.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -63,8 +63,8 @@
       <FileName>Statements.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="VariableDeclaration">
-    <Position X="7.5" Y="5.25" Width="1.5" />
+  <Class Name="VariableDeclaration" Collapsed="true">
+    <Position X="6.25" Y="6.5" Width="1.5" />
     <Compartments>
       <Compartment Name="Methods" Collapsed="true" />
     </Compartments>
@@ -73,8 +73,8 @@
       <FileName>Statements.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="FunctionDeclaration">
-    <Position X="9.75" Y="2" Width="1.5" />
+  <Class Name="FunctionDeclaration" Collapsed="true">
+    <Position X="6.25" Y="7.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAACAAAAAACAAAAAACAgAAAAAAAAAAIACAUAAABAA=</HashCode>
       <FileName>Statements.cs</FileName>
