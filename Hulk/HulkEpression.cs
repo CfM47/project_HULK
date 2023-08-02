@@ -147,18 +147,29 @@ namespace Hulk
         public Variable(string name, object value, Types type, VariableOptions options)
         {
             Name = name;
-            //Value = value;
-            //SetType();
             Options = options;
             if (options == VariableOptions.Dependent || options == VariableOptions.FunctionArgument)
                 IsDependent = true;
             object valueToCheck = value;
+            bool matchExp = false;
             if (value is HulkExpression)
+            {
                 valueToCheck = ((HulkExpression)value).GetValue(false);
+                if (valueToCheck == null)
+                {
+                    if (value is Addition && (type == Types.number || type == Types.hstring))
+                        matchExp = true;
+                    else if (value is Variable)
+                        matchExp = true;
+                }
+            }
+            else if (valueToCheck == null)
+                matchExp = true;
+            
             bool matchNumber = valueToCheck is double && type == Types.number;
             bool matchBool = valueToCheck is bool && type == Types.boolean;
             bool matchString = valueToCheck is string && type == Types.hstring;            
-            if (matchNumber || matchBool || matchString || value == null || type == Types.dynamic)
+            if (matchNumber || matchBool || matchString || matchExp || type == Types.dynamic)
             {
                 Value = value;
                 Type = type;
@@ -207,8 +218,16 @@ namespace Hulk
                     IsDependent = true;
             }
             Name = name;
+            CheckArgs(Args);
             Arguments = Args;
             Definition = Def;
+        }
+        private void CheckArgs(List<HulkExpression> Args)
+        {
+            foreach(var arg in Args)
+            {
+                arg.GetValue(false);
+            }
         }
         public override object GetValue(bool execute)
         {

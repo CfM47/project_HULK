@@ -337,45 +337,42 @@ namespace Hulk
             }
             return result;
         }
-        private HulkExpression ParseVarDeclaration(string[] tokens, int start, int end, VarDecParseOptions parsingOptions)
+        private HulkExpression ParseLetInArgs(string[] tokens, int start, int end)
         {
-            if (parsingOptions == VarDecParseOptions.Usual)
-                return ParseVarDeclaration(tokens, start, end);
+            VariableDeclaration result;
+            string type = null;
+            string name;
+            // la siguiente linea se puede poner dentro del bloque if
+            int declarationEnd;
+            if (tokens[start] == "number" || tokens[start] == "boolean" || tokens[start] == "string")
+            {
+                declarationEnd = GetNameLimit(tokens, start + 1, end, "=");
+                type = tokens[start];
+                if (tokens[start + 1] == "=")
+                    throw new SyntaxError("variable name", "variable declaration");
+                name = tokens[start + 1];
+            }
             else
             {
-                VariableDeclaration result;
-                string type = null;
-                string name;
-                // la siguiente linea se puede poner dentro del bloque if
-                int declarationEnd = GetNameLimit(tokens, start + 1, end, "=");
-                if (tokens[start] == "number" || tokens[start] == "boolean" || tokens[start] == "string")
-                {
-                    type = tokens[start];
-                    if (tokens[start + 1] == "=")
-                        throw new SyntaxError("variable name", "variable declaration");
-                    name = tokens[start + 1];
-                }
-                else
-                {
-                    name = tokens[start];
-                    declarationEnd = GetNameLimit(tokens, start, end, "=");
-                }
-                List<string> VariableName = new List<string>();
-
-                bool correct = HulkInfo.IsCorrectName(name);
-                if (!correct)
-                    throw new LexicalError(name, "variable name");
-
-                VariableName.Add(name);
-                HulkExpression ValueExp = null;
-                if (declarationEnd < end - 1)
-                    ValueExp = ParseInternal(tokens, declarationEnd + 2, end);
-                else if (declarationEnd >= end - 1)
-                    throw new SyntaxError("value expression", "variable declaration");
-                return new VariableDeclaration(VariableName, ValueExp);
+                name = tokens[start];
+                declarationEnd = GetNameLimit(tokens, start, end, "=");
             }
+            List<string> VariableName = new List<string>();
+
+            bool correct = HulkInfo.IsCorrectName(name);
+            if (!correct)
+            throw new LexicalError(name, "variable name");
+
+            VariableName.Add(name);
+            HulkExpression ValueExp = null;
+            if (declarationEnd < end - 1)
+                ValueExp = ParseInternal(tokens, declarationEnd + 2, end);
+            else if (declarationEnd >= end - 1)
+                throw new SyntaxError("value expression", "variable declaration");
+            if(type == null)
+                return new VariableDeclaration(VariableName, ValueExp);
+            return new VariableDeclaration(VariableName, type, ValueExp);
         }
-        private enum VarDecParseOptions { Usual, LetInArgs }
         public HulkExpression ParseFunctionDeclaration(string[] tokens, int start, int end)
         {
             FunctionDeclaration result = null;
@@ -411,9 +408,8 @@ namespace Hulk
                 }
 
                 foreach (string name in ArgNames)
-                {
-                    bool correct = HulkInfo.IsCorrectName(name);
-                    if (!correct)
+                {                    
+                    if (!HulkInfo.IsCorrectName(name))
                         throw new LexicalError(name, "variable name");
                 }
                 result = new FunctionDeclaration(funcName, ArgNames);
@@ -432,7 +428,7 @@ namespace Hulk
             int declarationEnd = GetNameLimit(tokens, start, end, "in");
             if (declarationEnd >= end - 1)
                 throw new SyntaxError("body", "let-in expression");
-            List<HulkExpression> Args = GetComaSeparatedDeclarations(tokens, start + 1, declarationEnd, VarDecParseOptions.LetInArgs);
+            List<HulkExpression> Args = GetComaSeparatedDeclarations(tokens, start + 1, declarationEnd);
             Dictionary<string, Variable> LayerVariables = new Dictionary<string, Variable>();
             foreach (HulkExpression arg in Args)
             {
@@ -443,12 +439,13 @@ namespace Hulk
                 {
                     if (Vars.ValueExpression is null)
                         throw new SyntaxError("value", "let-in expression argument");
-                    var LetVariable = new Variable(name, Vars.ValueExpression.GetValue(false), Vars.Type);
+                    Variable LetVariable;
                     if (Vars.ValueExpression.IsDependent)
                         LetVariable = new Variable(name, Vars.ValueExpression, Vars.Type, Variable.VariableOptions.Dependent);
+                    else
+                        LetVariable = new Variable(name, Vars.ValueExpression.GetValue(false), Vars.Type);
                     LayerVariables.Add(name, LetVariable);
                 }
-                //}
             }
             result = new LetInStatement(LayerVariables);
             ParsingExp.Push(result);
@@ -614,7 +611,7 @@ namespace Hulk
             }
             return result;
         }
-        private List<HulkExpression> GetComaSeparatedDeclarations(string[] tokens, int start, int end, VarDecParseOptions options)
+        private List<HulkExpression> GetComaSeparatedDeclarations(string[] tokens, int start, int end)
         {
             List<HulkExpression> result = new List<HulkExpression>();
             if (tokens[start] == "," || tokens[end] == ",")
@@ -631,7 +628,7 @@ namespace Hulk
                 if (tokens[i] == ",")
                 {
 
-                    var exp = ParseVarDeclaration(tokens, argStart, i - 1, options);
+                    var exp = ParseLetInArgs(tokens, argStart, i - 1);
                     if (exp == null || exp is not VariableDeclaration)
                         throw new SemanticError("Let-in argument", "variable declaration", exp.GetType().Name);
                     result.Add(exp);
@@ -639,7 +636,7 @@ namespace Hulk
                 }
                 else if (i == end)
                 {
-                    var exp = ParseVarDeclaration(tokens, argStart, i, options);
+                    var exp = ParseLetInArgs(tokens, argStart, i);
                     if (exp == null || exp is not VariableDeclaration)
                         throw new SemanticError("Let-in argument", "variable declaration", exp.GetType().Name);
                     result.Add(exp);

@@ -1,6 +1,4 @@
 ﻿using Hulk;
-using System;
-
 public enum Types { Void, number, boolean, hstring , dynamic}
 public class IfElseStatement : HulkExpression
 {
@@ -42,7 +40,7 @@ public class VariableDeclaration : HulkDeclaration
     {
         Names = names;
         SetType(type);
-        bool valueOk = ValueExp == null? true : IsOkValue(ValueExp.GetValue(false));
+        bool valueOk = ValueExp == null? true : IsOkValue(ValueExp);
         if (!valueOk)
             throw new SemanticError("Variable declaration", type, ValueExp.GetValue(false).GetHulkTypeAsString());
         ValueExpression = ValueExp;
@@ -85,12 +83,21 @@ public class VariableDeclaration : HulkDeclaration
         else
             throw new Exception();
     }
-    private bool IsOkValue(object val)
+    private bool IsOkValue(HulkExpression ValueExp)
     {
+        var val = ValueExp.GetValue(false);
+        bool matchExp = false;
+        if (val == null)
+        {
+            if (ValueExp is Addition && (Type == Types.number || Type == Types.hstring))
+                matchExp = true;
+            else if (Value is Variable)
+                matchExp = true;
+        }
         bool okNumber = (val is double) && (Type == Types.number);
         bool okBoolean = (val is bool) && (Type == Types.boolean);
         bool okString = (val is string) && (Type == Types.hstring);
-        if (okNumber || okBoolean || okString || val == null)
+        if (okNumber || okBoolean || okString || matchExp)
             return true;
         return false;
     }
@@ -111,7 +118,6 @@ public class VariableDeclaration : HulkDeclaration
             Memoria.AddNewVariable(name, newVar);
         }
     }
-
     public List<string> Names { get; }
     public Types Type { get; private set; }
 }
@@ -189,7 +195,53 @@ public class LetInStatement : HulkExpression
     }
     public override object GetValue(bool execute)
     {
+        CheckValues();
         return Body.GetValue(execute);
+    }
+    private void CheckValues()
+    {
+        foreach (var V in StoredVariables.Values)
+        {
+            bool isOK = false;
+            object val = null;
+            if (V.IsDependent)
+            {
+                var Exp = V.Value as HulkExpression;
+                val = Exp.GetValue(false);
+                if (val != null)
+                {
+                    if (V.Type == Types.boolean && val is bool)
+                        isOK = true;
+                    else if (V.Type == Types.hstring && val is string)
+                        isOK = true;
+                    else if (V.Type == Types.number && val is double)
+                        isOK = true;
+                    else if (V.Type == Types.dynamic)
+                        isOK = true;
+                }
+                else
+                    isOK = true;
+            }
+            else
+                isOK = true;
+            if (!isOK) 
+            {
+                string expectedType = "";
+                switch (V.Type) 
+                {
+                    case Types.number:
+                        expectedType = "number";
+                        break;
+                    case Types.boolean:
+                        expectedType = "boolean";
+                        break;
+                    case Types.hstring: 
+                        expectedType = "string";
+                        break;
+                }
+                throw new SemanticError("Let-in expression", expectedType, val.GetHulkTypeAsString());
+            } 
+        }
     }
     public void Define(HulkExpression Definition)
     {
