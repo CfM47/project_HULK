@@ -17,7 +17,15 @@
             SetType(type);
             bool valueOk = ValueExp == null || IsOkValue(ValueExp);
             if (!valueOk)
-                throw new SemanticError("Variable declaration", type, ValueExp.GetValue(false).GetHulkTypeAsString());
+            {
+                var val = ValueExp.GetValue(false);
+                string received;
+                if (val == null && ValueExp is Addition)
+                    received = "number nor string";
+                else
+                    received = val.GetHulkTypeAsString();
+                throw new SemanticError("Variable declaration", type, received);
+            }
             ValueExpression = ValueExp;
         }
         public VariableDeclaration(List<string> names, HulkExpression ValueExp)
