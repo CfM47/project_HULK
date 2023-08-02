@@ -10,10 +10,10 @@ public class Negation : UnaryFunction
     public override object Evaluate(object arg)
     {
         if (arg is bool)
-            return (bool)arg;
+            return !(bool)arg;
         if (arg == null)
             return default(bool);
-        throw new SemanticError("Operator `+`", "number", arg.GetHulkTypeAsString());
+        throw new SemanticError("Operator `!`", "boolean", arg.GetHulkTypeAsString());
     }
 }
 public class Conjunction : BinaryFunction

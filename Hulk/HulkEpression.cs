@@ -152,9 +152,12 @@ namespace Hulk
             Options = options;
             if (options == VariableOptions.Dependent || options == VariableOptions.FunctionArgument)
                 IsDependent = true;
-            bool matchNumber = value is double && type == Types.number;
-            bool matchBool = value is bool && type == Types.boolean;
-            bool matchString = value is string && type == Types.hstring;
+            object valueToCheck = value;
+            if (value is HulkExpression)
+                valueToCheck = ((HulkExpression)value).GetValue(false);
+            bool matchNumber = valueToCheck is double && type == Types.number;
+            bool matchBool = valueToCheck is bool && type == Types.boolean;
+            bool matchString = valueToCheck is string && type == Types.hstring;            
             if (matchNumber || matchBool || matchString || value == null || type == Types.dynamic)
             {
                 Value = value;

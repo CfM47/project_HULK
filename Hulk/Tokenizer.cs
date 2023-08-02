@@ -437,14 +437,6 @@ namespace Hulk
                 if (arg is not VariableDeclaration)
                     throw new SemanticError("let-in", "variable declaration", arg.GetType().Name);
                 var Vars = arg as VariableDeclaration;
-                //if (Vars.ValueExpression is Variable)
-                //{
-                //    var var = (Variable)Vars.ValueExpression;
-                //    foreach (string name in Vars.Names)
-                //        LayerVariables.Add(name, var);
-                //}
-                //else
-                //{
                 foreach (string name in Vars.Names)
                 {
                     if (Vars.ValueExpression is null)
