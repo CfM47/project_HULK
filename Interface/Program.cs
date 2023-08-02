@@ -32,26 +32,9 @@ namespace Interface
                     try
                     {
                         HulkExpression exp = tokenizer.Parse(instruction);
-                        if (exp is VariableDeclaration Vars)
+                        if(exp is HulkDeclaration Dec)
                         {
-                            foreach (string name in Vars.Names)
-                            {
-                                var options = Variable.VariableOptions.InitializedVariable;
-                                Variable newVar;
-                                if (Vars.ValueExpression == null)
-                                {
-                                    options = Variable.VariableOptions.NonInitialized;
-                                    newVar = new Variable(name, null, Vars.Type, options);
-
-                                }
-                                else
-                                    newVar = new Variable(name, Vars.ValueExpression.GetValue(false), Vars.Type, options);
-                                Memoria.AddNewVariable(name, newVar);
-                            }
-                        }
-                        else if (exp is FunctionDeclaration Function)
-                        {
-                            Memoria.AddNewFunction(Function.FunctionName, Function);
+                            Dec.AddToMemory(Memoria);
                         }
                         else
                         {

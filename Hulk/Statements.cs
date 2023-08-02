@@ -1,4 +1,6 @@
 ﻿using Hulk;
+using System;
+
 public enum Types { Void, number, boolean, hstring , dynamic}
 public class IfElseStatement : HulkExpression
 {
@@ -34,7 +36,7 @@ public class IfElseStatement : HulkExpression
         }
     }
 }
-public class VariableDeclaration : HulkExpression
+public class VariableDeclaration : HulkDeclaration
 {
     public VariableDeclaration(List<string> names, string type, HulkExpression ValueExp)
     {
@@ -92,14 +94,28 @@ public class VariableDeclaration : HulkExpression
             return true;
         return false;
     }
-    public override object GetValue(bool execute)
+    public override void AddToMemory(Memory Memoria)
     {
-        return new EmptyReturn();
+        foreach (string name in Names)
+        {
+            var options = Variable.VariableOptions.InitializedVariable;
+            Variable newVar;
+            if (ValueExpression == null)
+            {
+                options = Variable.VariableOptions.NonInitialized;
+                newVar = new Variable(name, null, Type, options);
+
+            }
+            else
+                newVar = new Variable(name, ValueExpression.GetValue(false), Type, options);
+            Memoria.AddNewVariable(name, newVar);
+        }
     }
+
     public List<string> Names { get; }
     public Types Type { get; private set; }
 }
-public class FunctionDeclaration : HulkExpression
+public class FunctionDeclaration : HulkDeclaration
 {
     public FunctionDeclaration(string name, List<string> argNames)
     {
@@ -107,10 +123,6 @@ public class FunctionDeclaration : HulkExpression
         ArgumentNames = argNames;
         Arguments = new Dictionary<string, Variable>();
         SetArgs(ArgumentNames);
-    }
-    public override object GetValue(bool execute)
-    {
-        return new EmptyReturn();
     }
     public object Evaluate(List<HulkExpression> Args, bool execute)
     {
@@ -159,6 +171,10 @@ public class FunctionDeclaration : HulkExpression
             object val = default;
             Arguments.Add(arg, new Variable(arg, val, Types.dynamic, Variable.VariableOptions.FunctionArgument));
         }
+    }
+    public override void AddToMemory(Memory Memoria)
+    {
+        Memoria.AddNewFunction(this.FunctionName, this);
     }
     public List<string> ArgumentNames { get; }
     public string FunctionName { get; private set; }
