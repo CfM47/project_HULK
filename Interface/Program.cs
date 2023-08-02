@@ -25,21 +25,29 @@ namespace Interface
                     Console.WriteLine(ex.Message);
                     continue;
                 }
-                foreach (string[] instruction in Instructions)
+                for (int i = 0; i < Instructions.Count; i++)
                 {
+                    string[] instruction = Instructions[i];
                     if (instruction.Length == 0)
                         continue;
                     try
                     {
-                        HulkExpression exp = tokenizer.Parse(instruction);
-                        if(exp is HulkDeclaration Dec)
+                        try
                         {
-                            Dec.AddToMemory(Memoria);
+                            HulkExpression exp = tokenizer.Parse(instruction);
+                            if (exp is HulkDeclaration Dec)
+                            {
+                                Dec.AddToMemory(Memoria);
+                            }
+                            else
+                            {
+                                exp.GetValue(false);
+                                exp.GetValue(true);
+                            }
                         }
-                        else
+                        catch(HulkException ex)
                         {
-                            exp.GetValue(false);
-                            exp.GetValue(true);
+                            throw new InstrucctionError(ex, i + 1, Instructions.Count);
                         }
                     }
                     catch (Exception ex)

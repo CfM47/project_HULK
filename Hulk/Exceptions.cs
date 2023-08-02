@@ -4,9 +4,18 @@ namespace Hulk
 {
 	public abstract class HulkException : Exception
 	{
-		public override string Message { get => MessageStart + MessageDefinition; }
+		public override string Message { get => MessageStart + MessageDefinition + "."; }
 		public string MessageStart { get; protected set; }
 		public string MessageDefinition { get; protected set; }
+	}
+	public class InstrucctionError: HulkException
+	{
+		public InstrucctionError(HulkException ex, int instrucctionNumber, int instrucctionsCount)
+		{
+			MessageStart = ex.MessageStart;
+			string messageEnd = instrucctionsCount > 1 ? $" (on instrucction {instrucctionNumber})" : ""; 
+			MessageDefinition = ex.MessageDefinition + messageEnd;
+		}
 	}
 	public class DefaultError : HulkException
 	{
