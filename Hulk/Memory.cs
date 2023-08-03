@@ -1,8 +1,8 @@
 ﻿namespace Hulk
 {
-	public class Memory
+	public class HulkMemory
 	{
-		public Memory()
+		public HulkMemory()
 		{
 			VariablesStorage = new Dictionary<string, Variable>();
 			FunctionsStorage = new Dictionary<string, FunctionDeclaration>();

@@ -2,7 +2,7 @@
 {
     public abstract class HulkDeclaration : HulkExpression
     {
-        public abstract void AddToMemory(Memory Mem);
+        public abstract void AddToMemory(HulkMemory Mem);
         public override object GetValue(bool execute)
         {
             return new EmptyReturn();
@@ -77,7 +77,7 @@
                 return true;
             return false;
         }
-        public override void AddToMemory(Memory Memoria)
+        public override void AddToMemory(HulkMemory Memoria)
         {
             foreach (string name in Names)
             {
@@ -160,7 +160,7 @@
                 Arguments.Add(arg, new Variable(arg, val, Types.dynamic, Variable.VariableOptions.FunctionArgument));
             }
         }
-        public override void AddToMemory(Memory Memoria)
+        public override void AddToMemory(HulkMemory Memoria)
         {
             Memoria.AddNewFunction(this.FunctionName, this);
         }

@@ -3,11 +3,11 @@ using System.Text.RegularExpressions;
 
 namespace Hulk
 {
-    public class Parser
+    public class HulkParser
     {
         Stack<HulkExpression> ParsingExp;
-        public Memory Memoria { get; }
-        public Parser(Memory Mem)
+        public HulkMemory Memoria { get; }
+        public HulkParser(HulkMemory Mem)
         {
             Memoria = Mem;
             ParsingExp = new Stack<HulkExpression>();
