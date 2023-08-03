@@ -1,12 +1,11 @@
-﻿using Hulk;
-
+﻿
 namespace Interface
 {
     internal class Program
     {
         static void Main()
         {
-            Kompiler kompiler = new();
+            Kompiler kompiler = new(Console.WriteLine);
             while (true)
             {
                 Console.Write(">");

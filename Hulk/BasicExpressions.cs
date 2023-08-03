@@ -92,16 +92,18 @@ namespace Hulk
     }
     public class PrintFunc : HulkExpression
     {
-        public PrintFunc(HulkExpression Arg)
+        public PrintFunc(HulkExpression Arg, Print printHandler)
         {
             Argument = Arg;
+            PrintHandler = printHandler;
         }
         public override object GetValue(bool execute)
         {
             if (execute)
-                Console.WriteLine(Argument.GetValue(false));
+                PrintHandler(Argument.GetValue(false));
             return new EmptyReturn();
         }
+        Print PrintHandler;
         public HulkExpression Argument { get; }
         
     }

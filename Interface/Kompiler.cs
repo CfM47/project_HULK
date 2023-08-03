@@ -2,16 +2,16 @@
 
 namespace Interface
 {
-	public class Kompiler
-	{
-		
-		public Kompiler()
-		{
-			Memory = new();
-			Parser = new(Memory);
-		}
-		public void Compile(string input)
-		{
+    public class Kompiler
+    {
+        public Kompiler(Print print)
+        {
+            Memory = new();
+            Parser = new(Memory, print);
+            Handler = print;
+        }
+        public void Compile(string input)
+        {
             string[] s = Tokenizer.GetTokens(input);
             List<string[]> Instructions;
             try
@@ -20,7 +20,7 @@ namespace Interface
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Handler(ex.Message);
                 return;
             }
             for (int i = 0; i < Instructions.Count; i++)
@@ -50,7 +50,7 @@ namespace Interface
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex.Message);
+                    Handler(ex.Message);
                 }
             }
         }
@@ -58,8 +58,9 @@ namespace Interface
         {
             Memory = new();
         }
-		public HulkMemory Memory { get; private set; }
-		HulkParser Parser;
+        public HulkMemory Memory { get; private set; }
+        Print Handler;
+        HulkParser Parser;
 
 	}
 }

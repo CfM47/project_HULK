@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using System.Runtime.InteropServices.ObjectiveC;
 using System.Text.RegularExpressions;
 
 namespace Hulk
@@ -6,11 +7,13 @@ namespace Hulk
     public class HulkParser
     {
         Stack<HulkExpression> ParsingExp;
+        Print PrintHandler;
         public HulkMemory Memoria { get; }
-        public HulkParser(HulkMemory Mem)
+        public HulkParser(HulkMemory Mem, Print printHandler)
         {
             Memoria = Mem;
             ParsingExp = new Stack<HulkExpression>();
+            PrintHandler = printHandler;
         }
         #region Methods
         public HulkExpression Parse(string[] tokens)
@@ -540,7 +543,6 @@ namespace Hulk
             //aqui hay que hacerle algo pa ver si el tipo es correcto
             object[] args = new object[] { argument };
             return (HulkExpression)Activator.CreateInstance(type, args);
-            //return null;
         }
         private HulkExpression FunctionCallMaker(string[] tokens, int start, int end, Type type)
         {
@@ -549,7 +551,14 @@ namespace Hulk
             else
             {
                 List<HulkExpression> Args = GetComaSeparatedExpressions(tokens, start + 2, end - 1);
-                object[] args = Args.ToArray();
+                if (type == typeof(PrintFunc))
+                {
+                    List<object> printArgs = new List<object>(Args);
+                    printArgs.Add(PrintHandler);
+                    object[] print = printArgs.ToArray();
+                    return (HulkExpression)Activator.CreateInstance(type, print);
+                }
+                object[] args = Args.ToArray();                
                 return (HulkExpression)Activator.CreateInstance(type, args);
             }
         }

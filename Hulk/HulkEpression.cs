@@ -5,6 +5,7 @@
         public abstract object GetValue(bool execute);
         public bool IsDependent { get; protected set; }
     }
+    public delegate void Print(object input);
     public static class ExtObject
     {
         public static string GetHulkTypeAsString (this Object arg)
