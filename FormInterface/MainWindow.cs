@@ -12,7 +12,7 @@ namespace FormInterface
             InitializeComponent();
             Compiler = new(PrintOutput);
             Parent = titleScreen;
-            Output.Text = ">";   
+            Output.Text = ">";
         }
         public void PrintOutput(object output)
         {
@@ -20,34 +20,16 @@ namespace FormInterface
         }
         private void Run_Click(object sender, EventArgs e)
         {
-            Output.Text +=Input.Text;
-            Compiler.Compile(Input.Text);
-            Output.Text += "\n>";
-            Input.Text = "";
-
-            VariablesList.Items.Clear();
-            VariablesList.Items.AddRange(GetVariableItems());
-            VariablesList.Refresh();
-            FunctionsList.Items.Clear();
-            FunctionsList.Items.AddRange(GetFunctionItems());
-            FunctionsList.Refresh();
-        }
-        private string[] GetVariableItems()
-        {
-            Dictionary<string, Variable> Variables = Compiler.Memory.VariablesStorage;
-            string[] items = new string[Variables.Count];
-            int i = 0;
-            foreach (var name in Variables.Keys)
+            if (Input.Text != "")
             {
-                var options = Variables[name].Options;
-                if(options == Variable.VariableOptions.NonInitialized)
-                    items[i] = $"{Variables[name].Type} {name}";
-                else
-                    items[i] = $"{Variables[name].Type} {name} = {Variables[name].Value}";
-                items[i] = items[i].Replace("hstring", "string");
-                i++;
+                Output.Text += Input.Text;
+                Compiler.Compile(Input.Text);
+                Output.Text += "\n>";
+                Input.Text = "";
+                FunctionsList.Items.Clear();
+                FunctionsList.Items.AddRange(GetFunctionItems());
+                FunctionsList.Refresh();
             }
-            return items;
         }
         private string[] GetFunctionItems()
         {
@@ -79,9 +61,6 @@ namespace FormInterface
         private void CleanButton_Click(object sender, EventArgs e)
         {
             Compiler.Clear();
-            VariablesList.Items.Clear();
-            VariablesList.Items.AddRange(GetVariableItems());
-            VariablesList.Refresh();
             FunctionsList.Items.Clear();
             FunctionsList.Items.AddRange(GetFunctionItems());
             FunctionsList.Refresh();
@@ -89,11 +68,11 @@ namespace FormInterface
         }
         private void Input_KeyDown(object sender, KeyEventArgs e)
         {
-            if(e.KeyCode == Keys.Return)
+            if (e.KeyCode == Keys.Return)
             {
                 Run_Click(sender, e);
                 e.Handled = true;
-            }            
+            }
         }
         private void MainWindow_KeyDown(object sender, KeyEventArgs e)
         {
