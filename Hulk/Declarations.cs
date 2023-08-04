@@ -67,7 +67,7 @@
             {
                 if (ValueExp is Addition && (Type == Types.number || Type == Types.hstring))
                     matchExp = true;
-                else if (Value is Variable)
+                else if (ValueExp is Variable)
                     matchExp = true;
             }
             bool okNumber = (val is double) && (Type == Types.number);

@@ -14,7 +14,19 @@
         #region Methods
         public override object GetValue(bool execute)
         {
+            if (!execute)
+                return CheckValue();
             return Result(Condition, IfExpression, ElseExpression, execute);
+        }
+        public object CheckValue()
+        {
+            if(Condition.GetValue(false) == null)
+            {
+                var ifValue = IfExpression.GetValue(false);
+                var elseValue = ElseExpression.GetValue(false);
+                return ifValue;
+            }
+            return Result(Condition, IfExpression, ElseExpression, false);
         }
         private object Result(HulkExpression Cond, HulkExpression IfExp, HulkExpression ElseExp, bool execute)
         {

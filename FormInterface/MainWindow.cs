@@ -20,17 +20,20 @@ namespace FormInterface
         }
         private void Run_Click(object sender, EventArgs e)
         {
-            Output.Text +=Input.Text;
-            Compiler.Compile(Input.Text);
-            Output.Text += "\n>";
-            Input.Text = "";
+            if (Input.Text != "")
+            {
+                Output.Text += Input.Text;
+                Compiler.Compile(Input.Text);
+                Output.Text += "\n>";
+                Input.Text = "";
 
-            VariablesList.Items.Clear();
-            VariablesList.Items.AddRange(GetVariableItems());
-            VariablesList.Refresh();
-            FunctionsList.Items.Clear();
-            FunctionsList.Items.AddRange(GetFunctionItems());
-            FunctionsList.Refresh();
+                VariablesList.Items.Clear();
+                VariablesList.Items.AddRange(GetVariableItems());
+                VariablesList.Refresh();
+                FunctionsList.Items.Clear();
+                FunctionsList.Items.AddRange(GetFunctionItems());
+                FunctionsList.Refresh();
+            }
         }
         private string[] GetVariableItems()
         {
