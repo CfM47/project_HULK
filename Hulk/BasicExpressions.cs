@@ -26,7 +26,7 @@ namespace Hulk
             foreach (Variable v in Variables)
             {
                 if (v.Type != type)
-                    throw new DefaultError("Cannot asign value of type " + type + " to " + v.Type + " variable", "asignment");
+                    throw new DefaultError($"Cannot asign value of type `{type}` to `{v.Type}` variable" , "asignment");
             }
         }
         private void ChangeValues()

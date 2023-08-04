@@ -21,7 +21,7 @@
                 var val = ValueExp.GetValue(false);
                 string received;
                 if (val == null && ValueExp is Addition)
-                    received = "number nor string";
+                    received = "number` nor `string";
                 else
                     received = val.GetHulkTypeAsString();
                 throw new SemanticError("Variable declaration", type, received);

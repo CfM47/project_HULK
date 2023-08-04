@@ -4,7 +4,7 @@ namespace Hulk
 {
 	public abstract class HulkException : Exception
 	{
-		public override string Message { get => MessageStart + MessageDefinition + "."; }
+		public override string Message { get => (MessageStart + MessageDefinition + ".").Replace("hstring", "string"); }
 		public string MessageStart { get; protected set; }
 		public string MessageDefinition { get; protected set; }
 	}
@@ -28,7 +28,7 @@ namespace Hulk
 		{
 			errorEspecification = errorEspecification.ToUpper(new CultureInfo("en-US"));
 			MessageStart = $"! {errorEspecification} ERROR :";
-			MessageDefinition = message;
+            MessageDefinition = message;
 		}
 	}
 	public class LexicalError : HulkException
@@ -72,7 +72,7 @@ namespace Hulk
 			Expression = expression;
 			ExpressionReceived = received;
 			ExpressionExpected = expected;
-			MessageDefinition = $"{Expression} receives {expected}, not {received}";
+			MessageDefinition = $"{Expression} receives `{expected}`, not `{received}`";
 		}
 		public string Expression { get; }
 		public string ExpressionReceived { get; }

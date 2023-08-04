@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindow));
             this.Output = new System.Windows.Forms.RichTextBox();
             this.Input = new System.Windows.Forms.TextBox();
             this.VariablesList = new System.Windows.Forms.ListBox();
@@ -35,6 +36,7 @@
             this.FunctionsList = new System.Windows.Forms.ListBox();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
+            this.CleanButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // Output
@@ -60,6 +62,7 @@
             this.Input.Name = "Input";
             this.Input.Size = new System.Drawing.Size(600, 27);
             this.Input.TabIndex = 1;
+            this.Input.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Input_KeyDown);
             // 
             // VariablesList
             // 
@@ -86,7 +89,7 @@
             this.Run.Name = "Run";
             this.Run.Size = new System.Drawing.Size(94, 27);
             this.Run.TabIndex = 3;
-            this.Run.Text = "Run Line";
+            this.Run.Text = "|> Run Line";
             this.Run.UseVisualStyleBackColor = false;
             this.Run.Click += new System.EventHandler(this.Run_Click);
             // 
@@ -127,12 +130,29 @@
             this.label2.Text = "Functions";
             this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
+            // CleanButton
+            // 
+            this.CleanButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(30)))));
+            this.CleanButton.FlatAppearance.BorderSize = 0;
+            this.CleanButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(60)))), ((int)(((byte)(60)))));
+            this.CleanButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(56)))), ((int)(((byte)(56)))), ((int)(((byte)(56)))));
+            this.CleanButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.CleanButton.ForeColor = System.Drawing.Color.SpringGreen;
+            this.CleanButton.Location = new System.Drawing.Point(730, 435);
+            this.CleanButton.Name = "CleanButton";
+            this.CleanButton.Size = new System.Drawing.Size(94, 27);
+            this.CleanButton.TabIndex = 7;
+            this.CleanButton.Text = "Clean All";
+            this.CleanButton.UseVisualStyleBackColor = false;
+            this.CleanButton.Click += new System.EventHandler(this.CleanButton_Click);
+            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(30)))));
             this.ClientSize = new System.Drawing.Size(982, 483);
+            this.Controls.Add(this.CleanButton);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.FunctionsList);
@@ -140,9 +160,15 @@
             this.Controls.Add(this.VariablesList);
             this.Controls.Add(this.Input);
             this.Controls.Add(this.Output);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.KeyPreview = true;
             this.MaximizeBox = false;
             this.Name = "MainWindow";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "H.U.L.K Interface";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainWindow_FormClosing);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MainWindow_KeyDown);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -157,5 +183,6 @@
         private ListBox FunctionsList;
         private Label label1;
         private Label label2;
+        private Button CleanButton;
     }
 }
