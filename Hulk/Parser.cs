@@ -77,11 +77,16 @@ namespace Hulk
                         if (exp is not Variable)
                             throw new SemanticError($"Operator {tokens[i]}", "Variable", exp.GetType().Name);
                         else
-                            Vars.Add(exp as Variable);
+                        {
+                            Variable var = exp as Variable;
+                            if (var.Name == null)
+                                throw new SemanticError($"Operator {tokens[i]}", "Variable", var.Type.ToString());
+                        }
+                        Vars.Add(exp as Variable);
                     }
                     //comentar la siguiente linea para que el operador de asignacion funcione. lo desactive porque aun no funciona bien
                     //al mezclarlo con otras operaciones (3 + a:=b por ejemplo da bateo)
-                    return null;  
+                    //return null;  
                     return new Asignment(Vars, right);
                 }
             }
@@ -314,7 +319,7 @@ namespace Hulk
             HulkExpression ValueExp = null;
             if (declarationEnd < end - 1)
                 ValueExp = ParseInternal(tokens, declarationEnd + 2, end);
-            else if (declarationEnd == end - 1 || declarationEnd > end - 1) //comentar miembro derecho del or para poder declarar varibales no inicializadas
+            else if (declarationEnd == end - 1 /*|| declarationEnd > end - 1*/) //comentar miembro derecho del or para poder declarar varibales no inicializadas
                 throw new SyntaxError("value expression", "variable declaration");
             result = new VariableDeclaration(names, type, ValueExp);
             return result;
