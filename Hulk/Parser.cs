@@ -90,6 +90,9 @@ namespace Hulk
                         else
                             Vars.Add(exp as Variable);
                     }
+                    //comentar la siguiente linea para que el operador de asignacion funcione. lo desactive porque aun no funciona bien
+                    //al mezclarlo con otras operaciones (3 + a:=b por ejemplo da bateo)
+                    return null;
                     return new Asignment(Vars, right);
                 }
             }
@@ -322,7 +325,7 @@ namespace Hulk
             HulkExpression ValueExp = null;
             if (declarationEnd < end - 1)
                 ValueExp = ParseInner(tokens, declarationEnd + 2, end);
-            else if (declarationEnd == end - 1)
+            else if (declarationEnd == end - 1 || declarationEnd > end - 1) //comentar miembro derecho del or para poder declarar varibales no inicializadas
                 throw new SyntaxError("value expression", "variable declaration");
             result = new VariableDeclaration(names, type, ValueExp);
             return result;
@@ -468,7 +471,7 @@ namespace Hulk
                     if (ifDoEnd < end - 1)
                         ElseDo = ParseInner(tokens, ifDoEnd + 2, end);
                     else
-                        throw new SyntaxError("if-else statement body", "if-else statement");
+                        throw new SyntaxError("else expression", "if-else statement");
                     result = new IfElseStatement(condition, IfDo, ElseDo);
                 }
             }
