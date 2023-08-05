@@ -79,7 +79,7 @@ namespace Hulk
             {
                 if (tokens[i] == "(")
                     i = Tokenizer.GoToNextParenthesis(i, end, tokens);
-                else if (tokens[i] == "=")
+                else if (tokens[i] == ":=")
                 {
                     List<HulkExpression> left = i != start ? GetComaSeparatedExpressions(tokens, start, i - 1) : throw new SyntaxError("variables", "asignment expression");
                     HulkExpression right = i != end ? ParseInner(tokens, i + 1, end) : throw new SyntaxError("value to asign", "asignment expression");
@@ -91,10 +91,10 @@ namespace Hulk
                         else
                             Vars.Add(exp as Variable);
                     }
-                    result = new Asignment(Vars, right);
+                    return result = new Asignment(Vars, right);
                 }
             }
-            return result;
+            return null;
         }
         private HulkExpression TryConditionalOr(string[] tokens, int start, int end)
         {
@@ -107,7 +107,7 @@ namespace Hulk
                             i = Tokenizer.GoToPreviousParenthesis(i, start, tokens);
                             break;
                         }
-                    case "||":
+                    case "|":
                         return BinaryFunctionMaker(tokens, start, end, i, typeof(Disjunction));
                 }
             }
@@ -124,7 +124,7 @@ namespace Hulk
                             i = Tokenizer.GoToPreviousParenthesis(i, start, tokens);
                             break;
                         }
-                    case "&&":
+                    case "&":
                         return BinaryFunctionMaker(tokens, start, end, i, typeof(Conjunction));
                 }
             }
