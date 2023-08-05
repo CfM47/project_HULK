@@ -19,6 +19,8 @@
                 type = Types.boolean;
             else if (val is string)
                 type = Types.hstring;
+            else if (val is null)
+                type = Types.dynamic;
             else if (val is EmptyReturn)
                 type = Types.Void;
             foreach (Variable v in Variables)
