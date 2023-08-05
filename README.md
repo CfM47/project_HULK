@@ -5,7 +5,7 @@ Branch: Modified Language
 
 En esta branch es donde se guarda el compilador de H.U.L.K., pero en esta el lenguaje tiene ciertas diferencias:
 
--Se pueden declarar variables globales con o sin valor y asignarselo o cambiarselo en otra instruccion.
+-Se pueden declarar variables globales y usarlas en otra instruccion. (number x = 3; //por ejemplo)
 
 -Se pueden declarar variables locales dentro de funciones sin necesidad de usar let-in
 
@@ -16,3 +16,5 @@ En esta branch es donde se guarda el compilador de H.U.L.K., pero en esta el len
 -Existen funciones que retornan void, como print().
 
 -Para que la consola devuelva una instruccion se debe usar print() oblogatoriamente.
+
+-No es obligatorio que haya else en las expresiones condicionales.
