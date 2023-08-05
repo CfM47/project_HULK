@@ -1,14 +1,6 @@
 ﻿namespace Hulk
 {
-    public abstract class HulkDeclaration : HulkExpression
-    {
-        public abstract void AddToMemory(HulkMemory Mem);
-        public override object GetValue(bool execute)
-        {
-            return new EmptyReturn();
-        }
-    }
-    public class VariableDeclaration : HulkDeclaration
+    public class VariableDeclaration : HulkExpression
     {
         #region Constructors
         public VariableDeclaration(List<string> names, string type, HulkExpression ValueExp)
@@ -67,7 +59,7 @@
             {
                 if (ValueExp is Addition && (Type == Types.number || Type == Types.hstring))
                     matchExp = true;
-                else if (Value is Variable)
+                else if (ValueExp is Variable)
                     matchExp = true;
             }
             bool okNumber = (val is double) && (Type == Types.number);
@@ -77,22 +69,9 @@
                 return true;
             return false;
         }
-        public override void AddToMemory(HulkMemory Memoria)
+        public override object GetValue(bool execute)
         {
-            foreach (string name in Names)
-            {
-                var options = Variable.VariableOptions.InitializedVariable;
-                Variable newVar;
-                if (ValueExpression == null)
-                {
-                    options = Variable.VariableOptions.NonInitialized;
-                    newVar = new Variable(name, null, Type, options);
-
-                }
-                else
-                    newVar = new Variable(name, ValueExpression.GetValue(false), Type, options);
-                Memoria.AddNewVariable(name, newVar);
-            }
+            return new EmptyReturn();
         }
         #endregion
         #region Properties
@@ -102,7 +81,7 @@
         public Types Type { get; private set; }
         #endregion
     }
-    public class FunctionDeclaration : HulkDeclaration
+    public class FunctionDeclaration : HulkExpression
     {
         public FunctionDeclaration(string name, List<string> argNames)
         {
@@ -160,9 +139,13 @@
                 Arguments.Add(arg, new Variable(arg, val, Types.dynamic, Variable.VariableOptions.FunctionArgument));
             }
         }
-        public override void AddToMemory(HulkMemory Memoria)
+        public void AddToMemory(HulkMemory Memoria)
         {
             Memoria.AddNewFunction(this.FunctionName, this);
+        }
+        public override object GetValue(bool execute)
+        {
+            return new EmptyReturn();
         }
         #endregion
         #region Properties

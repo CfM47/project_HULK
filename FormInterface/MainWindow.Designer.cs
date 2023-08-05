@@ -31,10 +31,8 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindow));
             this.Output = new System.Windows.Forms.RichTextBox();
             this.Input = new System.Windows.Forms.TextBox();
-            this.VariablesList = new System.Windows.Forms.ListBox();
             this.Run = new System.Windows.Forms.Button();
             this.FunctionsList = new System.Windows.Forms.ListBox();
-            this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.CleanButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
@@ -64,19 +62,6 @@
             this.Input.TabIndex = 1;
             this.Input.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Input_KeyDown);
             // 
-            // VariablesList
-            // 
-            this.VariablesList.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(30)))));
-            this.VariablesList.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.VariablesList.Font = new System.Drawing.Font("Segoe UI", 9.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.VariablesList.ForeColor = System.Drawing.Color.SpringGreen;
-            this.VariablesList.FormattingEnabled = true;
-            this.VariablesList.ItemHeight = 21;
-            this.VariablesList.Location = new System.Drawing.Point(730, 38);
-            this.VariablesList.Name = "VariablesList";
-            this.VariablesList.Size = new System.Drawing.Size(240, 170);
-            this.VariablesList.TabIndex = 2;
-            // 
             // Run
             // 
             this.Run.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(30)))));
@@ -101,29 +86,17 @@
             this.FunctionsList.ForeColor = System.Drawing.Color.SpringGreen;
             this.FunctionsList.FormattingEnabled = true;
             this.FunctionsList.ItemHeight = 21;
-            this.FunctionsList.Location = new System.Drawing.Point(730, 253);
+            this.FunctionsList.Location = new System.Drawing.Point(730, 43);
             this.FunctionsList.Name = "FunctionsList";
-            this.FunctionsList.Size = new System.Drawing.Size(240, 149);
+            this.FunctionsList.Size = new System.Drawing.Size(240, 359);
             this.FunctionsList.TabIndex = 4;
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Segoe UI", 9.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.label1.ForeColor = System.Drawing.Color.SpringGreen;
-            this.label1.Location = new System.Drawing.Point(730, 15);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(73, 21);
-            this.label1.TabIndex = 5;
-            this.label1.Text = "Variables";
-            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // label2
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Segoe UI", 9.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.label2.ForeColor = System.Drawing.Color.SpringGreen;
-            this.label2.Location = new System.Drawing.Point(730, 230);
+            this.label2.Location = new System.Drawing.Point(730, 18);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(77, 21);
             this.label2.TabIndex = 6;
@@ -154,10 +127,8 @@
             this.ClientSize = new System.Drawing.Size(982, 483);
             this.Controls.Add(this.CleanButton);
             this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
             this.Controls.Add(this.FunctionsList);
             this.Controls.Add(this.Run);
-            this.Controls.Add(this.VariablesList);
             this.Controls.Add(this.Input);
             this.Controls.Add(this.Output);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
@@ -178,10 +149,8 @@
 
         private RichTextBox Output;
         private TextBox Input;
-        private ListBox VariablesList;
         private Button Run;
         private ListBox FunctionsList;
-        private Label label1;
         private Label label2;
         private Button CleanButton;
     }

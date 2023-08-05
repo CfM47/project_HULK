@@ -1,4 +1,5 @@
 ﻿using Hulk;
+using System.Reflection.Metadata;
 
 namespace Interface
 {
@@ -33,14 +34,18 @@ namespace Interface
                     try
                     {
                         HulkExpression exp = Parser.Parse(instruction);
-                        if (exp is HulkDeclaration Dec)
+                        if (exp is FunctionDeclaration Dec)
                         {
                             Dec.AddToMemory(Memory);
                         }
+                        else if(exp is PrintFunc print)
+                        {
+                            print.GetValue(false);
+                            print.GetValue(true);
+                        }
                         else
                         {
-                            exp.GetValue(false);
-                            exp.GetValue(true);
+                            Handler(exp.GetValue(false));
                         }
                     }
                     catch (HulkException ex)

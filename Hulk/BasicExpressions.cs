@@ -100,8 +100,8 @@ namespace Hulk
         public override object GetValue(bool execute)
         {
             if (execute)
-                PrintHandler(Argument.GetValue(false));
-            return new EmptyReturn();
+                PrintHandler(Argument.GetValue(execute));
+            return Argument.GetValue(false);
         }
         Print PrintHandler;
         public HulkExpression Argument { get; }
