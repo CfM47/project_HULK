@@ -88,7 +88,12 @@ namespace Hulk
                         if (exp is not Variable)
                             throw new SemanticError($"Operator {tokens[i]}", "Variable", exp.GetType().Name);
                         else
-                            Vars.Add(exp as Variable);
+                        {
+                            Variable var = exp as Variable;
+                            if (var.Name == null)
+                                throw new SemanticError($"Operator {tokens[i]}", "Variable", var.Type.ToString());
+                        }
+                        Vars.Add(exp as Variable);
                     }
                     //comentar la siguiente linea para que el operador de asignacion funcione. lo desactive porque aun no funciona bien
                     //al mezclarlo con otras operaciones (3 + a:=b por ejemplo da bateo)
