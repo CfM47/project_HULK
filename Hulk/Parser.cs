@@ -459,6 +459,8 @@ namespace Hulk
                     HulkExpression ElseDo = null;
                     if (ifDoEnd < end - 1)
                         ElseDo = ParseInternal(tokens, ifDoEnd + 2, end);
+                    else
+                        throw new SyntaxError("else instruction", "if-else expression");
                     result = new IfElseStatement(condition, IfDo, ElseDo);
                 }
             }
