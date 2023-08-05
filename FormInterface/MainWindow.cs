@@ -12,7 +12,7 @@ namespace FormInterface
             InitializeComponent();
             Compiler = new(PrintOutput);
             Parent = titleScreen;
-            Output.Text = ">";   
+            Output.Text = ">";
         }
         public void PrintOutput(object output)
         {
@@ -43,10 +43,15 @@ namespace FormInterface
             foreach (var name in Variables.Keys)
             {
                 var options = Variables[name].Options;
-                if(options == Variable.VariableOptions.NonInitialized)
+                if (options == Variable.VariableOptions.NonInitialized)
                     items[i] = $"{Variables[name].Type} {name}";
                 else
-                    items[i] = $"{Variables[name].Type} {name} = {Variables[name].Value}";
+                {
+                    if (Variables[name].Value is string)
+                        items[i] = $"{Variables[name].Type} {name} = \"{Variables[name].Value}\"";
+                    else
+                        items[i] = $"{Variables[name].Type} {name} = {Variables[name].Value}";
+                }
                 items[i] = items[i].Replace("hstring", "string");
                 i++;
             }
@@ -92,11 +97,11 @@ namespace FormInterface
         }
         private void Input_KeyDown(object sender, KeyEventArgs e)
         {
-            if(e.KeyCode == Keys.Return)
+            if (e.KeyCode == Keys.Return)
             {
                 Run_Click(sender, e);
                 e.Handled = true;
-            }            
+            }
         }
         private void MainWindow_KeyDown(object sender, KeyEventArgs e)
         {

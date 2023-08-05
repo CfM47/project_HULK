@@ -42,6 +42,7 @@ namespace Hulk
         {
             if (execute)
                 ChangeValues();
+            //return new EmptyReturn();
             return ValueExpression.GetValue(false);
         }
         #endregion
