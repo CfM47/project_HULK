@@ -16,5 +16,3 @@ En esta branch es donde se guarda el compilador de H.U.L.K., pero en esta el len
 -Existen funciones que retornan void, como print().
 
 -Para que la consola devuelva una instruccion se debe usar print() oblogatoriamente.
-
--No es obligatorio que haya else en las expresiones condicionales.
