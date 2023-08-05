@@ -1,6 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-
-namespace Hulk
+﻿namespace Hulk
 {
     public class Asignment : HulkExpression
     {
@@ -42,7 +40,7 @@ namespace Hulk
         {
             if (execute)
                 ChangeValues();
-            return new EmptyReturn();
+            return ValueExpression.GetValue(false);
         }
         #endregion
         #region Propierties

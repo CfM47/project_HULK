@@ -74,12 +74,11 @@ namespace Hulk
         //https://learn.microsoft.com/es-es/dotnet/csharp/language-reference/operators/ 
         private HulkExpression TryAsignment(string[] tokens, int start, int end)
         {
-            HulkExpression result = null;
             for (int i = start; i <= end; i++)
             {
                 if (tokens[i] == "(")
                     i = Tokenizer.GoToNextParenthesis(i, end, tokens);
-                else if (tokens[i] == "=")
+                else if (tokens[i] == ":=")
                 {
                     List<HulkExpression> left = i != start ? GetComaSeparatedExpressions(tokens, start, i - 1) : throw new SyntaxError("variables", "asignment expression");
                     HulkExpression right = i != end ? ParseInner(tokens, i + 1, end) : throw new SyntaxError("value to asign", "asignment expression");
@@ -91,10 +90,13 @@ namespace Hulk
                         else
                             Vars.Add(exp as Variable);
                     }
-                    result = new Asignment(Vars, right);
+                    //comentar la siguiente linea para que el operador de asignacion funcione. lo desactive porque aun no funciona bien
+                    //al mezclarlo con otras operaciones (3 + a:=b por ejemplo da bateo)
+                    return null;
+                    return new Asignment(Vars, right);
                 }
             }
-            return result;
+            return null;
         }
         private HulkExpression TryConditionalOr(string[] tokens, int start, int end)
         {
@@ -107,7 +109,7 @@ namespace Hulk
                             i = Tokenizer.GoToPreviousParenthesis(i, start, tokens);
                             break;
                         }
-                    case "||":
+                    case "|":
                         return BinaryFunctionMaker(tokens, start, end, i, typeof(Disjunction));
                 }
             }
@@ -124,7 +126,7 @@ namespace Hulk
                             i = Tokenizer.GoToPreviousParenthesis(i, start, tokens);
                             break;
                         }
-                    case "&&":
+                    case "&":
                         return BinaryFunctionMaker(tokens, start, end, i, typeof(Conjunction));
                 }
             }
@@ -323,7 +325,7 @@ namespace Hulk
             HulkExpression ValueExp = null;
             if (declarationEnd < end - 1)
                 ValueExp = ParseInner(tokens, declarationEnd + 2, end);
-            else if (declarationEnd == end - 1)
+            else if (declarationEnd == end - 1 || declarationEnd > end - 1) //comentar miembro derecho del or para poder declarar varibales no inicializadas
                 throw new SyntaxError("value expression", "variable declaration");
             result = new VariableDeclaration(names, type, ValueExp);
             return result;
@@ -469,7 +471,7 @@ namespace Hulk
                     if (ifDoEnd < end - 1)
                         ElseDo = ParseInner(tokens, ifDoEnd + 2, end);
                     else
-                        throw new SyntaxError("if-else statement body", "if-else statement");
+                        throw new SyntaxError("else expression", "if-else statement");
                     result = new IfElseStatement(condition, IfDo, ElseDo);
                 }
             }
