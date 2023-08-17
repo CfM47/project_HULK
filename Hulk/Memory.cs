@@ -10,7 +10,7 @@
 		public void AddNewVariable(string key, Variable Val)
 		{
 			if (!VariablesStorage.TryAdd(key, Val))
-				throw new Exception($"Variable {key} already exist");
+				throw new DefaultError($"Variable {key} already exist");
 		}
 		public void AddNewFunction(string key, FunctionDeclaration Val)
 		{
