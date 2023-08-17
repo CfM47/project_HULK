@@ -91,12 +91,17 @@
             SetArgs(ArgumentNames);
         }
         #region Methods
+        int stackNumber = 0;
         public object Evaluate(List<HulkExpression> Args, bool execute)
         {
             if (Args.Count != Arguments.Count)
                 throw new SemanticError($"Function `{FunctionName}`", $"{Arguments.Count} argument(s)", $"{Args.Count} argument(s)");
             else
             {
+                if (stackNumber > HulkInfo.StackLimit)
+                    throw new OverFlowError(FunctionName);
+                else
+                    stackNumber++;
                 List<object> OldValues = new();
                 for (int i = 0; i < Args.Count; i++)
                 {
@@ -106,6 +111,7 @@
                     v.Value = Args[i].GetValue(false);
                 }
                 var result = Definition.GetValue(execute);
+                stackNumber--;
                 for (int i = 0; i < OldValues.Count; i++)
                 {
                     string key = ArgumentNames[i];
@@ -129,6 +135,10 @@
             catch (SemanticError ex)
             {
                 throw ex;
+            }
+            catch (OverFlowError)
+            {
+                throw new DefaultError($"Function '{FunctionName}' may reach call stack limit (callstack limit is {HulkInfo.StackLimit})", "function");
             }
         }
         private void SetArgs(List<string> argNames)

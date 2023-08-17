@@ -94,4 +94,14 @@ namespace Hulk
 		public string RightArgument { get; }
 		public string Expected { get; }
 	}
+    public class OverFlowError : HulkException
+    {
+        public OverFlowError(string functionName)
+        {
+            FunctionName = functionName;
+            MessageStart = "! FUNCTION ERROR : ";
+            MessageDefinition = $"Function '{FunctionName}' reached call stack limit (callstack limit is {HulkInfo.StackLimit})";
+        }
+        public string FunctionName { get; }
+    }
 }
