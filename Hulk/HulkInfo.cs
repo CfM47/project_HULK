@@ -51,6 +51,7 @@
             return true;
 
         }
+        public const int StackLimit = 1000; //este es el maximo numero de llamadas que puede recibir una funcion antes de que lance un StackOverflowException
     }
 }
 
