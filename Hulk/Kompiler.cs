@@ -1,7 +1,4 @@
-﻿using Hulk;
-using System.Reflection.Metadata;
-
-namespace Interface
+﻿namespace Hulk
 {
     public class Kompiler
     {
@@ -62,6 +59,7 @@ namespace Interface
         public void Clear()
         {
             Memory = new();
+            Parser = new(Memory, Handler);
         }
         public HulkMemory Memory { get; private set; }
         Print Handler;

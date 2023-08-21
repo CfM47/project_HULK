@@ -1,4 +1,4 @@
-﻿
+﻿using Hulk;
 namespace Interface
 {
     internal class Program
