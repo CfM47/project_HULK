@@ -259,8 +259,7 @@ namespace Hulk
                     return new Variable(maybeNum);
                 if (Regex.Match(tokens[start], @"\u0022(.)*\u0022").Success)
                 {
-                    string arg = tokens[start].Replace("\\", "");
-                    arg = arg[1..^1];
+                    string arg = TreatStringRepresentation(tokens[start]);
                     return new Variable(arg);
                 }
                 return TryVariable(tokens[start]);
@@ -573,6 +572,20 @@ namespace Hulk
         }
         #endregion
         #region Auxiliar Parsing Functions
+        private string TreatStringRepresentation(string str)
+        {
+            //este metodo trata los caracteres escapados y elimina las comillas al final del string
+            str = str.Replace("\\a", "\a");
+            str = str.Replace("\\b", "\b");
+            str = str.Replace("\\f", "\f");
+            str = str.Replace("\\n", "\n");
+            str = str.Replace("\\r", "\r");
+            str = str.Replace("\\t", "\t");
+            str = str.Replace("\\v", "\v");
+            str = str.Replace("\\", "");
+            str = str[1..^1];
+            return str;
+        }
         private List<HulkExpression> GetComaSeparatedExpressions(string[] tokens, int start, int end)
         {
             List<HulkExpression> result = new();
