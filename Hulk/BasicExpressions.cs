@@ -170,7 +170,7 @@ namespace Hulk
             switch (Options)
             {
                 case VariableOptions.NonInitialized:
-                    throw new DefaultError("Use of unasigned variable");
+                    throw new DefaultError($"Use of unasigned variable `{Name}`");
                 case VariableOptions.FunctionArgument:
                     return Value;
             }
