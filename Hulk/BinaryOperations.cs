@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using Microsoft.CSharp.RuntimeBinder;
+using System.ComponentModel;
 
 namespace Hulk
 {
@@ -154,7 +155,19 @@ namespace Hulk
         }
         public override object Evaluate(object left, object right)
         {
-            return (dynamic)left == (dynamic)right;
+            try 
+            {
+                return (dynamic)left == (dynamic)right;
+            }
+            catch(RuntimeBinderException ex)
+            {
+                string message = ex.Message;
+                message = message.Replace("'", "`");
+                message = message.Replace("bool", "boolean");
+                message = message.Replace("int", "number");
+                message = message.Replace("double", "number");
+                throw new DefaultError(message, "semantic");
+            }
         }
     }
     public class UnEqual : BinaryFunction
@@ -165,7 +178,19 @@ namespace Hulk
 
         public override object Evaluate(object left, object right)
         {
-            return (dynamic)left != (dynamic)right;
+            try
+            {
+                return (dynamic)left != (dynamic)right;
+            }
+            catch (RuntimeBinderException ex)
+            {
+                string message = ex.Message;
+                message = message.Replace("'", "`");
+                message = message.Replace("bool", "boolean");
+                message = message.Replace("int", "number");
+                message = message.Replace("double", "number");
+                throw new DefaultError(message, "semantic");
+            }
         }
     }
     #endregion
