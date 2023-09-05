@@ -87,7 +87,7 @@ namespace Hulk
 			LeftArgument = leftArg;
 			RightArgument = rightArg;
 			Expected = expected;
-			MessageDefinition = $"Operation `{Operation}` cannot be used between `{leftArg}` and `{rightArg}`";
+			MessageDefinition = $"Operator `{operation}` cannot be applied to operands of type  `{leftArg}` and `{rightArg}`";
 		}
 		public string Operation { get; }
 		public string LeftArgument { get; }
