@@ -176,8 +176,20 @@
         public override object Evaluate(object left, object right)
         {
             string expected = "";
-            left ??= right;
-            right ??= left;
+            if (left is null)
+            {
+                if ((double)right != 0d)
+                    left = right;
+                else
+                    left = 5d;
+            }
+            if (right is null)
+            {
+                if ((double)left != 0d)
+                    right = left;
+                else
+                    right = 5d;
+            }
             if (left == null && right == null)
                 return default;
             if ((left is double && right is double) || (left is string && right is string))
@@ -192,8 +204,20 @@
         }
         public override object Evaluate(object left, object right)
         {
-            left ??= right;
-            right ??= left;
+            if (left is null)
+            {
+                if ((double)right != 0d)
+                    left = right;
+                else
+                    left = 5d;
+            }
+            if (right is null)
+            {
+                if ((double)left != 0d)
+                    right = left;
+                else
+                    right = 5d;
+            }
             if (left == null && right == null)
                 return 5d;
             if ((left is double && right is double))
