@@ -1,4 +1,6 @@
-﻿namespace Hulk
+﻿using System.ComponentModel;
+
+namespace Hulk
 {
     public abstract class BinaryFunction : HulkExpression
     {
@@ -54,7 +56,7 @@
                 return default(bool);
             if ((left is bool && right is bool))
                 return (dynamic)left && (dynamic)right;
-            var conflictiveType = left is not bool ? left.GetType().Name : right.GetType().Name;
+            var conflictiveType = left is not bool ? left.GetHulkTypeAsString() : right.GetHulkTypeAsString();
             throw new SemanticError("Operator `&&`", "boolean", conflictiveType);
         }
     }
@@ -71,7 +73,7 @@
                 return default(bool);
             if ((left is bool && right is bool))
                 return (dynamic)left || (dynamic)right;
-            var conflictiveType = left is not bool ? left.GetType().Name : right.GetType().Name;
+            var conflictiveType = left is not bool ? left.GetHulkTypeAsString() : right.GetHulkTypeAsString();
             throw new SemanticError("Operator `||`", "boolean", conflictiveType);
         }
     }
@@ -90,7 +92,7 @@
                 return default(bool);
             if ((left is double && right is double))
                 return (dynamic)left < (dynamic)right;
-            var conflictiveType = left is not double ? left.GetType().Name : right.GetType().Name;
+            var conflictiveType = left is not double ? left.GetHulkTypeAsString() : right.GetHulkTypeAsString();
             throw new SemanticError("Operator `<`", "number", conflictiveType);
         }
     }
@@ -107,7 +109,7 @@
                 return default(bool);
             if ((left is double && right is double))
                 return (dynamic)left > (dynamic)right;
-            var conflictiveType = left is not double ? left.GetType().Name : right.GetType().Name;
+            var conflictiveType = left is not double ? left.GetHulkTypeAsString() : right.GetHulkTypeAsString();
             throw new SemanticError("Operator `>`", "number", conflictiveType);
         }
     }
@@ -124,7 +126,7 @@
                 return default(bool);
             if ((left is double && right is double))
                 return (dynamic)left <= (dynamic)right;
-            var conflictiveType = left is not double ? left.GetType().Name : right.GetType().Name;
+            var conflictiveType = left is not double ? left.GetHulkTypeAsString() : right.GetHulkTypeAsString();
             throw new SemanticError("Operator `<=`", "number", conflictiveType);
         }
     }
@@ -141,7 +143,7 @@
                 return default(bool);
             if ((left is double && right is double))
                 return (dynamic)left >= (dynamic)right;
-            var conflictiveType = left is not double ? left.GetType().Name : right.GetType().Name;
+            var conflictiveType = left is not double ? left.GetHulkTypeAsString() : right.GetHulkTypeAsString();
             throw new SemanticError("Operator `>=`", "number", conflictiveType);
         }
     }
@@ -222,7 +224,7 @@
                 return 5d;
             if ((left is double && right is double))
                 return (dynamic)left - (dynamic)right;
-            var conflictiveType = left is not double ? left.GetType().Name : right.GetType().Name;
+            var conflictiveType = left is not double ? left.GetHulkTypeAsString() : right.GetHulkTypeAsString();
             throw new SemanticError("Operator `-`", "number", conflictiveType);
         }
     }
@@ -240,7 +242,7 @@
                 return 5d;
             if ((left is double && right is double))
                 return (dynamic)left * (dynamic)right;
-            var conflictiveType = left is not double ? left.GetType().Name : right.GetType().Name;
+            var conflictiveType = left is not double ? left.GetHulkTypeAsString() : right.GetHulkTypeAsString();
             throw new SemanticError("Operator `*`", "number", conflictiveType);
         }
     }
@@ -261,7 +263,7 @@
                     throw new DefaultError("Atempted to divide by 0", "arithmetic");
                 return (dynamic)left / (dynamic)right;
             }
-            var conflictiveType = left is not double ? left.GetType().Name : right.GetType().Name;
+            var conflictiveType = left is not double ? left.GetHulkTypeAsString() : right.GetHulkTypeAsString();
             throw new SemanticError("Operator `/`", "number", conflictiveType);
         }
     }
@@ -282,7 +284,7 @@
                     throw new DefaultError("Atempted to divide by 0", "arithmetic");
                 return (dynamic)left % (dynamic)right;
             }
-            var conflictiveType = left is not double ? left.GetType().Name : right.GetType().Name;
+            var conflictiveType = left is not double ? left.GetHulkTypeAsString() : right.GetHulkTypeAsString();
             throw new SemanticError("Operator `%`", "number", conflictiveType);
         }
     }
@@ -299,7 +301,7 @@
                 return 5d;
             if ((left is double && right is double))
                 return Math.Pow((dynamic)left, (dynamic)right);
-            var conflictiveType = left is not double ? left.GetType().Name : right.GetType().Name;
+            var conflictiveType = left is not double ? left.GetHulkTypeAsString() : right.GetHulkTypeAsString();
             throw new SemanticError("Operator `^`", "number", conflictiveType);
         }
     }
@@ -316,7 +318,7 @@
                 return 5d;
             if ((left is double && right is double))
                 return Math.Log((dynamic)left, (dynamic)right);
-            var conflictiveType = left is not double ? left.GetType().Name : right.GetType().Name;
+            var conflictiveType = left is not double ? left.GetHulkTypeAsString() : right.GetHulkTypeAsString();
             throw new SemanticError("Function `log`", "number", conflictiveType);
         }
     }
