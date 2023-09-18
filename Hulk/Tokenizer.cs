@@ -6,7 +6,7 @@ namespace Hulk
     {
         public static string[] GetTokens(string entry)
         {
-            Regex pattern = new(@";|(\u0022([^\u0022\\]|\\.)*\u0022)|@{2}|@|\(|\+|-|\*|/|%|,|(=>)|(<=)|(>=)|(<)|(>)|:=|={2}|=|(!=)|\^|&|\||!|\)|[^\(\)\+\-\*/\^%<>:=!&\|,;\s]+");
+            Regex pattern = new(@";|(\u0022([^\u0022\\]|\\.)*\u0022)|@{2}|@|\(|\+|-|\*|/|%|,|(=>)|(<=)|(>=)|(<)|(>)|:=|={2}|=|(!=)|\^|&|\||!|\)|[^@\(\)\+\-\*/\^%<>:=!&\|,;\s]+");
             MatchCollection collection = pattern.Matches(entry);
             string[] tokens = new string[collection.Count];
             for (int i = 0; i < tokens.Length; i++)
