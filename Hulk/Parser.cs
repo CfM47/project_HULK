@@ -58,6 +58,7 @@ namespace Hulk
             expr ??= TryConditionalAnd(tokens, start, end);
             expr ??= TryEquality(tokens, start, end);
             expr ??= TryRelational(tokens, start, end);
+            expr ??= TryConcatenation(tokens, start, end);
             expr ??= TryAdditive(tokens, start, end);
             expr ??= TryMultiplicative(tokens, start, end);
             expr ??= TryPower(tokens, start, end);
@@ -175,6 +176,27 @@ namespace Hulk
                         return BinaryFunctionMaker(tokens, start, end, i, typeof(LowerEqualThan));
                     case ">=":
                         return BinaryFunctionMaker(tokens, start, end, i, typeof(GreaterEqualThan));
+                }
+            }
+            return null;
+        }
+        private HulkExpression TryConcatenation(string[] tokens, int start, int end)
+        {
+            for (int i = end; i >= start; i--)
+            {
+                switch (tokens[i])
+                {
+                    case ")":
+                        {
+                            i = Tokenizer.GoToPreviousParenthesis(i, start, tokens);
+                            break;
+                        }
+                    case "@":
+                        return i == start ? null : BinaryFunctionMaker(tokens, start, end, i, typeof(SimpleConcatenation));
+
+                    case "@@":
+                        return i == start ? null : BinaryFunctionMaker(tokens, start, end, i, typeof(WhiteSpaceConcatenation));
+
                 }
             }
             return null;

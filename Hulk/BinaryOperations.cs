@@ -219,9 +219,10 @@ namespace Hulk
             }
             if (left == null && right == null)
                 return default;
-            if ((left is double && right is double) || (left is string && right is string))
+            if (left is double && right is double)
                 return (dynamic)left + (dynamic)right;
-            throw new OperationSemanticError("+", left.GetHulkTypeAsString(), right.GetHulkTypeAsString(), expected);
+            var conflictiveType = left is not double ? left.GetHulkTypeAsString() : right.GetHulkTypeAsString();
+            throw new SemanticError("Operator `+`", "number", conflictiveType);
         }
     }
     public class Subtraction : BinaryFunction
@@ -345,6 +346,44 @@ namespace Hulk
                 return Math.Log((dynamic)left, (dynamic)right);
             var conflictiveType = left is not double ? left.GetHulkTypeAsString() : right.GetHulkTypeAsString();
             throw new SemanticError("Function `log`", "number", conflictiveType);
+        }
+    }
+    #endregion
+    #region String Operations
+    public class SimpleConcatenation : BinaryFunction
+    {
+        public SimpleConcatenation(HulkExpression leftArgument, HulkExpression rightArgument) : base(leftArgument, rightArgument)
+        {
+        }
+
+        public override object Evaluate(object left, object right)
+        {
+            left ??= right;
+            right ??= left;
+            if (left == null && right == null)
+                return "";
+            if ((left is string && right is string))
+                return (dynamic)left + (dynamic)right;
+            var conflictiveType = left is not string ? left.GetHulkTypeAsString() : right.GetHulkTypeAsString();
+            throw new SemanticError("Operator `&&`", "string", conflictiveType);
+        }
+    }
+    public class WhiteSpaceConcatenation : BinaryFunction
+    {
+        public WhiteSpaceConcatenation(HulkExpression leftArgument, HulkExpression rightArgument) : base(leftArgument, rightArgument)
+        {
+        }
+
+        public override object Evaluate(object left, object right)
+        {
+            left ??= right;
+            right ??= left;
+            if (left == null && right == null)
+                return "";
+            if ((left is string && right is string))
+                return (dynamic)left + " " + (dynamic)right;
+            var conflictiveType = left is not string ? left.GetHulkTypeAsString() : right.GetHulkTypeAsString();
+            throw new SemanticError("Operator `&&`", "string", conflictiveType);
         }
     }
     #endregion
