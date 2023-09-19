@@ -21,12 +21,19 @@
         public Negation(HulkExpression Arg) : base(Arg)
         {
         }
+
+        public override Types CheckType()
+        {
+            var argType = Argument.CheckType();
+            if(argType != Types.dynamic && argType != Types.boolean)
+                throw new SemanticError("Operator `!`", "boolean", argType.ToString());
+            return Types.boolean;
+        }
+
         public override object Evaluate(object arg)
         {
             if (arg is bool b)
                 return !b;
-            if (arg == null)
-                return default(bool);
             throw new SemanticError("Operator `!`", "boolean", arg.GetHulkTypeAsString());
         }
     }
@@ -37,12 +44,18 @@
         public Positive(HulkExpression Arg) : base(Arg)
         {
         }
+        public override Types CheckType()
+        {
+            var argType = Argument.CheckType();
+            if (argType != Types.dynamic && argType != Types.number)
+                throw new SemanticError("Operator `+`", "number", argType.ToString());
+            return Types.number;
+        }
+
         public override object Evaluate(object arg)
         {
             if (arg is double x)
                 return x;
-            if (arg == null)
-                return 5d;
             throw new SemanticError("Operator `+`", "number", arg.GetHulkTypeAsString());
         }
     }
@@ -51,12 +64,19 @@
         public Negative(HulkExpression Arg) : base(Arg)
         {
         }
+
+        public override Types CheckType()
+        {
+            var argType = Argument.CheckType();
+            if (argType != Types.dynamic && argType != Types.number)
+                throw new SemanticError("Operator `-`", "number", argType.ToString());
+            return Types.number;
+        }
+
         public override object Evaluate(object arg)
         {
             if (arg is double x)
                 return -x;
-            if (arg == null)
-                return 5d;
             throw new SemanticError("Operator `-`", "number", arg.GetHulkTypeAsString());
         }
     }
@@ -65,12 +85,19 @@
         public SquaredRoot(HulkExpression Arg) : base(Arg)
         {
         }
+
+        public override Types CheckType()
+        {
+            var argType = Argument.CheckType();
+            if (argType != Types.dynamic && argType != Types.number)
+                throw new SemanticError("Function `sqrt`", "number", argType.ToString());
+            return Types.number;
+        }
+
         public override object Evaluate(object arg)
         {
             if (arg is double x)
                 return Math.Sqrt(x);
-            if (arg == null)
-                return 5d;
             throw new SemanticError("Function `sqrt`", "number", arg.GetHulkTypeAsString());
         }
     }
@@ -79,12 +106,19 @@
         public Sine(HulkExpression Arg) : base(Arg)
         {
         }
+
+        public override Types CheckType()
+        {
+            var argType = Argument.CheckType();
+            if (argType != Types.dynamic && argType != Types.number)
+                throw new SemanticError("Function `sin`", "number", argType.ToString());
+            return Types.number;
+        }
+
         public override object Evaluate(object arg)
         {
             if (arg is double x)
                 return Math.Sin(x);
-            if (arg == null)
-                return 5d;
             throw new SemanticError("Function `sin`", "number", arg.GetHulkTypeAsString());
         }
     }
@@ -93,12 +127,19 @@
         public Cosine(HulkExpression Arg) : base(Arg)
         {
         }
+
+        public override Types CheckType()
+        {
+            var argType = Argument.CheckType();
+            if (argType != Types.dynamic && argType != Types.number)
+                throw new SemanticError("Function `cos`", "number", argType.ToString());
+            return Types.number;
+        }
+
         public override object Evaluate(object arg)
         {
             if (arg is double x)
                 return Math.Cos(x);
-            if (arg == null)
-                return 5d;
             throw new SemanticError("Function `cos`", "number", arg.GetHulkTypeAsString());
         }
     }
@@ -107,12 +148,19 @@
         public ERaised(HulkExpression Arg) : base(Arg)
         {
         }
+
+        public override Types CheckType()
+        {
+            var argType = Argument.CheckType();
+            if (argType != Types.dynamic && argType != Types.number)
+                throw new SemanticError("Function `exp`", "number", argType.ToString());
+            return Types.number;
+        }
+
         public override object Evaluate(object arg)
         {
             if (arg is double x)
                 return Math.Exp(x);
-            if (arg == null)
-                return 5d;
             throw new SemanticError("Function `exp`", "number", arg.GetHulkTypeAsString());
         }
     }
@@ -121,6 +169,12 @@
         public Rand()
         {
         }
+
+        public override Types CheckType()
+        {
+            return Types.number;
+        }
+
         public override object GetValue(bool execute)
         {
             Random random = new();

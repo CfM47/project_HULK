@@ -30,6 +30,13 @@
                 return Result(Condition, IfExpression, ElseExpression, false);
 
         }
+        public override Types CheckType()
+        {
+            Condition.CheckType();
+            IfExpression.CheckType();
+            ElseExpression.CheckType();
+            return Types.dynamic;
+        }
         private object Result(HulkExpression Cond, HulkExpression IfExp, HulkExpression ElseExp, bool execute)
         {
             if (Cond.GetValue(execute) is not bool)
@@ -45,6 +52,8 @@
                 return ElseExp.GetValue(execute);
             }
         }
+
+        
         #endregion
         #region Properties
         public HulkExpression Condition { get; protected set; }
@@ -108,6 +117,10 @@
                     throw new SemanticError("Let-in expression", expectedType, val.GetHulkTypeAsString());
                 }
             }
+        }
+        public override Types CheckType()
+        {
+            return Body.CheckType();
         }
         public void Define(HulkExpression Definition)
         {

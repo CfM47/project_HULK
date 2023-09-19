@@ -3,6 +3,7 @@
     public abstract class HulkExpression
     {
         public abstract object GetValue(bool execute);
+        public abstract Types CheckType();
         public bool IsDependent { get; protected set; }
     }
     public delegate void Print(object input);

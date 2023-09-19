@@ -598,8 +598,15 @@ namespace Hulk
                     object[] print = printArgs.ToArray();
                     return (HulkExpression)Activator.CreateInstance(type, print);
                 }
-                object[] args = Args.ToArray();                
-                return (HulkExpression)Activator.CreateInstance(type, args);
+                object[] args = Args.ToArray();
+                try 
+                {
+                    return (HulkExpression)Activator.CreateInstance(type, args);
+                }
+                catch
+                {
+                    throw new DefaultError($"Function `{tokens[start]}` does not take {args.Length} arguments");
+                }
             }
         }
         #endregion

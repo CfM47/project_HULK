@@ -49,16 +49,24 @@ namespace Hulk
         public Conjunction(HulkExpression leftArgument, HulkExpression rightArgument) : base(leftArgument, rightArgument)
         {
         }
+
+        public override Types CheckType()
+        {
+            var leftType = LeftArgument.CheckType();
+            var rightType = RightArgument.CheckType();
+            if (leftType != Types.boolean && leftType != Types.dynamic)
+                throw new SemanticError("Operator `&`", "boolean", leftType.ToString());
+            if (rightType != Types.boolean && rightType != Types.dynamic)
+                throw new SemanticError("Operator `&`", "boolean", rightType.ToString());
+            return Types.boolean;
+        }
+
         public override object Evaluate(object left, object right)
         {
-            left ??= right;
-            right ??= left;
-            if (left == null && right == null)
-                return default(bool);
             if ((left is bool && right is bool))
                 return (dynamic)left && (dynamic)right;
             var conflictiveType = left is not bool ? left.GetHulkTypeAsString() : right.GetHulkTypeAsString();
-            throw new SemanticError("Operator `&&`", "boolean", conflictiveType);
+            throw new SemanticError("Operator `&`", "boolean", conflictiveType);
         }
     }
     public class Disjunction : BinaryFunction
@@ -66,12 +74,20 @@ namespace Hulk
         public Disjunction(HulkExpression leftArgument, HulkExpression rightArgument) : base(leftArgument, rightArgument)
         {
         }
+
+        public override Types CheckType()
+        {
+            var leftType = LeftArgument.CheckType();
+            var rightType = RightArgument.CheckType();
+            if (leftType != Types.boolean && leftType != Types.dynamic)
+                throw new SemanticError("Operator `|`", "boolean", leftType.ToString());
+            if (rightType != Types.boolean && rightType != Types.dynamic)
+                throw new SemanticError("Operator `|`", "boolean", rightType.ToString());
+            return Types.boolean;
+        }
+
         public override object Evaluate(object left, object right)
         {
-            left ??= right;
-            right ??= left;
-            if (left == null && right == null)
-                return default(bool);
             if ((left is bool && right is bool))
                 return (dynamic)left || (dynamic)right;
             var conflictiveType = left is not bool ? left.GetHulkTypeAsString() : right.GetHulkTypeAsString();
@@ -85,12 +101,20 @@ namespace Hulk
         public LowerThan(HulkExpression leftArgument, HulkExpression rightArgument) : base(leftArgument, rightArgument)
         {
         }
+
+        public override Types CheckType()
+        {
+            var leftType = LeftArgument.CheckType();
+            var rightType = RightArgument.CheckType();
+            if (leftType != Types.number && leftType != Types.dynamic)
+                throw new SemanticError("Operator `<`", "number", leftType.ToString());
+            if (rightType != Types.number && rightType != Types.dynamic)
+                throw new SemanticError("Operator `<`", "number", rightType.ToString());
+            return Types.boolean;
+        }
+
         public override object Evaluate(object left, object right)
         {
-            left ??= right;
-            right ??= left;
-            if (left == null && right == null)
-                return default(bool);
             if ((left is double && right is double))
                 return (dynamic)left < (dynamic)right;
             var conflictiveType = left is not double ? left.GetHulkTypeAsString() : right.GetHulkTypeAsString();
@@ -102,12 +126,20 @@ namespace Hulk
         public GreaterThan(HulkExpression leftArgument, HulkExpression rightArgument) : base(leftArgument, rightArgument)
         {
         }
+
+        public override Types CheckType()
+        {
+            var leftType = LeftArgument.CheckType();
+            var rightType = RightArgument.CheckType();
+            if (leftType != Types.number && leftType != Types.dynamic)
+                throw new SemanticError("Operator `>`", "number", leftType.ToString());
+            if (rightType != Types.number && rightType != Types.dynamic)
+                throw new SemanticError("Operator `>`", "number", rightType.ToString());
+            return Types.boolean;
+        }
+
         public override object Evaluate(object left, object right)
         {
-            left ??= right;
-            right ??= left;
-            if (left == null && right == null)
-                return default(bool);
             if ((left is double && right is double))
                 return (dynamic)left > (dynamic)right;
             var conflictiveType = left is not double ? left.GetHulkTypeAsString() : right.GetHulkTypeAsString();
@@ -119,12 +151,20 @@ namespace Hulk
         public LowerEqualThan(HulkExpression leftArgument, HulkExpression rightArgument) : base(leftArgument, rightArgument)
         {
         }
+
+        public override Types CheckType()
+        {
+            var leftType = LeftArgument.CheckType();
+            var rightType = RightArgument.CheckType();
+            if (leftType != Types.number && leftType != Types.dynamic)
+                throw new SemanticError("Operator `<=`", "number", leftType.ToString());
+            if (rightType != Types.number && rightType != Types.dynamic)
+                throw new SemanticError("Operator `<=`", "number", rightType.ToString());
+            return Types.boolean;
+        }
+
         public override object Evaluate(object left, object right)
         {
-            left ??= right;
-            right ??= left;
-            if (left == null && right == null)
-                return default(bool);
             if ((left is double && right is double))
                 return (dynamic)left <= (dynamic)right;
             var conflictiveType = left is not double ? left.GetHulkTypeAsString() : right.GetHulkTypeAsString();
@@ -136,12 +176,20 @@ namespace Hulk
         public GreaterEqualThan(HulkExpression leftArgument, HulkExpression rightArgument) : base(leftArgument, rightArgument)
         {
         }
+
+        public override Types CheckType()
+        {
+            var leftType = LeftArgument.CheckType();
+            var rightType = RightArgument.CheckType();
+            if (leftType != Types.number && leftType != Types.dynamic)
+                throw new SemanticError("Operator `>=`", "number", leftType.ToString());
+            if (rightType != Types.number && rightType != Types.dynamic)
+                throw new SemanticError("Operator `>=`", "number", rightType.ToString());
+            return Types.boolean;
+        }
+
         public override object Evaluate(object left, object right)
         {
-            left ??= right;
-            right ??= left;
-            if (left == null && right == null)
-                return default(bool);
             if ((left is double && right is double))
                 return (dynamic)left >= (dynamic)right;
             var conflictiveType = left is not double ? left.GetHulkTypeAsString() : right.GetHulkTypeAsString();
@@ -153,6 +201,16 @@ namespace Hulk
         public Equal(HulkExpression leftArgument, HulkExpression rightArgument) : base(leftArgument, rightArgument)
         {
         }
+
+        public override Types CheckType()
+        {
+            var leftType = LeftArgument.CheckType();
+            var rightType = RightArgument.CheckType();
+            if (!(leftType == Types.dynamic || leftType == Types.dynamic) && leftType != rightType)
+                throw new DefaultError($"Operator `==` cannot be used between `{leftType}` and `{rightType.ToString()}`", "semantic");
+            return Types.boolean;
+        }
+
         public override object Evaluate(object left, object right)
         {
             try 
@@ -174,6 +232,15 @@ namespace Hulk
     {
         public UnEqual(HulkExpression leftArgument, HulkExpression rightArgument) : base(leftArgument, rightArgument)
         {
+        }
+
+        public override Types CheckType()
+        {
+            var leftType = LeftArgument.CheckType();
+            var rightType = RightArgument.CheckType();
+            if (!(leftType == Types.dynamic || leftType == Types.dynamic) && leftType != rightType)
+                throw new DefaultError($"Operator `!=` cannot be used between `{leftType}` and `{rightType.ToString()}`", "semantic");
+            return Types.boolean;
         }
 
         public override object Evaluate(object left, object right)
@@ -200,25 +267,20 @@ namespace Hulk
         public Addition(HulkExpression leftArgument, HulkExpression rightArgument) : base(leftArgument, rightArgument)
         {
         }
+
+        public override Types CheckType()
+        {
+            var leftType = LeftArgument.CheckType();
+            var rightType = RightArgument.CheckType();
+            if (leftType != Types.number && leftType != Types.dynamic)
+                throw new SemanticError("Operator `+`", "number", leftType.ToString());
+            if (rightType != Types.number && rightType != Types.dynamic)
+                throw new SemanticError("Operator `+`", "number", rightType.ToString());
+            return Types.number;
+        }
+
         public override object Evaluate(object left, object right)
         {
-            string expected = "";
-            if (left is null)
-            {
-                if ((double)right != 0d)
-                    left = right;
-                else
-                    left = 5d;
-            }
-            if (right is null)
-            {
-                if ((double)left != 0d)
-                    right = left;
-                else
-                    right = 5d;
-            }
-            if (left == null && right == null)
-                return default;
             if (left is double && right is double)
                 return (dynamic)left + (dynamic)right;
             var conflictiveType = left is not double ? left.GetHulkTypeAsString() : right.GetHulkTypeAsString();
@@ -230,24 +292,20 @@ namespace Hulk
         public Subtraction(HulkExpression leftArgument, HulkExpression rightArgument) : base(leftArgument, rightArgument)
         {
         }
+
+        public override Types CheckType()
+        {
+            var leftType = LeftArgument.CheckType();
+            var rightType = RightArgument.CheckType();
+            if (leftType != Types.number && leftType != Types.dynamic)
+                throw new SemanticError("Operator `-`", "number", leftType.ToString());
+            if (rightType != Types.number && rightType != Types.dynamic)
+                throw new SemanticError("Operator `-`", "number", rightType.ToString());
+            return Types.number;
+        }
+
         public override object Evaluate(object left, object right)
         {
-            if (left is null)
-            {
-                if ((double)right != 0d)
-                    left = right;
-                else
-                    left = 5d;
-            }
-            if (right is null)
-            {
-                if ((double)left != 0d)
-                    right = left;
-                else
-                    right = 5d;
-            }
-            if (left == null && right == null)
-                return 5d;
             if ((left is double && right is double))
                 return (dynamic)left - (dynamic)right;
             var conflictiveType = left is not double ? left.GetHulkTypeAsString() : right.GetHulkTypeAsString();
@@ -260,12 +318,19 @@ namespace Hulk
         {
         }
 
+        public override Types CheckType()
+        {
+            var leftType = LeftArgument.CheckType();
+            var rightType = RightArgument.CheckType();
+            if (leftType != Types.number && leftType != Types.dynamic)
+                throw new SemanticError("Operator `*`", "number", leftType.ToString());
+            if (rightType != Types.number && rightType != Types.dynamic)
+                throw new SemanticError("Operator `*`", "number", rightType.ToString());
+            return Types.number;
+        }
+
         public override object Evaluate(object left, object right)
         {
-            left ??= right;
-            right ??= left;
-            if (left == null && right == null)
-                return 5d;
             if ((left is double && right is double))
                 return (dynamic)left * (dynamic)right;
             var conflictiveType = left is not double ? left.GetHulkTypeAsString() : right.GetHulkTypeAsString();
@@ -277,12 +342,20 @@ namespace Hulk
         public Division(HulkExpression leftArgument, HulkExpression rightArgument) : base(leftArgument, rightArgument)
         {
         }
+
+        public override Types CheckType()
+        {
+            var leftType = LeftArgument.CheckType();
+            var rightType = RightArgument.CheckType();
+            if (leftType != Types.number && leftType != Types.dynamic)
+                throw new SemanticError("Operator `/`", "number", leftType.ToString());
+            if (rightType != Types.number && rightType != Types.dynamic)
+                throw new SemanticError("Operator `/`", "number", rightType.ToString());
+            return Types.number;
+        }
+
         public override object Evaluate(object left, object right)
         {
-            left ??= right;
-            right ??= left;
-            if (left == null && right == null)
-                return 5d;
             if (left is double && right is double divisor)
             {
                 if (divisor == 0)
@@ -298,12 +371,20 @@ namespace Hulk
         public Module(HulkExpression leftArgument, HulkExpression rightArgument) : base(leftArgument, rightArgument)
         {
         }
+
+        public override Types CheckType()
+        {
+            var leftType = LeftArgument.CheckType();
+            var rightType = RightArgument.CheckType();
+            if (leftType != Types.number && leftType != Types.dynamic)
+                throw new SemanticError("Operator `%`", "number", leftType.ToString());
+            if (rightType != Types.number && rightType != Types.dynamic)
+                throw new SemanticError("Operator `%`", "number", rightType.ToString());
+            return Types.number;
+        }
+
         public override object Evaluate(object left, object right)
         {
-            left ??= right;
-            right ??= left;
-            if (left == null && right == null)
-                return 5d;
             if (left is double && right is double divisor)
             {
                 if (divisor == 0)
@@ -319,12 +400,20 @@ namespace Hulk
         public Power(HulkExpression leftArgument, HulkExpression rightArgument) : base(leftArgument, rightArgument)
         {
         }
+
+        public override Types CheckType()
+        {
+            var leftType = LeftArgument.CheckType();
+            var rightType = RightArgument.CheckType();
+            if (leftType != Types.number && leftType != Types.dynamic)
+                throw new SemanticError("Operator `^`", "number", leftType.ToString());
+            if (rightType != Types.number && rightType != Types.dynamic)
+                throw new SemanticError("Operator `^`", "number", rightType.ToString());
+            return Types.number;
+        }
+
         public override object Evaluate(object left, object right)
         {
-            left ??= right;
-            right ??= left;
-            if (left == null && right == null)
-                return 5d;
             if ((left is double && right is double))
                 return Math.Pow((dynamic)left, (dynamic)right);
             var conflictiveType = left is not double ? left.GetHulkTypeAsString() : right.GetHulkTypeAsString();
@@ -336,12 +425,20 @@ namespace Hulk
         public Logarithm(HulkExpression leftArgument, HulkExpression rightArgument) : base(leftArgument, rightArgument)
         {
         }
+
+        public override Types CheckType()
+        {
+            var leftType = LeftArgument.CheckType();
+            var rightType = RightArgument.CheckType();
+            if (leftType != Types.number && leftType != Types.dynamic)
+                throw new SemanticError("Function `log`", "number", leftType.ToString());
+            if (rightType != Types.number && rightType != Types.dynamic)
+                throw new SemanticError("Function `log`", "number", rightType.ToString());
+            return Types.number;
+        }
+
         public override object Evaluate(object left, object right)
         {
-            left ??= right;
-            right ??= left;
-            if (left == null && right == null)
-                return 5d;
             if ((left is double && right is double))
                 return Math.Log((dynamic)left, (dynamic)right);
             var conflictiveType = left is not double ? left.GetHulkTypeAsString() : right.GetHulkTypeAsString();
@@ -356,12 +453,19 @@ namespace Hulk
         {
         }
 
+        public override Types CheckType()
+        {
+            var leftType = LeftArgument.CheckType();
+            var rightType = RightArgument.CheckType();
+            if (leftType != Types.hstring && leftType != Types.dynamic)
+                throw new SemanticError("Operator `@`", "string", leftType.ToString());
+            if (rightType != Types.hstring && rightType != Types.dynamic)
+                throw new SemanticError("Operator `@`", "string", rightType.ToString());
+            return Types.hstring;
+        }
+
         public override object Evaluate(object left, object right)
         {
-            left ??= right;
-            right ??= left;
-            if (left == null && right == null)
-                return "";
             if ((left is string && right is string))
                 return (dynamic)left + (dynamic)right;
             var conflictiveType = left is not string ? left.GetHulkTypeAsString() : right.GetHulkTypeAsString();
@@ -374,16 +478,23 @@ namespace Hulk
         {
         }
 
+        public override Types CheckType()
+        {
+            var leftType = LeftArgument.CheckType();
+            var rightType = RightArgument.CheckType();
+            if(leftType != Types.hstring && leftType != Types.dynamic)
+                throw new SemanticError("Operator `@@`", "string", leftType.ToString());
+            if (rightType != Types.hstring && rightType != Types.dynamic)
+                throw new SemanticError("Operator `@@`", "string", rightType.ToString());
+            return Types.hstring;
+        }
+
         public override object Evaluate(object left, object right)
         {
-            left ??= right;
-            right ??= left;
-            if (left == null && right == null)
-                return "";
             if ((left is string && right is string))
                 return (dynamic)left + " " + (dynamic)right;
             var conflictiveType = left is not string ? left.GetHulkTypeAsString() : right.GetHulkTypeAsString();
-            throw new SemanticError("Operator `&&`", "string", conflictiveType);
+            throw new SemanticError("Operator `@@`", "string", conflictiveType);
         }
     }
     #endregion

@@ -44,6 +44,11 @@
                 ChangeValues();
             return ValueExpression.GetValue(false);
         }
+
+        public override Types CheckType()
+        {
+            return ValueExpression.CheckType();
+        }
         #endregion
         #region Propierties
         public List<Variable> Variables { get; protected set; }
@@ -83,7 +88,12 @@
                 throw new SemanticError($"Function `{Name}`", ex.ExpressionExpected, ex.ExpressionReceived);
             }
         }
-        #endregion  
+
+        public override Types CheckType()
+        {
+            return Definition.CheckType();
+        }
+        #endregion
         #region Properties
         public string Name { get; protected set; }
         public List<HulkExpression> Arguments { get; protected set; }
@@ -103,6 +113,11 @@
                 PrintHandler(Argument.GetValue(execute));
             return Argument.GetValue(false);
         }
+        public override Types CheckType()
+        {
+            return Types.Void;
+        }
+
         Print PrintHandler;
         public HulkExpression Argument { get; }
         
@@ -175,6 +190,7 @@
                 return ((HulkExpression)Value).GetValue(execute);
             return Value;
         }        
+
         private void SetType()
         {
             if (Value is double)
@@ -185,6 +201,10 @@
                 Type = Types.hstring;
             //else
             //    Type = null;
+        }
+        public override Types CheckType()
+        {
+            return Type;
         }
         #endregion
         #region Properties

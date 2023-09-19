@@ -73,6 +73,11 @@
         {
             return new EmptyReturn();
         }
+
+        public override Types CheckType()
+        {
+            return Types.Void;
+        }
         #endregion
         #region Properties
         public List<string> Names { get; }
@@ -130,7 +135,7 @@
         {
             try
             {
-                Definition.GetValue(false);
+                Definition.CheckType();
             }
             catch (SemanticError ex)
             {
@@ -156,6 +161,11 @@
         public override object GetValue(bool execute)
         {
             return new EmptyReturn();
+        }
+
+        public override Types CheckType()
+        {
+            return Types.Void;
         }
         #endregion
         #region Properties
