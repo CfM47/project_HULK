@@ -39,59 +39,58 @@ namespace Hulk
             }
             return false;
         }
+        public override Types CheckType()
+        {
+            var leftType = LeftArgument.CheckType();
+            var rightType = RightArgument.CheckType();
+            if (leftType != EnteredType && leftType != Types.dynamic)
+                throw new SemanticError($"Operator `{OperationToken}`", EnteredType.ToString(), leftType.ToString());
+            if (rightType != Types.boolean && rightType != Types.dynamic)
+                throw new SemanticError($"Operator `{OperationToken}`", EnteredType.ToString(), leftType.ToString());
+            return ReturnedType;
+        }
+        public object Evaluate(object left, object right)
+        {
+            if (left.GetType() == AcceptedType && right.GetType() == AcceptedType)
+                return Operation(left, right);
+            var conflictiveType = left.GetType() != AcceptedType ? left.GetHulkTypeAsString() : right.GetHulkTypeAsString();
+            throw new SemanticError($"Operator `{OperationToken}`", ReturnedType.ToString(), conflictiveType);
+        }
         public HulkExpression LeftArgument { get; protected set; }
-        public HulkExpression RightArgument { get; protected set; }
-        public abstract object Evaluate(object left, object right);
+        public HulkExpression RightArgument { get; protected set; }        
+        public Types ReturnedType { get; protected set; }
+        public Types EnteredType { get; protected set; }
+        public Type AcceptedType { get; protected set; }
+        public string OperationToken { get; protected set; }
+        public BinaryOperation Operation { get; protected set; }
+        public delegate object BinaryOperation(object left, object right);
+        
     }
     #region Boolean Literals
     public class Conjunction : BinaryFunction
     {
         public Conjunction(HulkExpression leftArgument, HulkExpression rightArgument) : base(leftArgument, rightArgument)
         {
-        }
-
-        public override Types CheckType()
-        {
-            var leftType = LeftArgument.CheckType();
-            var rightType = RightArgument.CheckType();
-            if (leftType != Types.boolean && leftType != Types.dynamic)
-                throw new SemanticError("Operator `&`", "boolean", leftType.ToString());
-            if (rightType != Types.boolean && rightType != Types.dynamic)
-                throw new SemanticError("Operator `&`", "boolean", rightType.ToString());
-            return Types.boolean;
-        }
-
-        public override object Evaluate(object left, object right)
-        {
-            if ((left is bool && right is bool))
-                return (dynamic)left && (dynamic)right;
-            var conflictiveType = left is not bool ? left.GetHulkTypeAsString() : right.GetHulkTypeAsString();
-            throw new SemanticError("Operator `&`", "boolean", conflictiveType);
+            LeftArgument = leftArgument;
+            RightArgument = rightArgument;
+            ReturnedType = Types.boolean;
+            AcceptedType = typeof(bool);
+            OperationToken = "&";
+            object func(object a, object b) => (dynamic)a && (dynamic)b;
+            Operation = func;
         }
     }
     public class Disjunction : BinaryFunction
     {
         public Disjunction(HulkExpression leftArgument, HulkExpression rightArgument) : base(leftArgument, rightArgument)
         {
-        }
-
-        public override Types CheckType()
-        {
-            var leftType = LeftArgument.CheckType();
-            var rightType = RightArgument.CheckType();
-            if (leftType != Types.boolean && leftType != Types.dynamic)
-                throw new SemanticError("Operator `|`", "boolean", leftType.ToString());
-            if (rightType != Types.boolean && rightType != Types.dynamic)
-                throw new SemanticError("Operator `|`", "boolean", rightType.ToString());
-            return Types.boolean;
-        }
-
-        public override object Evaluate(object left, object right)
-        {
-            if ((left is bool && right is bool))
-                return (dynamic)left || (dynamic)right;
-            var conflictiveType = left is not bool ? left.GetHulkTypeAsString() : right.GetHulkTypeAsString();
-            throw new SemanticError("Operator `||`", "boolean", conflictiveType);
+            LeftArgument = leftArgument;
+            RightArgument = rightArgument;
+            ReturnedType = Types.boolean;
+            AcceptedType = typeof(bool);
+            OperationToken = "|";
+            object func(object a, object b) => (dynamic)a || (dynamic)b;
+            Operation = func;
         }
     }
     #endregion
@@ -100,164 +99,108 @@ namespace Hulk
     {
         public LowerThan(HulkExpression leftArgument, HulkExpression rightArgument) : base(leftArgument, rightArgument)
         {
-        }
-
-        public override Types CheckType()
-        {
-            var leftType = LeftArgument.CheckType();
-            var rightType = RightArgument.CheckType();
-            if (leftType != Types.number && leftType != Types.dynamic)
-                throw new SemanticError("Operator `<`", "number", leftType.ToString());
-            if (rightType != Types.number && rightType != Types.dynamic)
-                throw new SemanticError("Operator `<`", "number", rightType.ToString());
-            return Types.boolean;
-        }
-
-        public override object Evaluate(object left, object right)
-        {
-            if ((left is double && right is double))
-                return (dynamic)left < (dynamic)right;
-            var conflictiveType = left is not double ? left.GetHulkTypeAsString() : right.GetHulkTypeAsString();
-            throw new SemanticError("Operator `<`", "number", conflictiveType);
+            LeftArgument = leftArgument;
+            RightArgument = rightArgument;
+            ReturnedType = Types.boolean;
+            AcceptedType = typeof(double);
+            OperationToken = "<";
+            object func(object a, object b) => (dynamic)a < (dynamic)b;
+            Operation = func;
         }
     }
     public class GreaterThan : BinaryFunction
     {
         public GreaterThan(HulkExpression leftArgument, HulkExpression rightArgument) : base(leftArgument, rightArgument)
         {
-        }
-
-        public override Types CheckType()
-        {
-            var leftType = LeftArgument.CheckType();
-            var rightType = RightArgument.CheckType();
-            if (leftType != Types.number && leftType != Types.dynamic)
-                throw new SemanticError("Operator `>`", "number", leftType.ToString());
-            if (rightType != Types.number && rightType != Types.dynamic)
-                throw new SemanticError("Operator `>`", "number", rightType.ToString());
-            return Types.boolean;
-        }
-
-        public override object Evaluate(object left, object right)
-        {
-            if ((left is double && right is double))
-                return (dynamic)left > (dynamic)right;
-            var conflictiveType = left is not double ? left.GetHulkTypeAsString() : right.GetHulkTypeAsString();
-            throw new SemanticError("Operator `>`", "number", conflictiveType);
+            LeftArgument = leftArgument;
+            RightArgument = rightArgument;
+            ReturnedType = Types.boolean;
+            AcceptedType = typeof(double);
+            OperationToken = ">";
+            object func(object a, object b) => (dynamic)a > (dynamic)b;
+            Operation = func;
         }
     }
     public class LowerEqualThan : BinaryFunction
     {
         public LowerEqualThan(HulkExpression leftArgument, HulkExpression rightArgument) : base(leftArgument, rightArgument)
         {
-        }
-
-        public override Types CheckType()
-        {
-            var leftType = LeftArgument.CheckType();
-            var rightType = RightArgument.CheckType();
-            if (leftType != Types.number && leftType != Types.dynamic)
-                throw new SemanticError("Operator `<=`", "number", leftType.ToString());
-            if (rightType != Types.number && rightType != Types.dynamic)
-                throw new SemanticError("Operator `<=`", "number", rightType.ToString());
-            return Types.boolean;
-        }
-
-        public override object Evaluate(object left, object right)
-        {
-            if ((left is double && right is double))
-                return (dynamic)left <= (dynamic)right;
-            var conflictiveType = left is not double ? left.GetHulkTypeAsString() : right.GetHulkTypeAsString();
-            throw new SemanticError("Operator `<=`", "number", conflictiveType);
+            LeftArgument = leftArgument;
+            RightArgument = rightArgument;
+            ReturnedType = Types.boolean;
+            AcceptedType = typeof(double);
+            OperationToken = "<=";
+            object func(object a, object b) => (dynamic)a <= (dynamic)b;
+            Operation = func;
         }
     }
     public class GreaterEqualThan : BinaryFunction
     {
         public GreaterEqualThan(HulkExpression leftArgument, HulkExpression rightArgument) : base(leftArgument, rightArgument)
         {
-        }
-
-        public override Types CheckType()
-        {
-            var leftType = LeftArgument.CheckType();
-            var rightType = RightArgument.CheckType();
-            if (leftType != Types.number && leftType != Types.dynamic)
-                throw new SemanticError("Operator `>=`", "number", leftType.ToString());
-            if (rightType != Types.number && rightType != Types.dynamic)
-                throw new SemanticError("Operator `>=`", "number", rightType.ToString());
-            return Types.boolean;
-        }
-
-        public override object Evaluate(object left, object right)
-        {
-            if ((left is double && right is double))
-                return (dynamic)left >= (dynamic)right;
-            var conflictiveType = left is not double ? left.GetHulkTypeAsString() : right.GetHulkTypeAsString();
-            throw new SemanticError("Operator `>=`", "number", conflictiveType);
+            LeftArgument = leftArgument;
+            RightArgument = rightArgument;
+            ReturnedType = Types.boolean;
+            AcceptedType = typeof(double);
+            OperationToken = ">=";
+            object func(object a, object b) => (dynamic)a >= (dynamic)b;
+            Operation = func;
         }
     }
     public class Equal : BinaryFunction
     {
         public Equal(HulkExpression leftArgument, HulkExpression rightArgument) : base(leftArgument, rightArgument)
         {
-        }
-
-        public override Types CheckType()
-        {
-            var leftType = LeftArgument.CheckType();
-            var rightType = RightArgument.CheckType();
-            if (!(leftType == Types.dynamic || leftType == Types.dynamic) && leftType != rightType)
-                throw new DefaultError($"Operator `==` cannot be used between `{leftType}` and `{rightType.ToString()}`", "semantic");
-            return Types.boolean;
-        }
-
-        public override object Evaluate(object left, object right)
-        {
-            try 
+            LeftArgument = leftArgument;
+            RightArgument = rightArgument;
+            ReturnedType = Types.boolean;
+            AcceptedType = typeof(object);
+            OperationToken = "==";
+            object func(object a, object b) 
             {
-                return (dynamic)left == (dynamic)right;
+                try
+                {
+                    return (dynamic)a == (dynamic)b;
+                }
+                catch (RuntimeBinderException ex)
+                {
+                    string message = ex.Message;
+                    message = message.Replace("'", "`");
+                    message = message.Replace("bool", "boolean");
+                    message = message.Replace("int", "number");
+                    message = message.Replace("double", "number");
+                    throw new DefaultError(message, "semantic");
+                }
             }
-            catch(RuntimeBinderException ex)
-            {
-                string message = ex.Message;
-                message = message.Replace("'", "`");
-                message = message.Replace("bool", "boolean");
-                message = message.Replace("int", "number");
-                message = message.Replace("double", "number");
-                throw new DefaultError(message, "semantic");
-            }
+            Operation = func;
         }
     }
     public class UnEqual : BinaryFunction
     {
         public UnEqual(HulkExpression leftArgument, HulkExpression rightArgument) : base(leftArgument, rightArgument)
         {
-        }
-
-        public override Types CheckType()
-        {
-            var leftType = LeftArgument.CheckType();
-            var rightType = RightArgument.CheckType();
-            if (!(leftType == Types.dynamic || leftType == Types.dynamic) && leftType != rightType)
-                throw new DefaultError($"Operator `!=` cannot be used between `{leftType}` and `{rightType.ToString()}`", "semantic");
-            return Types.boolean;
-        }
-
-        public override object Evaluate(object left, object right)
-        {
-            try
+            LeftArgument = leftArgument;
+            RightArgument = rightArgument;
+            ReturnedType = Types.boolean;
+            AcceptedType = typeof(object);
+            OperationToken = "!=";
+            object func(object a, object b)
             {
-                return (dynamic)left != (dynamic)right;
+                try
+                {
+                    return (dynamic)a != (dynamic)b;
+                }
+                catch (RuntimeBinderException ex)
+                {
+                    string message = ex.Message;
+                    message = message.Replace("'", "`");
+                    message = message.Replace("bool", "boolean");
+                    message = message.Replace("int", "number");
+                    message = message.Replace("double", "number");
+                    throw new DefaultError(message, "semantic");
+                }
             }
-            catch (RuntimeBinderException ex)
-            {
-                string message = ex.Message;
-                message = message.Replace("'", "`");
-                message = message.Replace("bool", "boolean");
-                message = message.Replace("int", "number");
-                message = message.Replace("double", "number");
-                throw new DefaultError(message, "semantic");
-            }
+            Operation = func;
         }
     }
     #endregion
@@ -266,183 +209,99 @@ namespace Hulk
     {
         public Addition(HulkExpression leftArgument, HulkExpression rightArgument) : base(leftArgument, rightArgument)
         {
-        }
-
-        public override Types CheckType()
-        {
-            var leftType = LeftArgument.CheckType();
-            var rightType = RightArgument.CheckType();
-            if (leftType != Types.number && leftType != Types.dynamic)
-                throw new SemanticError("Operator `+`", "number", leftType.ToString());
-            if (rightType != Types.number && rightType != Types.dynamic)
-                throw new SemanticError("Operator `+`", "number", rightType.ToString());
-            return Types.number;
-        }
-
-        public override object Evaluate(object left, object right)
-        {
-            if (left is double && right is double)
-                return (dynamic)left + (dynamic)right;
-            var conflictiveType = left is not double ? left.GetHulkTypeAsString() : right.GetHulkTypeAsString();
-            throw new SemanticError("Operator `+`", "number", conflictiveType);
+            LeftArgument = leftArgument;
+            RightArgument = rightArgument;
+            ReturnedType = Types.number;
+            AcceptedType = typeof(double);
+            OperationToken = "+";
+            object func(object a, object b) => (dynamic)a + (dynamic)b;
+            Operation = func;
         }
     }
     public class Subtraction : BinaryFunction
     {
         public Subtraction(HulkExpression leftArgument, HulkExpression rightArgument) : base(leftArgument, rightArgument)
         {
-        }
-
-        public override Types CheckType()
-        {
-            var leftType = LeftArgument.CheckType();
-            var rightType = RightArgument.CheckType();
-            if (leftType != Types.number && leftType != Types.dynamic)
-                throw new SemanticError("Operator `-`", "number", leftType.ToString());
-            if (rightType != Types.number && rightType != Types.dynamic)
-                throw new SemanticError("Operator `-`", "number", rightType.ToString());
-            return Types.number;
-        }
-
-        public override object Evaluate(object left, object right)
-        {
-            if ((left is double && right is double))
-                return (dynamic)left - (dynamic)right;
-            var conflictiveType = left is not double ? left.GetHulkTypeAsString() : right.GetHulkTypeAsString();
-            throw new SemanticError("Operator `-`", "number", conflictiveType);
+            LeftArgument = leftArgument;
+            RightArgument = rightArgument;
+            ReturnedType = Types.number;
+            AcceptedType = typeof(double);
+            OperationToken = "-";
+            object func(object a, object b) => (dynamic)a - (dynamic)b;
+            Operation = func;
         }
     }
     public class Multiplication : BinaryFunction
     {
         public Multiplication(HulkExpression leftArgument, HulkExpression rightArgument) : base(leftArgument, rightArgument)
         {
-        }
-
-        public override Types CheckType()
-        {
-            var leftType = LeftArgument.CheckType();
-            var rightType = RightArgument.CheckType();
-            if (leftType != Types.number && leftType != Types.dynamic)
-                throw new SemanticError("Operator `*`", "number", leftType.ToString());
-            if (rightType != Types.number && rightType != Types.dynamic)
-                throw new SemanticError("Operator `*`", "number", rightType.ToString());
-            return Types.number;
-        }
-
-        public override object Evaluate(object left, object right)
-        {
-            if ((left is double && right is double))
-                return (dynamic)left * (dynamic)right;
-            var conflictiveType = left is not double ? left.GetHulkTypeAsString() : right.GetHulkTypeAsString();
-            throw new SemanticError("Operator `*`", "number", conflictiveType);
+            LeftArgument = leftArgument;
+            RightArgument = rightArgument;
+            ReturnedType = Types.number;
+            AcceptedType = typeof(double);
+            OperationToken = "*";
+            object func(object a, object b) => (dynamic)a * (dynamic)b;
+            Operation = func;
         }
     }
     public class Division : BinaryFunction
     {
         public Division(HulkExpression leftArgument, HulkExpression rightArgument) : base(leftArgument, rightArgument)
         {
-        }
-
-        public override Types CheckType()
-        {
-            var leftType = LeftArgument.CheckType();
-            var rightType = RightArgument.CheckType();
-            if (leftType != Types.number && leftType != Types.dynamic)
-                throw new SemanticError("Operator `/`", "number", leftType.ToString());
-            if (rightType != Types.number && rightType != Types.dynamic)
-                throw new SemanticError("Operator `/`", "number", rightType.ToString());
-            return Types.number;
-        }
-
-        public override object Evaluate(object left, object right)
-        {
-            if (left is double && right is double divisor)
+            LeftArgument = leftArgument;
+            RightArgument = rightArgument;
+            ReturnedType = Types.number;
+            AcceptedType = typeof(double);
+            OperationToken = "/";
+            object func(object a, object b) 
             {
-                if (divisor == 0)
+                if ((double)b == 0)
                     throw new DefaultError("Atempted to divide by 0", "arithmetic");
-                return (dynamic)left / (dynamic)right;
+                return (dynamic)a / (dynamic)b;
             }
-            var conflictiveType = left is not double ? left.GetHulkTypeAsString() : right.GetHulkTypeAsString();
-            throw new SemanticError("Operator `/`", "number", conflictiveType);
+            Operation = func;
         }
     }
     public class Module : BinaryFunction
     {
         public Module(HulkExpression leftArgument, HulkExpression rightArgument) : base(leftArgument, rightArgument)
         {
-        }
-
-        public override Types CheckType()
-        {
-            var leftType = LeftArgument.CheckType();
-            var rightType = RightArgument.CheckType();
-            if (leftType != Types.number && leftType != Types.dynamic)
-                throw new SemanticError("Operator `%`", "number", leftType.ToString());
-            if (rightType != Types.number && rightType != Types.dynamic)
-                throw new SemanticError("Operator `%`", "number", rightType.ToString());
-            return Types.number;
-        }
-
-        public override object Evaluate(object left, object right)
-        {
-            if (left is double && right is double divisor)
+            LeftArgument = leftArgument;
+            RightArgument = rightArgument;
+            ReturnedType = Types.number;
+            AcceptedType = typeof(double);
+            OperationToken = "%";
+            object func(object a, object b)
             {
-                if (divisor == 0)
+                if ((double)b == 0)
                     throw new DefaultError("Atempted to divide by 0", "arithmetic");
-                return (dynamic)left % (dynamic)right;
+                return (dynamic)a % (dynamic)b;
             }
-            var conflictiveType = left is not double ? left.GetHulkTypeAsString() : right.GetHulkTypeAsString();
-            throw new SemanticError("Operator `%`", "number", conflictiveType);
+            Operation = func;
         }
     }
     public class Power : BinaryFunction
     {
         public Power(HulkExpression leftArgument, HulkExpression rightArgument) : base(leftArgument, rightArgument)
         {
-        }
-
-        public override Types CheckType()
-        {
-            var leftType = LeftArgument.CheckType();
-            var rightType = RightArgument.CheckType();
-            if (leftType != Types.number && leftType != Types.dynamic)
-                throw new SemanticError("Operator `^`", "number", leftType.ToString());
-            if (rightType != Types.number && rightType != Types.dynamic)
-                throw new SemanticError("Operator `^`", "number", rightType.ToString());
-            return Types.number;
-        }
-
-        public override object Evaluate(object left, object right)
-        {
-            if ((left is double && right is double))
-                return Math.Pow((dynamic)left, (dynamic)right);
-            var conflictiveType = left is not double ? left.GetHulkTypeAsString() : right.GetHulkTypeAsString();
-            throw new SemanticError("Operator `^`", "number", conflictiveType);
+            LeftArgument = leftArgument;
+            RightArgument = rightArgument;
+            ReturnedType = Types.number;
+            AcceptedType = typeof(double);
+            OperationToken = "^";
+            object func(object a, object b) => Math.Pow((dynamic)a,(dynamic)b);
         }
     }
     public class Logarithm : BinaryFunction
     {
         public Logarithm(HulkExpression leftArgument, HulkExpression rightArgument) : base(leftArgument, rightArgument)
         {
-        }
-
-        public override Types CheckType()
-        {
-            var leftType = LeftArgument.CheckType();
-            var rightType = RightArgument.CheckType();
-            if (leftType != Types.number && leftType != Types.dynamic)
-                throw new SemanticError("Function `log`", "number", leftType.ToString());
-            if (rightType != Types.number && rightType != Types.dynamic)
-                throw new SemanticError("Function `log`", "number", rightType.ToString());
-            return Types.number;
-        }
-
-        public override object Evaluate(object left, object right)
-        {
-            if ((left is double && right is double))
-                return Math.Log((dynamic)left, (dynamic)right);
-            var conflictiveType = left is not double ? left.GetHulkTypeAsString() : right.GetHulkTypeAsString();
-            throw new SemanticError("Function `log`", "number", conflictiveType);
+            LeftArgument = leftArgument;
+            RightArgument = rightArgument;
+            ReturnedType = Types.number;
+            AcceptedType = typeof(double);
+            OperationToken = "log";
+            object func(object a, object b) => Math.Log((dynamic)a, (dynamic)b);
         }
     }
     #endregion
@@ -451,50 +310,24 @@ namespace Hulk
     {
         public SimpleConcatenation(HulkExpression leftArgument, HulkExpression rightArgument) : base(leftArgument, rightArgument)
         {
-        }
-
-        public override Types CheckType()
-        {
-            var leftType = LeftArgument.CheckType();
-            var rightType = RightArgument.CheckType();
-            if (leftType != Types.hstring && leftType != Types.dynamic)
-                throw new SemanticError("Operator `@`", "string", leftType.ToString());
-            if (rightType != Types.hstring && rightType != Types.dynamic)
-                throw new SemanticError("Operator `@`", "string", rightType.ToString());
-            return Types.hstring;
-        }
-
-        public override object Evaluate(object left, object right)
-        {
-            if ((left is string && right is string))
-                return (dynamic)left + (dynamic)right;
-            var conflictiveType = left is not string ? left.GetHulkTypeAsString() : right.GetHulkTypeAsString();
-            throw new SemanticError("Operator `&&`", "string", conflictiveType);
+            LeftArgument = leftArgument;
+            RightArgument = rightArgument;
+            ReturnedType = Types.hstring;
+            AcceptedType = typeof(string);
+            OperationToken = "@";
+            object func(object a, object b) => (dynamic)a + (dynamic)b;
         }
     }
     public class WhiteSpaceConcatenation : BinaryFunction
     {
         public WhiteSpaceConcatenation(HulkExpression leftArgument, HulkExpression rightArgument) : base(leftArgument, rightArgument)
         {
-        }
-
-        public override Types CheckType()
-        {
-            var leftType = LeftArgument.CheckType();
-            var rightType = RightArgument.CheckType();
-            if(leftType != Types.hstring && leftType != Types.dynamic)
-                throw new SemanticError("Operator `@@`", "string", leftType.ToString());
-            if (rightType != Types.hstring && rightType != Types.dynamic)
-                throw new SemanticError("Operator `@@`", "string", rightType.ToString());
-            return Types.hstring;
-        }
-
-        public override object Evaluate(object left, object right)
-        {
-            if ((left is string && right is string))
-                return (dynamic)left + " " + (dynamic)right;
-            var conflictiveType = left is not string ? left.GetHulkTypeAsString() : right.GetHulkTypeAsString();
-            throw new SemanticError("Operator `@@`", "string", conflictiveType);
+            LeftArgument = leftArgument;
+            RightArgument = rightArgument;
+            ReturnedType = Types.hstring;
+            AcceptedType = typeof(string);
+            OperationToken = "@";
+            object func(object a, object b) => (dynamic)a + " " + (dynamic)b;
         }
     }
     #endregion

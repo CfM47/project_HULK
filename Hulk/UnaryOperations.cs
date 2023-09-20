@@ -13,28 +13,38 @@
             return Evaluate(Argument.GetValue(execute));
         }
         public HulkExpression Argument { get; protected set; }
-        public abstract object Evaluate(object arg);
+        public Types ReturnedType { get; protected set; }
+        public Types EnteredType { get; protected set; }
+        public Type AcceptedType { get; protected set; }
+        public string OperationToken { get; protected set; }
+        public UnaryOperation Operation { get; protected set; }
+        public delegate object UnaryOperation(object arg);
+        public object Evaluate(object arg)
+        {
+            if (arg.GetType() == AcceptedType)
+                return Operation(arg);
+            throw new SemanticError($"Operator `{OperationToken}`", EnteredType.ToString(), arg.GetHulkTypeAsString());
+        }
+        public override Types CheckType()
+        {
+            var argType = Argument.CheckType();
+            if (argType != Types.dynamic && argType != EnteredType)
+                throw new SemanticError($"Operator `{OperationToken}`", EnteredType.ToString(), argType.ToString());
+            return ReturnedType;
+        }
     }
     #region Boolean
     public class Negation : UnaryFunction
     {
         public Negation(HulkExpression Arg) : base(Arg)
         {
-        }
-
-        public override Types CheckType()
-        {
-            var argType = Argument.CheckType();
-            if(argType != Types.dynamic && argType != Types.boolean)
-                throw new SemanticError("Operator `!`", "boolean", argType.ToString());
-            return Types.boolean;
-        }
-
-        public override object Evaluate(object arg)
-        {
-            if (arg is bool b)
-                return !b;
-            throw new SemanticError("Operator `!`", "boolean", arg.GetHulkTypeAsString());
+            Argument = Arg;
+            ReturnedType = Types.boolean;
+            EnteredType = Types.boolean;
+            AcceptedType = typeof(bool);
+            OperationToken = "!";
+            object func(object a) => !(bool)a; ;
+            Operation = func;
         }
     }
     #endregion
@@ -43,125 +53,78 @@
     {
         public Positive(HulkExpression Arg) : base(Arg)
         {
-        }
-        public override Types CheckType()
-        {
-            var argType = Argument.CheckType();
-            if (argType != Types.dynamic && argType != Types.number)
-                throw new SemanticError("Operator `+`", "number", argType.ToString());
-            return Types.number;
-        }
-
-        public override object Evaluate(object arg)
-        {
-            if (arg is double x)
-                return x;
-            throw new SemanticError("Operator `+`", "number", arg.GetHulkTypeAsString());
+            Argument = Arg;
+            ReturnedType = Types.number;
+            EnteredType = Types.number;
+            AcceptedType = typeof(double);
+            OperationToken = "+";
+            object func(object a) => a; ;
+            Operation = func;
         }
     }
     public class Negative : UnaryFunction
     {
         public Negative(HulkExpression Arg) : base(Arg)
         {
-        }
-
-        public override Types CheckType()
-        {
-            var argType = Argument.CheckType();
-            if (argType != Types.dynamic && argType != Types.number)
-                throw new SemanticError("Operator `-`", "number", argType.ToString());
-            return Types.number;
-        }
-
-        public override object Evaluate(object arg)
-        {
-            if (arg is double x)
-                return -x;
-            throw new SemanticError("Operator `-`", "number", arg.GetHulkTypeAsString());
+            Argument = Arg;
+            ReturnedType = Types.number;
+            EnteredType = Types.number;
+            AcceptedType = typeof(double);
+            OperationToken = "-";
+            object func(object a) => -(double)a; ;
+            Operation = func;
         }
     }
     public class SquaredRoot : UnaryFunction
     {
         public SquaredRoot(HulkExpression Arg) : base(Arg)
         {
-        }
-
-        public override Types CheckType()
-        {
-            var argType = Argument.CheckType();
-            if (argType != Types.dynamic && argType != Types.number)
-                throw new SemanticError("Function `sqrt`", "number", argType.ToString());
-            return Types.number;
-        }
-
-        public override object Evaluate(object arg)
-        {
-            if (arg is double x)
-                return Math.Sqrt(x);
-            throw new SemanticError("Function `sqrt`", "number", arg.GetHulkTypeAsString());
+            Argument = Arg;
+            ReturnedType = Types.number;
+            EnteredType = Types.number;
+            AcceptedType = typeof(double);
+            OperationToken = "sqrt";
+            object func(object a) => Math.Sqrt((double)a); ;
+            Operation = func;
         }
     }
     public class Sine : UnaryFunction
     {
         public Sine(HulkExpression Arg) : base(Arg)
         {
-        }
-
-        public override Types CheckType()
-        {
-            var argType = Argument.CheckType();
-            if (argType != Types.dynamic && argType != Types.number)
-                throw new SemanticError("Function `sin`", "number", argType.ToString());
-            return Types.number;
-        }
-
-        public override object Evaluate(object arg)
-        {
-            if (arg is double x)
-                return Math.Sin(x);
-            throw new SemanticError("Function `sin`", "number", arg.GetHulkTypeAsString());
+            Argument = Arg;
+            ReturnedType = Types.number;
+            EnteredType = Types.number;
+            AcceptedType = typeof(double);
+            OperationToken = "sin";
+            object func(object a) => Math.Sin((double)a); ;
+            Operation = func;
         }
     }
     public class Cosine : UnaryFunction
     {
         public Cosine(HulkExpression Arg) : base(Arg)
         {
-        }
-
-        public override Types CheckType()
-        {
-            var argType = Argument.CheckType();
-            if (argType != Types.dynamic && argType != Types.number)
-                throw new SemanticError("Function `cos`", "number", argType.ToString());
-            return Types.number;
-        }
-
-        public override object Evaluate(object arg)
-        {
-            if (arg is double x)
-                return Math.Cos(x);
-            throw new SemanticError("Function `cos`", "number", arg.GetHulkTypeAsString());
+            Argument = Arg;
+            ReturnedType = Types.number;
+            EnteredType = Types.number;
+            AcceptedType = typeof(double);
+            OperationToken = "cos";
+            object func(object a) => Math.Cos((double)a); ;
+            Operation = func;
         }
     }
     public class ERaised : UnaryFunction
     {
         public ERaised(HulkExpression Arg) : base(Arg)
         {
-        }
-
-        public override Types CheckType()
-        {
-            var argType = Argument.CheckType();
-            if (argType != Types.dynamic && argType != Types.number)
-                throw new SemanticError("Function `exp`", "number", argType.ToString());
-            return Types.number;
-        }
-
-        public override object Evaluate(object arg)
-        {
-            if (arg is double x)
-                return Math.Exp(x);
-            throw new SemanticError("Function `exp`", "number", arg.GetHulkTypeAsString());
+            Argument = Arg;
+            ReturnedType = Types.number;
+            EnteredType = Types.number;
+            AcceptedType = typeof(double);
+            OperationToken = "exp";
+            object func(object a) => Math.Exp((double)a); ;
+            Operation = func;
         }
     }
     public class Rand : HulkExpression

@@ -51,9 +51,7 @@
                         return null;
                 return ElseExp.GetValue(execute);
             }
-        }
-
-        
+        }        
         #endregion
         #region Properties
         public HulkExpression Condition { get; protected set; }
