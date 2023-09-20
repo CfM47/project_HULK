@@ -74,7 +74,7 @@
         {
             foreach (var arg in Args)
             {
-                arg.GetValue(false);
+                arg.CheckType();
             }
         }
         public override object GetValue(bool execute)
@@ -91,7 +91,7 @@
 
         public override Types CheckType()
         {
-            return Definition.CheckType();
+            return Definition.CheckDefinition();
         }
         #endregion
         #region Properties

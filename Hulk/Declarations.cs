@@ -131,11 +131,17 @@
             Definition = definition;
             CheckDefinition();
         }
-        public void CheckDefinition()
+        public Types CheckDefinition()
         {
             try
             {
-                Definition.CheckType();
+                if (stackNumber > HulkInfo.StackLimit)
+                    throw new OverFlowError(FunctionName);
+                else
+                    stackNumber++;
+                var result = Definition.CheckType();
+                stackNumber--;
+                return result;
             }
             catch (SemanticError ex)
             {
