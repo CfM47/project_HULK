@@ -1,5 +1,4 @@
 ﻿using Microsoft.CSharp.RuntimeBinder;
-using System.ComponentModel;
 
 namespace Hulk
 {
@@ -45,8 +44,8 @@ namespace Hulk
             var rightType = RightArgument.CheckType();
             if (leftType != EnteredType && leftType != Types.dynamic)
                 throw new SemanticError($"Operator `{OperationToken}`", EnteredType.ToString(), leftType.ToString());
-            if (rightType != Types.boolean && rightType != Types.dynamic)
-                throw new SemanticError($"Operator `{OperationToken}`", EnteredType.ToString(), leftType.ToString());
+            if (rightType != EnteredType && rightType != Types.dynamic)
+                throw new SemanticError($"Operator `{OperationToken}`", EnteredType.ToString(), rightType.ToString());
             return ReturnedType;
         }
         public object Evaluate(object left, object right)
@@ -57,14 +56,14 @@ namespace Hulk
             throw new SemanticError($"Operator `{OperationToken}`", ReturnedType.ToString(), conflictiveType);
         }
         public HulkExpression LeftArgument { get; protected set; }
-        public HulkExpression RightArgument { get; protected set; }        
+        public HulkExpression RightArgument { get; protected set; }
         public Types ReturnedType { get; protected set; }
         public Types EnteredType { get; protected set; }
         public Type AcceptedType { get; protected set; }
         public string OperationToken { get; protected set; }
         public BinaryOperation Operation { get; protected set; }
         public delegate object BinaryOperation(object left, object right);
-        
+
     }
     #region Boolean Literals
     public class Conjunction : BinaryFunction
@@ -74,6 +73,7 @@ namespace Hulk
             LeftArgument = leftArgument;
             RightArgument = rightArgument;
             ReturnedType = Types.boolean;
+            EnteredType = Types.boolean;
             AcceptedType = typeof(bool);
             OperationToken = "&";
             object func(object a, object b) => (dynamic)a && (dynamic)b;
@@ -87,6 +87,7 @@ namespace Hulk
             LeftArgument = leftArgument;
             RightArgument = rightArgument;
             ReturnedType = Types.boolean;
+            EnteredType = Types.boolean;
             AcceptedType = typeof(bool);
             OperationToken = "|";
             object func(object a, object b) => (dynamic)a || (dynamic)b;
@@ -102,6 +103,7 @@ namespace Hulk
             LeftArgument = leftArgument;
             RightArgument = rightArgument;
             ReturnedType = Types.boolean;
+            EnteredType = Types.number;
             AcceptedType = typeof(double);
             OperationToken = "<";
             object func(object a, object b) => (dynamic)a < (dynamic)b;
@@ -115,6 +117,7 @@ namespace Hulk
             LeftArgument = leftArgument;
             RightArgument = rightArgument;
             ReturnedType = Types.boolean;
+            EnteredType = Types.number;
             AcceptedType = typeof(double);
             OperationToken = ">";
             object func(object a, object b) => (dynamic)a > (dynamic)b;
@@ -128,6 +131,7 @@ namespace Hulk
             LeftArgument = leftArgument;
             RightArgument = rightArgument;
             ReturnedType = Types.boolean;
+            EnteredType = Types.number;
             AcceptedType = typeof(double);
             OperationToken = "<=";
             object func(object a, object b) => (dynamic)a <= (dynamic)b;
@@ -141,6 +145,7 @@ namespace Hulk
             LeftArgument = leftArgument;
             RightArgument = rightArgument;
             ReturnedType = Types.boolean;
+            EnteredType = Types.number;
             AcceptedType = typeof(double);
             OperationToken = ">=";
             object func(object a, object b) => (dynamic)a >= (dynamic)b;
@@ -154,9 +159,10 @@ namespace Hulk
             LeftArgument = leftArgument;
             RightArgument = rightArgument;
             ReturnedType = Types.boolean;
+            EnteredType = Types.dynamic;
             AcceptedType = typeof(object);
             OperationToken = "==";
-            object func(object a, object b) 
+            object func(object a, object b)
             {
                 try
                 {
@@ -182,6 +188,7 @@ namespace Hulk
             LeftArgument = leftArgument;
             RightArgument = rightArgument;
             ReturnedType = Types.boolean;
+            EnteredType = Types.dynamic;
             AcceptedType = typeof(object);
             OperationToken = "!=";
             object func(object a, object b)
@@ -212,6 +219,7 @@ namespace Hulk
             LeftArgument = leftArgument;
             RightArgument = rightArgument;
             ReturnedType = Types.number;
+            EnteredType = Types.number;
             AcceptedType = typeof(double);
             OperationToken = "+";
             object func(object a, object b) => (dynamic)a + (dynamic)b;
@@ -225,6 +233,7 @@ namespace Hulk
             LeftArgument = leftArgument;
             RightArgument = rightArgument;
             ReturnedType = Types.number;
+            EnteredType = Types.number;
             AcceptedType = typeof(double);
             OperationToken = "-";
             object func(object a, object b) => (dynamic)a - (dynamic)b;
@@ -238,6 +247,7 @@ namespace Hulk
             LeftArgument = leftArgument;
             RightArgument = rightArgument;
             ReturnedType = Types.number;
+            EnteredType = Types.number;
             AcceptedType = typeof(double);
             OperationToken = "*";
             object func(object a, object b) => (dynamic)a * (dynamic)b;
@@ -251,9 +261,10 @@ namespace Hulk
             LeftArgument = leftArgument;
             RightArgument = rightArgument;
             ReturnedType = Types.number;
+            EnteredType = Types.number;
             AcceptedType = typeof(double);
             OperationToken = "/";
-            object func(object a, object b) 
+            object func(object a, object b)
             {
                 if ((double)b == 0)
                     throw new DefaultError("Atempted to divide by 0", "arithmetic");
@@ -269,6 +280,7 @@ namespace Hulk
             LeftArgument = leftArgument;
             RightArgument = rightArgument;
             ReturnedType = Types.number;
+            EnteredType = Types.number;
             AcceptedType = typeof(double);
             OperationToken = "%";
             object func(object a, object b)
@@ -287,9 +299,10 @@ namespace Hulk
             LeftArgument = leftArgument;
             RightArgument = rightArgument;
             ReturnedType = Types.number;
+            EnteredType = Types.number;
             AcceptedType = typeof(double);
             OperationToken = "^";
-            object func(object a, object b) => Math.Pow((dynamic)a,(dynamic)b);
+            object func(object a, object b) => Math.Pow((dynamic)a, (dynamic)b);
         }
     }
     public class Logarithm : BinaryFunction
@@ -299,6 +312,7 @@ namespace Hulk
             LeftArgument = leftArgument;
             RightArgument = rightArgument;
             ReturnedType = Types.number;
+            EnteredType = Types.number;
             AcceptedType = typeof(double);
             OperationToken = "log";
             object func(object a, object b) => Math.Log((dynamic)a, (dynamic)b);
@@ -313,6 +327,7 @@ namespace Hulk
             LeftArgument = leftArgument;
             RightArgument = rightArgument;
             ReturnedType = Types.hstring;
+            EnteredType = Types.hstring;
             AcceptedType = typeof(string);
             OperationToken = "@";
             object func(object a, object b) => (dynamic)a + (dynamic)b;
@@ -325,6 +340,7 @@ namespace Hulk
             LeftArgument = leftArgument;
             RightArgument = rightArgument;
             ReturnedType = Types.hstring;
+            EnteredType = Types.hstring;
             AcceptedType = typeof(string);
             OperationToken = "@";
             object func(object a, object b) => (dynamic)a + " " + (dynamic)b;

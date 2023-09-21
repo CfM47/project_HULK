@@ -26,7 +26,7 @@
             foreach (Variable v in Variables)
             {
                 if (v.Type != type)
-                    throw new DefaultError($"Cannot asign value of type `{type}` to `{v.Type}` variable" , "asignment");
+                    throw new DefaultError($"Cannot asign value of type `{type}` to `{v.Type}` variable", "asignment");
             }
         }
         private void ChangeValues()
@@ -91,7 +91,7 @@
 
         public override Types CheckType()
         {
-            return Definition.CheckDefinition();
+            return Definition.ReturnedType;
         }
         #endregion
         #region Properties
@@ -120,7 +120,7 @@
 
         Print PrintHandler;
         public HulkExpression Argument { get; }
-        
+
     }
     public class Variable : HulkExpression
     {
@@ -189,7 +189,7 @@
             if (IsDependent)
                 return ((HulkExpression)Value).GetValue(execute);
             return Value;
-        }        
+        }
 
         private void SetType()
         {

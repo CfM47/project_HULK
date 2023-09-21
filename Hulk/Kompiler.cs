@@ -35,7 +35,7 @@
                         {
                             Dec.AddToMemory(Memory);
                         }
-                        else if(exp is PrintFunc print)
+                        else if (exp is PrintFunc print)
                         {
                             print.GetValue(false);
                             print.GetValue(true);
@@ -65,5 +65,5 @@
         Print Handler;
         HulkParser Parser;
 
-	}
+    }
 }

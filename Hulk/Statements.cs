@@ -20,7 +20,7 @@
         }
         private object CheckValue()
         {
-            if(Condition is Variable && Condition.GetValue(false) == null) 
+            if (Condition is Variable && Condition.GetValue(false) == null)
             {
                 var ifValue = IfExpression.GetValue(false);
                 var elseValue = ElseExpression.GetValue(false);
@@ -33,8 +33,10 @@
         public override Types CheckType()
         {
             Condition.CheckType();
-            IfExpression.CheckType();
-            ElseExpression.CheckType();
+            var ifType = IfExpression.CheckType();
+            var elseType = ElseExpression.CheckType();
+            if (ifType == elseType)
+                return ifType;
             return Types.dynamic;
         }
         private object Result(HulkExpression Cond, HulkExpression IfExp, HulkExpression ElseExp, bool execute)
@@ -51,7 +53,7 @@
                         return null;
                 return ElseExp.GetValue(execute);
             }
-        }        
+        }
         #endregion
         #region Properties
         public HulkExpression Condition { get; protected set; }

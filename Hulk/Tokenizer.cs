@@ -1,8 +1,8 @@
 ﻿using System.Text.RegularExpressions;
 
-namespace Hulk 
-{ 
-    public static class Tokenizer 
+namespace Hulk
+{
+    public static class Tokenizer
     {
         public static string[] GetTokens(string entry)
         {

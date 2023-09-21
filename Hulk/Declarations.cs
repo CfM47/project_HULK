@@ -94,6 +94,7 @@
             ArgumentNames = argNames;
             Arguments = new Dictionary<string, Variable>();
             SetArgs(ArgumentNames);
+            ReturnedType = Types.dynamic;
         }
         #region Methods
         int stackNumber = 0;
@@ -129,7 +130,7 @@
         public void Define(HulkExpression definition)
         {
             Definition = definition;
-            CheckDefinition();
+            ReturnedType = CheckDefinition();
         }
         public Types CheckDefinition()
         {
@@ -168,7 +169,6 @@
         {
             return new EmptyReturn();
         }
-
         public override Types CheckType()
         {
             return Types.Void;
@@ -179,6 +179,7 @@
         public string FunctionName { get; private set; }
         public Dictionary<string, Variable> Arguments { get; private set; }
         public HulkExpression Definition { get; private set; }
+        public Types ReturnedType { get; private set; }
         #endregion
     }
 }

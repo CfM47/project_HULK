@@ -52,7 +52,7 @@ namespace Hulk
             if (tokens[start] == "let")
                 expr = ParseLetInExpression(tokens, start, end);
             else if (tokens[start] == "if")
-                expr = ParseIfElseStatement(tokens, start, end);            
+                expr = ParseIfElseStatement(tokens, start, end);
             expr ??= TryAsignment(tokens, start, end);
             expr ??= TryConditionalOr(tokens, start, end);
             expr ??= TryConditionalAnd(tokens, start, end);
@@ -599,7 +599,7 @@ namespace Hulk
                     return (HulkExpression)Activator.CreateInstance(type, print);
                 }
                 object[] args = Args.ToArray();
-                try 
+                try
                 {
                     return (HulkExpression)Activator.CreateInstance(type, args);
                 }
@@ -614,8 +614,8 @@ namespace Hulk
         private string TreatStringRepresentation(string str)
         {
             //este metodo trata los caracteres escapados y elimina las comillas al final del string
-            str = str.Replace("\\a","\a");
-            str = str.Replace("\\b", "\b"); 
+            str = str.Replace("\\a", "\a");
+            str = str.Replace("\\b", "\b");
             str = str.Replace("\\f", "\f");
             str = str.Replace("\\n", "\n");
             str = str.Replace("\\r", "\r");

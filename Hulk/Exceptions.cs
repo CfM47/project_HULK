@@ -8,12 +8,12 @@ namespace Hulk
 		public string MessageStart { get; protected set; }
 		public string MessageDefinition { get; protected set; }
 	}
-	public class InstrucctionError: HulkException
+	public class InstrucctionError : HulkException
 	{
 		public InstrucctionError(HulkException ex, int instrucctionNumber, int instrucctionsCount)
 		{
 			MessageStart = ex.MessageStart;
-			string messageEnd = instrucctionsCount > 1 ? $" (on instrucction {instrucctionNumber})" : ""; 
+			string messageEnd = instrucctionsCount > 1 ? $" (on instrucction {instrucctionNumber})" : "";
 			MessageDefinition = ex.MessageDefinition + messageEnd;
 		}
 	}
@@ -28,7 +28,7 @@ namespace Hulk
 		{
 			errorEspecification = errorEspecification.ToUpper(new CultureInfo("en-US"));
 			MessageStart = $"! {errorEspecification} ERROR :";
-            MessageDefinition = message;
+			MessageDefinition = message;
 		}
 	}
 	public class LexicalError : HulkException
@@ -94,14 +94,14 @@ namespace Hulk
 		public string RightArgument { get; }
 		public string Expected { get; }
 	}
-    public class OverFlowError : HulkException
-    {
-        public OverFlowError(string functionName)
-        {
-            FunctionName = functionName;
-            MessageStart = "! FUNCTION ERROR : ";
-            MessageDefinition = $"Function '{FunctionName}' reached call stack limit (callstack limit is {HulkInfo.StackLimit})";
-        }
-        public string FunctionName { get; }
-    }
+	public class OverFlowError : HulkException
+	{
+		public OverFlowError(string functionName)
+		{
+			FunctionName = functionName;
+			MessageStart = "! FUNCTION ERROR : ";
+			MessageDefinition = $"Function '{FunctionName}' reached call stack limit (callstack limit is {HulkInfo.StackLimit})";
+		}
+		public string FunctionName { get; }
+	}
 }
