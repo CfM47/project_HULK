@@ -303,6 +303,7 @@ namespace Hulk
             AcceptedType = typeof(double);
             OperationToken = "^";
             object func(object a, object b) => Math.Pow((dynamic)a, (dynamic)b);
+            Operation = func;
         }
     }
     public class Logarithm : BinaryFunction
@@ -316,6 +317,7 @@ namespace Hulk
             AcceptedType = typeof(double);
             OperationToken = "log";
             object func(object a, object b) => Math.Log((dynamic)a, (dynamic)b);
+            Operation = func;
         }
     }
     #endregion
@@ -331,6 +333,7 @@ namespace Hulk
             AcceptedType = typeof(string);
             OperationToken = "@";
             object func(object a, object b) => (dynamic)a + (dynamic)b;
+            Operation = func;
         }
     }
     public class WhiteSpaceConcatenation : BinaryFunction
@@ -342,8 +345,9 @@ namespace Hulk
             ReturnedType = Types.hstring;
             EnteredType = Types.hstring;
             AcceptedType = typeof(string);
-            OperationToken = "@";
+            OperationToken = "@@";
             object func(object a, object b) => (dynamic)a + " " + (dynamic)b;
+            Operation = func;
         }
     }
     #endregion
