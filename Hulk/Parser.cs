@@ -303,11 +303,13 @@ public class HulkParser
             case "cos":
                 return FunctionCallMaker(tokens, start, end, typeof(Cosine));
             case "exp":
-                return FunctionCallMaker(tokens, start, end, typeof(SquaredRoot));
+                return FunctionCallMaker(tokens, start, end, typeof(ERaised));
             case "log":
                 return FunctionCallMaker(tokens, start, end, typeof(Logarithm));
             case "print":
                 return FunctionCallMaker(tokens, start, end, typeof(PrintFunc));
+            case "rand":
+                return FunctionCallMaker(tokens, start, end, typeof(Rand));
             default:
                 return TryFunctionCall(tokens, start, end);
         }

@@ -10,6 +10,8 @@ public class Kompiler
     }
     public void Compile(string input)
     {
+        if (input == null || input.Length == 0)
+            return;
         string[] s = Tokenizer.GetTokens(input);
         List<string[]> Instructions;
         try
