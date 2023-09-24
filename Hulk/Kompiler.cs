@@ -35,14 +35,14 @@
                         {
                             Dec.AddToMemory(Memory);
                         }
-                        else if (exp is PrintFunc print)
-                        {
-                            print.GetValue(false);
-                            print.GetValue(true);
-                        }
+                        //else if (exp is PrintFunc print)
+                        //{
+                        //    print.GetValue(false);
+                        //    print.GetValue(true);
+                        //}
                         else
                         {
-                            Handler(exp.GetValue(false));
+                            exp.GetValue(true);
                         }
                     }
                     catch (HulkException ex)

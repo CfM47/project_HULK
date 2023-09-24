@@ -11,18 +11,7 @@
         #region Methods
         private void CheckValue(HulkExpression ValueExp)
         {
-            Types type = default;
-            var val = ValueExp.GetValue(false);
-            if (val is double)
-                type = Types.number;
-            else if (val is bool)
-                type = Types.boolean;
-            else if (val is string)
-                type = Types.hstring;
-            else if (val is null)
-                type = Types.dynamic;
-            else if (val is EmptyReturn)
-                type = Types.Void;
+            Types type = ValueExp.CheckType();            
             foreach (Variable v in Variables)
             {
                 if (v.Type != type)
@@ -42,7 +31,7 @@
         {
             if (execute)
                 ChangeValues();
-            return ValueExpression.GetValue(false);
+            return ValueExpression.GetValue(execute);
         }
 
         public override Types CheckType()
@@ -115,9 +104,8 @@
         }
         public override Types CheckType()
         {
-            return Types.Void;
+            return Argument.CheckType();
         }
-
         Print PrintHandler;
         public HulkExpression Argument { get; }
 

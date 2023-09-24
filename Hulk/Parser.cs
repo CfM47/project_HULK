@@ -98,7 +98,7 @@ namespace Hulk
                     }
                     //comentar la siguiente linea para que el operador de asignacion funcione. lo desactive porque aun no funciona bien
                     //al mezclarlo con otras operaciones (3 + a:=b por ejemplo da bateo)
-                    return null;
+                    //return null;
                     return new Asignment(Vars, right);
                 }
             }
@@ -593,8 +593,7 @@ namespace Hulk
                 List<HulkExpression> Args = GetComaSeparatedExpressions(tokens, start + 2, end - 1);
                 if (type == typeof(PrintFunc))
                 {
-                    List<object> printArgs = new List<object>(Args);
-                    printArgs.Add(PrintHandler);
+                    List<object> printArgs = new(Args){PrintHandler};
                     object[] print = printArgs.ToArray();
                     return (HulkExpression)Activator.CreateInstance(type, print);
                 }
