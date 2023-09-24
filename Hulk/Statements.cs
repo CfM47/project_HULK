@@ -68,10 +68,11 @@ public class LetInStatement : HulkExpression
         //arreglar
         foreach (Variable V in StoredVariables.Values)
         {
-            bool isOK = false;
-            object val = null;
+            
+            object val;
             if (V.IsDependent)
             {
+                bool isOK = false;
                 HulkExpression? Exp = V.Value as HulkExpression;
                 val = Exp.GetValue(false);
                 if (val != null)
@@ -85,28 +86,9 @@ public class LetInStatement : HulkExpression
                     else if (V.Type == Types.dynamic)
                         isOK = true;
                 }
-                else
-                    isOK = true;
-            }
-            else
-                isOK = true;
-            if (!isOK)
-            {
-                string expectedType = "";
-                switch (V.Type)
-                {
-                    case Types.number:
-                        expectedType = "number";
-                        break;
-                    case Types.boolean:
-                        expectedType = "boolean";
-                        break;
-                    case Types.hstring:
-                        expectedType = "string";
-                        break;
-                }
-                throw new SemanticError("Let-in expression", expectedType, val.GetHulkTypeAsString());
-            }
+                if (!isOK)
+                    throw new SemanticError("Let-in expression", V.Type.ToString(), val.GetHulkTypeAsString());
+            }            
         }
     }
     public override Types CheckType() => Body.CheckType();

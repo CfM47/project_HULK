@@ -33,11 +33,7 @@ public class Asignment : HulkExpression
             ChangeValues();
         return ValueExpression.GetValue(execute);
     }
-
-    public override Types CheckType()
-    {
-        return ValueExpression.CheckType();
-    }
+    public override Types CheckType() => ValueExpression.CheckType();
     #endregion
     #region Propierties
     public List<Variable> Variables { get; protected set; }
@@ -125,37 +121,54 @@ public class Variable : HulkExpression
     //constructor para las declaraciones de variable con tipo
     public Variable(string name, object value, Types type, VariableOptions options)
     {
-        //este constructor hay que arreglarlo
         Name = name;
         Options = options;
         if (options is VariableOptions.Dependent or VariableOptions.FunctionArgument)
             IsDependent = true;
-        object valueToCheck = value;
-        bool matchExp = false;
+        //object valueToCheck = value;
+        //bool matchExp = false;
+        //if (value is HulkExpression expression)
+        //{
+        //    valueToCheck = expression.GetValue(false);
+        //    if (valueToCheck == null)
+        //    {
+        //        if (value is Addition && (type == Types.number || type == Types.hstring))
+        //            matchExp = true;
+        //        else if (value is Variable)
+        //            matchExp = true;
+        //    }
+        //}
+        //else if (valueToCheck == null)
+        //    matchExp = true;
+
+        //bool matchNumber = valueToCheck is double && type == Types.number;
+        //bool matchBool = valueToCheck is bool && type == Types.boolean;
+        //bool matchString = valueToCheck is string && type == Types.hstring;
+        //if (matchNumber || matchBool || matchString || matchExp || type == Types.dynamic)
+        //{
+        //    Value = value;
+        //    Type = type;
+        //}
+        Types enteredType;
         if (value is HulkExpression expression)
         {
-            valueToCheck = expression.GetValue(false);
-            if (valueToCheck == null)
-            {
-                if (value is Addition && (type == Types.number || type == Types.hstring))
-                    matchExp = true;
-                else if (value is Variable)
-                    matchExp = true;
-            }
+            enteredType = expression.CheckType();
         }
-        else if (valueToCheck == null)
-            matchExp = true;
-
-        bool matchNumber = valueToCheck is double && type == Types.number;
-        bool matchBool = valueToCheck is bool && type == Types.boolean;
-        bool matchString = valueToCheck is string && type == Types.hstring;
-        if (matchNumber || matchBool || matchString || matchExp || type == Types.dynamic)
+        else if (value is double)
+            enteredType = Types.number;
+        else if (value is bool)
+            enteredType = Types.number;
+        else if (value is string)
+            enteredType = Types.hstring;
+        else
+            enteredType = Types.dynamic;
+        if(type == enteredType || type == Types.dynamic || enteredType == Types.dynamic)
         {
             Value = value;
             Type = type;
         }
         else
-            throw new SemanticError($"Variable `{Name}`", $"{Type}", value.GetHulkTypeAsString());
+            throw new SemanticError($"Variable `{Name}`", $"{Type}", enteredType.ToString());
 
     }
     #endregion
@@ -166,8 +179,8 @@ public class Variable : HulkExpression
         {
             VariableOptions.NonInitialized => throw new DefaultError("Use of unasigned variable"),
             VariableOptions.FunctionArgument => Value,
-            _ => IsDependent ? ((HulkExpression)Value).GetValue(execute) : Value,
-        };
+            _ => IsDependent ? ((HulkExpression)Value).GetValue(execute) : Value
+        }; 
     }
 
     private void SetType()

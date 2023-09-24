@@ -7,21 +7,25 @@ public class VariableDeclaration : HulkExpression
     {
         Names = names;
         SetType(type);
-        bool valueOk = ValueExp == null || IsOkValue(ValueExp);
-        if (!valueOk)
-        {
-            //esto hay que arreglarlo
-            object? val = ValueExp.GetValue(false);
-            string received = val == null && ValueExp is Addition ? "number` nor `string" : val.GetHulkTypeAsString();
-            throw new SemanticError("Variable declaration", type, received);
-        }
+        Types enteredType = ValueExp.CheckType();
+        if(!(Type == enteredType || enteredType == Types.dynamic))
+            throw new SemanticError("Variable declaration", Type.ToString(), enteredType.ToString());
+        //bool valueOk = ValueExp == null || IsOkValue(ValueExp);
+        //if (!valueOk)
+        //{
+        //    //esto hay que arreglarlo
+        //    object? val = ValueExp.GetValue(false);
+        //    string received = val == null && ValueExp is Addition ? "number` nor `string" : val.GetHulkTypeAsString();
+        //    throw new SemanticError("Variable declaration", type, received);
+        //}
         ValueExpression = ValueExp;
     }
     public VariableDeclaration(List<string> names, HulkExpression ValueExp)
     {
         Names = names;
         //arreglar
-        SetType(ValueExp.GetValue(false));
+        //SetType(ValueExp.GetValue(false));
+        Type = ValueExp.CheckType();
         ValueExpression = ValueExp;
     }
     #endregion
@@ -33,8 +37,7 @@ public class VariableDeclaration : HulkExpression
             "number" => Types.number,
             "boolean" => Types.boolean,
             "string" => Types.hstring,
-            //arreglar mensaje de excepcion
-            _ => throw new Exception(),
+            _ => throw new DefaultError("Invalid variable type"),
         };
     }
     private void SetType(object value)

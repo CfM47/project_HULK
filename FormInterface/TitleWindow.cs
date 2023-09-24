@@ -2,10 +2,7 @@
 
 public partial class TitleScreen : Form
 {
-    public TitleScreen()
-    {
-        InitializeComponent();
-    }
+    public TitleScreen() => InitializeComponent();
 
     private void pictureBox1_Click(object sender, EventArgs e)
     {
