@@ -39,6 +39,8 @@ public abstract class BinaryFunction : HulkExpression
     }
     public override Types CheckType()
     {
+        if (EnteredType == Types.dynamic)
+            return ReturnedType;
         var leftType = LeftArgument.CheckType();
         var rightType = RightArgument.CheckType();
         if (leftType != EnteredType && leftType != Types.dynamic)
@@ -49,7 +51,7 @@ public abstract class BinaryFunction : HulkExpression
     }
     public object Evaluate(object left, object right)
     {
-        if (left.GetType() == AcceptedType && right.GetType() == AcceptedType)
+        if (left.GetType() == AcceptedType && right.GetType() == AcceptedType || AcceptedType == typeof(object))
             return Operation(left, right);
         var conflictiveType = left.GetType() != AcceptedType ? left.GetHulkTypeAsString() : right.GetHulkTypeAsString();
         throw new SemanticError($"Operator `{OperationToken}`", ReturnedType.ToString(), conflictiveType);
@@ -326,10 +328,10 @@ public class SimpleConcatenation : BinaryFunction
         LeftArgument = leftArgument;
         RightArgument = rightArgument;
         ReturnedType = Types.hstring;
-        EnteredType = Types.hstring;
-        AcceptedType = typeof(string);
+        EnteredType = Types.dynamic;
+        AcceptedType = typeof(object);
         OperationToken = "@";
-        object func(object a, object b) => (dynamic)a + (dynamic)b;
+        object func(object a, object b) => (dynamic)a.ToString() + (dynamic)b.ToString();
         Operation = func;
     }
 }
@@ -340,10 +342,10 @@ public class WhiteSpaceConcatenation : BinaryFunction
         LeftArgument = leftArgument;
         RightArgument = rightArgument;
         ReturnedType = Types.hstring;
-        EnteredType = Types.hstring;
-        AcceptedType = typeof(string);
+        EnteredType = Types.dynamic;
+        AcceptedType = typeof(object);
         OperationToken = "@@";
-        object func(object a, object b) => (dynamic)a + " " + (dynamic)b;
+        object func(object a, object b) => (dynamic)a.ToString() + " " + (dynamic)b.ToString();
         Operation = func;
     }
 }
