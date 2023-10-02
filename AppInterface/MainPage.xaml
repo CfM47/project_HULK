@@ -1,0 +1,61 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="AppInterface.MainPage"
+             xmlns:viewmodel ="clr-namespace:AppInterface.ViewModel"
+             x:DataType="viewmodel:MainViewModel">
+    <Grid RowDefinitions=".10*, .80*, .10*"
+          ColumnDefinitions=".70*,.15*,.15*"
+          Padding="10"
+          RowSpacing="10"
+          ColumnSpacing="10">
+        <Editor Grid.ColumnSpan="2"
+                Grid.RowSpan="2"
+                IsReadOnly="True"
+                BackgroundColor="{StaticResource Gray900}"
+                Text="{Binding OutputText}">                
+        </Editor>
+        <Label Grid.Column="3"
+               BackgroundColor="{StaticResource Gray900}"
+               Text="Functions"
+               VerticalTextAlignment="Center"
+               HorizontalTextAlignment="Center"
+               TextColor="{StaticResource GreenCode}"/>
+        <CollectionView Grid.Row="1"
+                        Grid.Column="3"
+                        ItemsSource="{Binding Functions}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Grid Padding="0,5">
+                        <Frame BackgroundColor="{StaticResource Gray900}">
+                            <Label Text="{Binding .}"
+                                TextColor="{StaticResource GreenCode}"/>
+                        </Frame>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+        <Entry Placeholder="Enter command"
+               Grid.Row="3"
+               BackgroundColor="{StaticResource Gray900}"
+               Text="{Binding InputText}"
+               FontFamily="CascadiaCode">
+        </Entry>
+        <Button Text="Run Line"
+                TextColor="SpringGreen"
+                Grid.Row="3"
+                Grid.Column="1"
+                BackgroundColor="{StaticResource Gray900}"
+                Command="{Binding RunLine}">            
+        </Button>
+        <Button Text="Clear"
+                TextColor="SpringGreen"
+                Grid.Row="3"
+                Grid.Column="3"
+                BackgroundColor="{StaticResource Gray900}"
+                Command="{Binding Clean}">
+        </Button>
+        
+    </Grid>
+
+</ContentPage>
