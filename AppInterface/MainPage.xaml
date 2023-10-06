@@ -35,13 +35,16 @@
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
-        <Entry Placeholder="Enter command"
+        <Entry x:Name="inputEntry"
+               Placeholder="Enter command"
                Grid.Row="3"
                BackgroundColor="{StaticResource Gray900}"
                Text="{Binding InputText}"
-               FontFamily="CascadiaCode">
+               FontFamily="CascadiaCode"
+               Completed="OnInputEntryCompleted">
         </Entry>
-        <Button Text="Run Line"
+        <Button x:Name="runButton"
+                Text="Run Line"
                 TextColor="SpringGreen"
                 Grid.Row="3"
                 Grid.Column="1"
@@ -54,8 +57,7 @@
                 Grid.Column="3"
                 BackgroundColor="{StaticResource Gray900}"
                 Command="{Binding Clean}">
-        </Button>
-        
+        </Button>        
     </Grid>
 
 </ContentPage>
