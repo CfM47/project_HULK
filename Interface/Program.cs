@@ -1,16 +1,15 @@
 ﻿using Hulk;
-namespace Interface
+namespace Interface;
+
+internal class Program
 {
-    internal class Program
+    static void Main()
     {
-        static void Main()
+        Kompiler kompiler = new(Console.WriteLine);
+        while (true)
         {
-            Kompiler kompiler = new(Console.WriteLine);
-            while (true)
-            {
-                Console.Write(">");
-                kompiler.Compile(Console.ReadLine());
-            }
+            Console.Write(">");
+            kompiler.Compile(Console.ReadLine());
         }
     }
 }
