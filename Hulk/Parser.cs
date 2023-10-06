@@ -397,7 +397,6 @@ public class HulkParser
         else
         {
             string funcName = tokens[start + 1];
-            ;
             if (!HulkInfo.IsCorrectName(funcName))
                 throw new LexicalError(funcName, "function name");
             if (tokens[start + 2] != "(")
@@ -452,7 +451,8 @@ public class HulkParser
                 Variable LetVariable = Vars.ValueExpression.IsDependent
                     ? new Variable(name, Vars.ValueExpression, Vars.Type, Variable.VariableOptions.Dependent)
                     : new Variable(name, Vars.ValueExpression.GetValue(false));
-                LayerVariables.Add(name, LetVariable);
+                if (!LayerVariables.TryAdd(name, LetVariable))
+                    throw new DefaultError("Let-in arguments must have diferent names");
             }
         }
         result = new LetInStatement(LayerVariables);

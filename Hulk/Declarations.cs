@@ -150,7 +150,8 @@ public class FunctionDeclaration : HulkExpression
         foreach (string arg in argNames)
         {
             object val = default;
-            Arguments.Add(arg, new Variable(arg, val, Types.dynamic, Variable.VariableOptions.FunctionArgument));
+            if (!Arguments.TryAdd(arg, new Variable(arg, val, Types.dynamic, Variable.VariableOptions.FunctionArgument)))
+                throw new DefaultError("Function arguments must have diferent names", "declaration");
         }
     }
     public void AddToMemory(HulkMemory Memoria) => Memoria.AddNewFunction(this.FunctionName, this);
