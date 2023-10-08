@@ -1,4 +1,5 @@
 using Hulk;
+using System.Xml.Linq;
 
 namespace FormInterface;
 
@@ -22,43 +23,37 @@ public partial class MainWindow : Form
             Compiler.Compile(Input.Text);
             Output.Text += "\n>";
             Input.Text = "";
-            FunctionsList.Items.Clear();
-            FunctionsList.Items.AddRange(GetFunctionItems());
+            if (FunctionsList.Items.Count < Compiler.Memory.FunctionsStorage.Count)
+                FunctionsList.Items.Add(GetLastFunctionName());
             FunctionsList.Refresh();
         }
     }
-    private string[] GetFunctionItems()
+    private string GetLastFunctionName()
     {
-        Dictionary<string, FunctionDeclaration> Functions = Compiler.Memory.FunctionsStorage;
-        string[] items = new string[Functions.Count];
-        int i = 0;
-        foreach (string name in Functions.Keys)
+        Dictionary<string, FunctionDeclaration> functions = Compiler.Memory.FunctionsStorage;
+        var funcNames = functions.Keys;
+        var lastFunc = funcNames.ElementAt(funcNames.Count-1);
+        string args = lastFunc + "(";
+        if (functions[lastFunc].ArgumentNames.Count == 0)
+            args += ")";
+        for (int i = 0; i < functions[lastFunc].ArgumentNames.Count; i++) 
         {
-            string args = name + "(";
-            int argumentsCount = Functions[name].ArgumentNames.Count;
-            if (argumentsCount == 1)
+            string? argument = functions[lastFunc].ArgumentNames[i];
+            if (functions[lastFunc].ArgumentNames.Count == 1)
+                return $"{lastFunc}({argument})";
+            else if (i == functions[lastFunc].ArgumentNames.Count - 1)
             {
-                args = name + "(" + Functions[name].ArgumentNames[0] + ")";
-                items[i] = args;
-                i++;
+                args += argument + ")";
                 continue;
             }
-            for (int j = 0; j < argumentsCount; j++)
-            {
-                string? arg = Functions[name].ArgumentNames[j];
-                args += j == argumentsCount - 1 ? arg : arg + ", ";
-            }
-            args += ")";
-            items[i] = args;
-            i++;
+            args += argument + ",";
         }
-        return items;
+        return args;
     }
     private void CleanButton_Click(object sender, EventArgs e)
     {
         Compiler.Clear();
         FunctionsList.Items.Clear();
-        FunctionsList.Items.AddRange(GetFunctionItems());
         FunctionsList.Refresh();
         Output.Text = ">";
     }

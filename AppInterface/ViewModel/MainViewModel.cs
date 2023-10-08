@@ -19,32 +19,27 @@ public class MainViewModel : INotifyPropertyChanged
         hulkKompiler = new(PrintOutput);
     }
     public void PrintOutput(object output) => OutputText += "\n" + output.ToString();
-    private string[] GetFunctionItems()
+    private string GetLastFunctionName()
     {
-        Dictionary<string, FunctionDeclaration> Functions = hulkKompiler.Memory.FunctionsStorage;
-        string[] items = new string[Functions.Count];
-        int i = 0;
-        foreach (string name in Functions.Keys)
+        Dictionary<string, FunctionDeclaration> functions = hulkKompiler.Memory.FunctionsStorage;
+        var funcNames = functions.Keys;
+        var lastFunc = funcNames.ElementAt(funcNames.Count - 1);
+        string args = lastFunc + "(";
+        if (functions[lastFunc].ArgumentNames.Count == 0)
+            args += ")";
+        for (int i = 0; i < functions[lastFunc].ArgumentNames.Count; i++)
         {
-            string args = name + "(";
-            int argumentsCount = Functions[name].ArgumentNames.Count;
-            if (argumentsCount == 1)
+            string argument = functions[lastFunc].ArgumentNames[i];
+            if (functions[lastFunc].ArgumentNames.Count == 1)
+                return $"{lastFunc}({argument})";
+            else if (i == functions[lastFunc].ArgumentNames.Count - 1)
             {
-                args = name + "(" + Functions[name].ArgumentNames[0] + ")";
-                items[i] = args;
-                i++;
+                args += argument + ")";
                 continue;
             }
-            for (int j = 0; j < argumentsCount; j++)
-            {
-                string? arg = Functions[name].ArgumentNames[j];
-                args += j == argumentsCount - 1 ? arg : arg + ", ";
-            }
-            args += ")";
-            items[i] = args;
-            i++;
+            args += argument + ",";
         }
-        return items;
+        return args;
     }
     private void ExecuteRunLine()
     {
@@ -54,12 +49,14 @@ public class MainViewModel : INotifyPropertyChanged
         hulkKompiler.Compile(InputText);
         OutputText += "\n>";
         InputText = "";
-        Functions = new(GetFunctionItems());
+        Functions ??= new();
+        if (Functions.Count < hulkKompiler.Memory.FunctionsStorage.Count)
+            Functions.Add(GetLastFunctionName());
     }
     private void CleanProgram()
     {
         hulkKompiler.Clear();
-        Functions = new(GetFunctionItems());
+        Functions = new();
         OutputText = ">";
     }
     public string InputText
