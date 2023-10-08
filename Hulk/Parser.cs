@@ -531,6 +531,10 @@ public class HulkParser
                 return new Variable(Math.PI);
             case "E":
                 return new Variable(Math.E);
+            case "Infinity":
+                return new Variable(double.PositiveInfinity);
+            case "∞":
+                return new Variable(double.PositiveInfinity);
         }
         Stack<HulkExpression> PosibleLocations = new(new Stack<HulkExpression>(ParsingExp));
         Dictionary<string, Variable> Location = new();
