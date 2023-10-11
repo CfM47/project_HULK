@@ -1,4 +1,5 @@
 ﻿using AppInterface.ViewModel;
+using AppInterface.Views.Mobile;
 using Microsoft.Extensions.Logging;
 
 namespace AppInterface;
@@ -15,7 +16,10 @@ public static class MauiProgram
                 fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
             });
         builder.Services.AddSingleton<MainPage>();
-        builder.Services.AddSingleton<MainViewModel>();
+        builder.Services.AddSingleton<DesktopMainViewModel>();
+        builder.Services.AddSingleton<MobileMainViewModel>();
+
+        builder.Services.AddTransient<FunctionsPage>();
 
 #if DEBUG
 		builder.Logging.AddDebug();

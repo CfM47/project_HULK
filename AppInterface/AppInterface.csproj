@@ -60,4 +60,28 @@
 	  <ProjectReference Include="..\Hulk\Hulk.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Compile Update="Views\Mobile\FunctionsPage.xaml.cs">
+	    <DependentUpon>FunctionsPage.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="Views\Mobile\PrincipalPageMobile.xaml.cs">
+	    <DependentUpon>PrincipalPageMobile.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="Views\Desktop\PrincipalPageDesktop.xaml.cs">
+	    <DependentUpon>PrincipalPageDesktop.xaml</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <MauiXaml Update="Views\Mobile\FunctionsPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\Mobile\PrincipalPageMobile.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\Desktop\PrincipalPageDesktop.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	</ItemGroup>
+
 </Project>

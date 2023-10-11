@@ -1,9 +1,10 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="AppInterface.MainPage"
+             x:Class="AppInterface.Views.Desktop.PrincipalPageDesktop"
              xmlns:viewmodel ="clr-namespace:AppInterface.ViewModel"
-             x:DataType="viewmodel:DesktopMainViewModel">
+             x:DataType="viewmodel:DesktopMainViewModel"
+             Title="H.U.L.K. Interpeter">
     <Grid RowDefinitions=".10*, .80*, .10*"
           ColumnDefinitions=".70*,.15*,.15*"
           Padding="10"
@@ -13,7 +14,7 @@
                 Grid.RowSpan="2"
                 IsReadOnly="True"
                 BackgroundColor="{StaticResource Gray900}"
-                Text="{Binding OutputText}">                
+                Text="{Binding OutputText}">
         </Editor>
         <Label Grid.Column="3"
                BackgroundColor="{StaticResource Gray900}"
@@ -49,7 +50,7 @@
                 Grid.Row="3"
                 Grid.Column="1"
                 BackgroundColor="{StaticResource Gray900}"
-                Command="{Binding RunLine}">            
+                Command="{Binding RunLine}">
         </Button>
         <Button Text="Clear"
                 TextColor="SpringGreen"
@@ -57,7 +58,7 @@
                 Grid.Column="3"
                 BackgroundColor="{StaticResource Gray900}"
                 Command="{Binding Clean}">
-        </Button>        
+        </Button>
     </Grid>
 
 </ContentPage>
