@@ -574,9 +574,16 @@ public class HulkParser
             List<HulkExpression> Args = GetComaSeparatedExpressions(tokens, start + 2, end - 1);
             if (type == typeof(PrintFunc))
             {
-                List<object> printArgs = new(Args) { PrintHandler };
-                object[] print = printArgs.ToArray();
-                return (HulkExpression)Activator.CreateInstance(type, print);
+                try 
+                {
+                    List<object> printArgs = new(Args) { PrintHandler };
+                    object[] print = printArgs.ToArray();
+                    return (HulkExpression)Activator.CreateInstance(type, print);
+                }
+                catch
+                {
+                    throw new DefaultError($"Function `{tokens[start]}` does not take {Args.Count} arguments");
+                }
             }
             object[] args = Args.ToArray();
             try
