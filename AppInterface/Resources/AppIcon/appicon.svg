@@ -1,4 +1,18 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<svg width="456" height="456" viewBox="0 0 456 456" version="1.1" xmlns="http://www.w3.org/2000/svg">
-    <rect x="0" y="0" width="456" height="456" fill="#512BD4" />
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 25.4.1, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Capa_1" xmlns:serif="http://www.serif.com/"
+	 xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 456 456"
+	 style="enable-background:new 0 0 456 456;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:#FFFFFF;}
+</style>
+<g>
+	<g>
+		<path class="st0" d="M129.8,294.6V169.8h17.6v124.8H129.8z M133.4,240.8v-16.7h73.9v16.7H133.4z M193,294.6V169.8h17.6v124.8H193z
+			"/>
+		<path class="st0" d="M242,294.6V169.8h17.6v124.8H242z M253.1,254.9l1.6-17.4c9,0,16.8-1.9,23.4-5.7s12-8.9,16.2-15.3
+			c4.2-6.4,7.4-13.7,9.5-21.7c2.1-8.1,3.1-16.4,3.1-25H325c0,11.1-1.6,21.7-4.8,31.9c-3.2,10.2-7.9,19.3-14.1,27.3
+			s-13.7,14.3-22.6,18.9C274.6,252.6,264.5,254.9,253.1,254.9z M309.7,294.6l-31.6-60.8l15.8-9l37.1,69.8H309.7z"/>
+	</g>
+</g>
 </svg>
