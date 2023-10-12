@@ -1,11 +1,10 @@
-﻿using AppInterface.ViewModel;
+using AppInterface.ViewModel;
+namespace AppInterface.Views.Desktop;
 
-namespace AppInterface;
-
-public partial class MainPage : ContentPage
+public partial class PrincipalPageDesktop : ContentPage
 {
-    public MainPage()
-    {
+	public PrincipalPageDesktop()
+	{
         InitializeComponent();
         BindingContext = new DesktopMainViewModel();
     }
@@ -14,8 +13,7 @@ public partial class MainPage : ContentPage
         if (sender is Entry entry && entry.Text.Length > 0)
         {
             runButton.SendClicked();
-            inputEntry.Focus();            
+            inputEntry.Focus();
         }
     }
 }
-

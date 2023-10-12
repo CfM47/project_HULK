@@ -3,7 +3,7 @@ using System.ComponentModel;
 using Hulk;
 
 namespace AppInterface.ViewModel;
-public class MainViewModel : INotifyPropertyChanged
+public class DesktopMainViewModel : INotifyPropertyChanged
 {
     string inputText;
     string outputText;
@@ -11,7 +11,7 @@ public class MainViewModel : INotifyPropertyChanged
     ObservableCollection<string> functionsList;
     public Command RunLine { get; private set; }
     public Command Clean { get; private set; }
-    public MainViewModel()
+    public DesktopMainViewModel()
     {
         outputText = ">";
         RunLine = new Command(ExecuteRunLine);

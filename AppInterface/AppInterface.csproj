@@ -32,7 +32,7 @@
 
 	<ItemGroup>
 		<!-- App Icon -->
-		<MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#512BD4" />
+		<MauiIcon Include="Resources\AppIcon\appicon.svg" BaseSize="80,80" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#512BD4"/>
 
 		<!-- Splash Screen -->
 		<MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#512BD4" BaseSize="128,128" />
@@ -58,6 +58,30 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\Hulk\Hulk.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Update="Views\Mobile\FunctionsPage.xaml.cs">
+	    <DependentUpon>FunctionsPage.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="Views\Mobile\PrincipalPageMobile.xaml.cs">
+	    <DependentUpon>PrincipalPageMobile.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="Views\Desktop\PrincipalPageDesktop.xaml.cs">
+	    <DependentUpon>PrincipalPageDesktop.xaml</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <MauiXaml Update="Views\Mobile\FunctionsPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\Mobile\PrincipalPageMobile.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\Desktop\PrincipalPageDesktop.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	</ItemGroup>
 
 </Project>
