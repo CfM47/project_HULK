@@ -44,6 +44,7 @@ public class Kompiler
                     //}
                     else
                     {
+                        exp.CheckType();
                         exp.GetValue(true);
                     }
                 }
