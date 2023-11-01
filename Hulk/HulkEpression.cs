@@ -9,7 +9,7 @@ public abstract class HulkExpression
 public delegate void Print(object input);
 public static class ExtObject
 {
-    public static string GetHulkTypeAsString(this Object arg)
+    public static string GetHulkTypeAsString(this object arg)
     {
         Type type = arg.GetType();
         if (type == typeof(double))

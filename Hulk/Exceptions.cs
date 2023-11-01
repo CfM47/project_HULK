@@ -77,22 +77,6 @@ public class SemanticError : HulkException
     public string ExpressionReceived { get; }
     public string ExpressionExpected { get; }
 }
-public class OperationSemanticError : HulkException
-{
-    public OperationSemanticError(string operation, string leftArg, string rightArg, string expected)
-    {
-        MessageStart = "! SEMANTIC ERROR : ";
-        Operation = operation;
-        LeftArgument = leftArg;
-        RightArgument = rightArg;
-        Expected = expected;
-        MessageDefinition = $"Operator `{operation}` cannot be applied to operands of type  `{leftArg}` and `{rightArg}`";
-    }
-    public string Operation { get; }
-    public string LeftArgument { get; }
-    public string RightArgument { get; }
-    public string Expected { get; }
-}
 public class OverFlowError : HulkException
 {
     public OverFlowError(string functionName)

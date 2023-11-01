@@ -125,30 +125,6 @@ public class Variable : HulkExpression
         Options = options;
         if (options is VariableOptions.Dependent or VariableOptions.FunctionArgument)
             IsDependent = true;
-        //object valueToCheck = value;
-        //bool matchExp = false;
-        //if (value is HulkExpression expression)
-        //{
-        //    valueToCheck = expression.GetValue(false);
-        //    if (valueToCheck == null)
-        //    {
-        //        if (value is Addition && (type == Types.number || type == Types.hstring))
-        //            matchExp = true;
-        //        else if (value is Variable)
-        //            matchExp = true;
-        //    }
-        //}
-        //else if (valueToCheck == null)
-        //    matchExp = true;
-
-        //bool matchNumber = valueToCheck is double && type == Types.number;
-        //bool matchBool = valueToCheck is bool && type == Types.boolean;
-        //bool matchString = valueToCheck is string && type == Types.hstring;
-        //if (matchNumber || matchBool || matchString || matchExp || type == Types.dynamic)
-        //{
-        //    Value = value;
-        //    Type = type;
-        //}
         Types enteredType;
         if (value is HulkExpression expression)
         {

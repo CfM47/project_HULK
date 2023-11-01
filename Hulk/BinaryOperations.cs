@@ -1,4 +1,6 @@
-﻿namespace Hulk;
+﻿using Microsoft.CSharp.RuntimeBinder;
+
+namespace Hulk;
 
 public abstract class BinaryFunction : HulkExpression
 {
@@ -11,30 +13,6 @@ public abstract class BinaryFunction : HulkExpression
     }
     #region Methods
     public override object GetValue(bool execute) => Evaluate(LeftArgument.GetValue(execute), RightArgument.GetValue(execute));
-    //es posible que elimine el siguiente metodo
-    protected bool ArgsOk(object left, object right, List<Type> AdmitedTypesName)
-    {
-        foreach (Type type in AdmitedTypesName)
-        {
-            if (left == null || right == null)
-            {
-                if (left == null && right != null)
-                {
-                    if (right.GetType() == type)
-                        return true;
-                }
-                else if (right == null && left != null)
-                {
-                    if (left.GetType() == type)
-                        return true;
-                }
-                return true;
-            }
-            if (left.GetType() == right.GetType() && left.GetType() == type)
-                return true;
-        }
-        return false;
-    }
     public override Types CheckType()
     {
         if (EnteredType == Types.dynamic)
@@ -77,7 +55,7 @@ public class Conjunction : BinaryFunction
         EnteredType = Types.boolean;
         AcceptedType = typeof(bool);
         OperationToken = "&";
-        object func(object a, object b) => (dynamic)a && (dynamic)b;
+        object func(object a, object b) => (bool)a && (bool)b;
         Operation = func;
     }
 }
@@ -91,7 +69,7 @@ public class Disjunction : BinaryFunction
         EnteredType = Types.boolean;
         AcceptedType = typeof(bool);
         OperationToken = "|";
-        object func(object a, object b) => (dynamic)a || (dynamic)b;
+        object func(object a, object b) => (bool)a || (bool)b;
         Operation = func;
     }
 }
@@ -107,7 +85,7 @@ public class LowerThan : BinaryFunction
         EnteredType = Types.number;
         AcceptedType = typeof(double);
         OperationToken = "<";
-        object func(object a, object b) => (dynamic)a < (dynamic)b;
+        object func(object a, object b) => (double)a < (double)b;
         Operation = func;
     }
 }
@@ -121,7 +99,7 @@ public class GreaterThan : BinaryFunction
         EnteredType = Types.number;
         AcceptedType = typeof(double);
         OperationToken = ">";
-        object func(object a, object b) => (dynamic)a > (dynamic)b;
+        object func(object a, object b) => (double)a > (double)b;
         Operation = func;
     }
 }
@@ -135,7 +113,7 @@ public class LowerEqualThan : BinaryFunction
         EnteredType = Types.number;
         AcceptedType = typeof(double);
         OperationToken = "<=";
-        object func(object a, object b) => (dynamic)a <= (dynamic)b;
+        object func(object a, object b) => (double)a <= (double)b;
         Operation = func;
     }
 }
@@ -149,7 +127,7 @@ public class GreaterEqualThan : BinaryFunction
         EnteredType = Types.number;
         AcceptedType = typeof(double);
         OperationToken = ">=";
-        object func(object a, object b) => (dynamic)a >= (dynamic)b;
+        object func(object a, object b) => (double)a >= (double)b;
         Operation = func;
     }
 }
@@ -223,7 +201,7 @@ public class Addition : BinaryFunction
         EnteredType = Types.number;
         AcceptedType = typeof(double);
         OperationToken = "+";
-        object func(object a, object b) => (dynamic)a + (dynamic)b;
+        object func(object a, object b) => (double)a + (double)b;
         Operation = func;
     }
 }
@@ -237,7 +215,7 @@ public class Subtraction : BinaryFunction
         EnteredType = Types.number;
         AcceptedType = typeof(double);
         OperationToken = "-";
-        object func(object a, object b) => (dynamic)a - (dynamic)b;
+        object func(object a, object b) => (double)a - (double)b;
         Operation = func;
     }
 }
@@ -251,7 +229,7 @@ public class Multiplication : BinaryFunction
         EnteredType = Types.number;
         AcceptedType = typeof(double);
         OperationToken = "*";
-        object func(object a, object b) => (dynamic)a * (dynamic)b;
+        object func(object a, object b) => (double)a * (double)b;
         Operation = func;
     }
 }
@@ -265,10 +243,7 @@ public class Division : BinaryFunction
         EnteredType = Types.number;
         AcceptedType = typeof(double);
         OperationToken = "/";
-        object func(object a, object b)
-        {
-            return (double)b == 0 ? throw new DefaultError("Atempted to divide by 0", "arithmetic") : (object)((dynamic)a / (dynamic)b);
-        }
+        object func(object a, object b) => (double)b == 0 ? throw new DefaultError("Atempted to divide by 0", "arithmetic") : (double)a / (double)b;
         Operation = func;
     }
 }
@@ -282,10 +257,7 @@ public class Module : BinaryFunction
         EnteredType = Types.number;
         AcceptedType = typeof(double);
         OperationToken = "%";
-        object func(object a, object b)
-        {
-            return (double)b == 0 ? throw new DefaultError("Atempted to divide by 0", "arithmetic") : (object)((dynamic)a % (dynamic)b);
-        }
+        object func(object a, object b) => (double)b == 0 ? throw new DefaultError("Atempted to divide by 0", "arithmetic") : (double)a % (double)b;
         Operation = func;
     }
 }
@@ -299,7 +271,7 @@ public class Power : BinaryFunction
         EnteredType = Types.number;
         AcceptedType = typeof(double);
         OperationToken = "^";
-        object func(object a, object b) => Math.Pow((dynamic)a, (dynamic)b);
+        object func(object a, object b) => Math.Pow((double)a, (double)b);
         Operation = func;
     }
 }

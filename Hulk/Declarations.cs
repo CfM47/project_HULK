@@ -10,21 +10,11 @@ public class VariableDeclaration : HulkExpression
         Types enteredType = ValueExp.CheckType();
         if(!(Type == enteredType || enteredType == Types.dynamic))
             throw new SemanticError("Variable declaration", Type.ToString(), enteredType.ToString());
-        //bool valueOk = ValueExp == null || IsOkValue(ValueExp);
-        //if (!valueOk)
-        //{
-        //    //esto hay que arreglarlo
-        //    object? val = ValueExp.GetValue(false);
-        //    string received = val == null && ValueExp is Addition ? "number` nor `string" : val.GetHulkTypeAsString();
-        //    throw new SemanticError("Variable declaration", type, received);
-        //}
         ValueExpression = ValueExp;
     }
     public VariableDeclaration(List<string> names, HulkExpression ValueExp)
     {
         Names = names;
-        //arreglar
-        //SetType(ValueExp.GetValue(false));
         Type = ValueExp.CheckType();
         ValueExpression = ValueExp;
     }
@@ -39,34 +29,6 @@ public class VariableDeclaration : HulkExpression
             "string" => Types.hstring,
             _ => throw new DefaultError("Invalid variable type"),
         };
-    }
-    private void SetType(object value)
-    {
-        //arreglar
-        if (value is double)
-            Type = Types.number;
-        else if (value is bool)
-            Type = Types.boolean;
-        else if (value is string)
-            Type = Types.hstring;
-        else Type = value == null ? Types.dynamic : throw new Exception();
-    }
-    private bool IsOkValue(HulkExpression ValueExp)
-    {
-        //arreglar
-        object? val = ValueExp.GetValue(false);
-        bool matchExp = false;
-        if (val == null)
-        {
-            if (ValueExp is Addition && (Type == Types.number || Type == Types.hstring))
-                matchExp = true;
-            else if (ValueExp is Variable)
-                matchExp = true;
-        }
-        bool okNumber = (val is double) && (Type == Types.number);
-        bool okBoolean = (val is bool) && (Type == Types.boolean);
-        bool okString = (val is string) && (Type == Types.hstring);
-        return okNumber || okBoolean || okString || matchExp;
     }
     public override object GetValue(bool execute) => new EmptyReturn();
     public override Types CheckType() => Types.Void;
@@ -154,7 +116,7 @@ public class FunctionDeclaration : HulkExpression
                 throw new DefaultError("Function arguments must have diferent names", "declaration");
         }
     }
-    public void AddToMemory(HulkMemory Memoria) => Memoria.AddNewFunction(this.FunctionName, this);
+    public void AddToMemory(HulkMemory Memoria) => Memoria.AddNewFunction(FunctionName, this);
     public override object GetValue(bool execute) => new EmptyReturn();
     public override Types CheckType() => Types.Void;
     #endregion

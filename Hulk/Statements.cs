@@ -12,19 +12,7 @@ public class IfElseStatement : HulkExpression
 
     }
     #region Methods
-    public override object GetValue(bool execute) => !execute ? CheckValue() : Result(Condition, IfExpression, ElseExpression, execute);
-    private object CheckValue()
-    {
-        if (Condition is Variable && Condition.GetValue(false) == null)
-        {
-            object ifValue = IfExpression.GetValue(false);
-            object elseValue = ElseExpression.GetValue(false);
-            return ifValue;
-        }
-        else
-            return Result(Condition, IfExpression, ElseExpression, false);
-
-    }
+    public override object GetValue(bool execute) => Result(Condition, IfExpression, ElseExpression, execute);
     public override Types CheckType()
     {
         Condition.CheckType();
@@ -41,9 +29,6 @@ public class IfElseStatement : HulkExpression
             bool condition = (bool)Cond.GetValue(execute);
             if (condition)
                 return IfExp.GetValue(execute);
-            if (IfExp != null)
-                if (ElseExp == null)
-                    return null;
             return ElseExp.GetValue(execute);
         }
     }

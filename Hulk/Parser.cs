@@ -499,9 +499,7 @@ public class HulkParser
         {
             if (tokens[end] != ")")
                 throw new SyntaxError(")", "function call");
-            //la siguiente linea tiene cara de que me van a romper el programa
             FunctionDeclaration Definition;
-
             if (Memoria.FunctionsStorage.ContainsKey(tokens[start]))
                 Definition = Memoria.FunctionsStorage[tokens[start]];
             else
