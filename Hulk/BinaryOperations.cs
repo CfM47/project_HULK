@@ -1,6 +1,4 @@
-﻿using Microsoft.CSharp.RuntimeBinder;
-
-namespace Hulk;
+﻿namespace Hulk;
 
 public abstract class BinaryFunction : HulkExpression
 {
