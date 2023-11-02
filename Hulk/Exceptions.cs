@@ -2,12 +2,24 @@
 
 namespace Hulk;
 
+/// <summary>
+/// Representa los errores de cualquier tipo que se puedan dar en el lenguaje
+/// </summary>
 public abstract class HulkException : Exception
 {
     public override string Message => (MessageStart + MessageDefinition + ".").Replace("hstring", "string");
+    /// <summary>
+    /// Caption que inicia el mensaje de error
+    /// </summary>
     public string MessageStart { get; protected set; }
+    /// <summary>
+    /// Descripcion del error
+    /// </summary>
     public string MessageDefinition { get; protected set; }
 }
+/// <summary>
+/// Representa los errores ocurridos en una instruccion
+/// </summary>
 public class InstrucctionError : HulkException
 {
     public InstrucctionError(HulkException ex, int instrucctionNumber, int instrucctionsCount)
@@ -17,6 +29,9 @@ public class InstrucctionError : HulkException
         MessageDefinition = ex.MessageDefinition + messageEnd;
     }
 }
+/// <summary>
+/// Representa un error generico
+/// </summary>
 public class DefaultError : HulkException
 {
     public DefaultError(string message)
@@ -31,6 +46,9 @@ public class DefaultError : HulkException
         MessageDefinition = message;
     }
 }
+/// <summary>
+/// Representa un error lexico. Se producen por la presencia de tokens invalidos.
+/// </summary>
 public class LexicalError : HulkException
 {
     public LexicalError(string invalidToken)
@@ -51,6 +69,9 @@ public class LexicalError : HulkException
     public string InvalidToken { get; }
     public string ExpectedToken { get; }
 }
+/// <summary>
+/// Representa un error sintactico. Se produce por expresiones incompletas
+/// </summary>
 public class SyntaxError : HulkException
 {
     public SyntaxError(string missingPart, string place)
@@ -63,6 +84,9 @@ public class SyntaxError : HulkException
     public string MissingPart { get; }
     public string MissingPlace { get; }
 }
+/// <summary>
+/// Representa un error semantico. Se produce por el uso incorrecto de los tipos y argumentos
+/// </summary>
 public class SemanticError : HulkException
 {
     public SemanticError(string expression, string expected, string received)
@@ -77,6 +101,9 @@ public class SemanticError : HulkException
     public string ExpressionReceived { get; }
     public string ExpressionExpected { get; }
 }
+/// <summary>
+/// Representa un error producido por la sobrecarga de la pila de llamados
+/// </summary>
 public class OverFlowError : HulkException
 {
     public OverFlowError(string functionName)
