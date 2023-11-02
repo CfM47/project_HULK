@@ -3,11 +3,28 @@ using System.Text.RegularExpressions;
 
 namespace Hulk;
 
+/// <summary>
+/// Representa un objeto que controla el parseo de instrucciones de HULK
+/// </summary>
 public class HulkParser
 {
+    /// <summary>
+    /// Pila donde se especifica la expresion que define el contexto en que se esta parseando. Necesaria para Definir el scope de variables
+    /// </summary>
     Stack<HulkExpression> ParsingExp;
+    /// <summary>
+    /// Funcion que se encarga de imprimir en consola
+    /// </summary>
     Print PrintHandler;
+    /// <summary>
+    /// Memoria donde se guardaran las funciones declaradas
+    /// </summary>
     public HulkMemory Memoria { get; }
+    /// <summary>
+    /// Construye un parseador del lenguaje HULK
+    /// </summary>
+    /// <param name="Mem">Memoria donde se guardaran las funciones</param>
+    /// <param name="printHandler">Funcion que se encargara de imprimir</param>
     public HulkParser(HulkMemory Mem, Print printHandler)
     {
         Memoria = Mem;
@@ -15,6 +32,11 @@ public class HulkParser
         PrintHandler = printHandler;
     }
     #region Methods
+    /// <summary>
+    /// Parsea una instruccion de HULK
+    /// </summary>
+    /// <param name="tokens">Arreglo de tokens que representan la entrada</param>
+    /// <returns></returns>
     public HulkExpression Parse(string[] tokens)
     {
         try
@@ -28,6 +50,13 @@ public class HulkParser
             throw;
         }
     }
+    /// <summary>
+    /// Primer nivel de parseo de una instruccion de HULK
+    /// </summary>
+    /// <param name="tokens">Arreglo de tokens que representan la entrada</param>
+    /// <param name="start">Puntero que representa el punto de inicio de la expresion a parsear</param>
+    /// <param name="end">Puntero que representa el punto final de la expresion a parsear</param>
+    /// <returns>Expresion que se logra parsear o null</returns>
     private HulkExpression ParseInternal(string[] tokens, int start, int end)
     {
         if (tokens.Length == 0)
@@ -42,6 +71,13 @@ public class HulkParser
         expr ??= ParseInner(tokens, start, end);
         return expr ?? throw new DefaultError("Invalid Expression, missing semicolon?");
     }
+    /// <summary>
+    /// Intenta parsear una expresion de HULK en los diferentes niveles de precedencia de expresiones
+    /// </summary>
+    /// <param name="tokens">Arreglo de tokens que representan la entrada</param>
+    /// <param name="start">Puntero que representa el punto de inicio de la expresion a parsear</param>
+    /// <param name="end">Puntero que representa el punto final de la expresion a parsear</param>
+    /// <returns>Expresion que se logra parsear o null</returns>
     private HulkExpression ParseInner(string[] tokens, int start, int end)
     {
         if (tokens.Length == 0)
@@ -69,6 +105,13 @@ public class HulkParser
     //en esta region se implementaran los metodos para parasear los operadores. Estos tienen un nivel de prioridad,
     //me estoy guiando por la prioridad de C#. Para ver la lista detallada del orden de las operaciones ir a
     //https://learn.microsoft.com/es-es/dotnet/csharp/language-reference/operators/ 
+    /// <summary>
+    /// Intenta parsear una asignacion destructiva de variables
+    /// </summary>
+    /// <param name="tokens">Arreglo de tokens que representan la entrada</param>
+    /// <param name="start">Puntero que representa el punto de inicio de la expresion a parsear</param>
+    /// <param name="end">Puntero que representa el punto final de la expresion a parsear</param>
+    /// <returns>Expresion que se logra parsear o null</returns>
     private HulkExpression TryAsignment(string[] tokens, int start, int end)
     {
         for (int i = start; i <= end; i++)
@@ -100,6 +143,13 @@ public class HulkParser
         }
         return null;
     }
+    /// <summary>
+    /// Intenta parsear una disyuncion logica
+    /// </summary>
+    /// <param name="tokens">Arreglo de tokens que representan la entrada</param>
+    /// <param name="start">Puntero que representa el punto de inicio de la expresion a parsear</param>
+    /// <param name="end">Puntero que representa el punto final de la expresion a parsear</param>
+    /// <returns>Expresion que se logra parsear o null</returns>
     private HulkExpression TryConditionalOr(string[] tokens, int start, int end)
     {
         for (int i = end; i >= start; i--)
@@ -117,6 +167,13 @@ public class HulkParser
         }
         return null;
     }
+    /// <summary>
+    /// Intenta parsear una conjuncion logica
+    /// </summary>
+    /// <param name="tokens">Arreglo de tokens que representan la entrada</param>
+    /// <param name="start">Puntero que representa el punto de inicio de la expresion a parsear</param>
+    /// <param name="end">Puntero que representa el punto final de la expresion a parsear</param>
+    /// <returns>Expresion que se logra parsear o null</returns>
     private HulkExpression TryConditionalAnd(string[] tokens, int start, int end)
     {
         for (int i = end; i >= start; i--)
@@ -134,6 +191,13 @@ public class HulkParser
         }
         return null;
     }
+    /// <summary>
+    /// Intenta parsear una igualdad o desigualdad
+    /// </summary>
+    /// <param name="tokens">Arreglo de tokens que representan la entrada</param>
+    /// <param name="start">Puntero que representa el punto de inicio de la expresion a parsear</param>
+    /// <param name="end">Puntero que representa el punto final de la expresion a parsear</param>
+    /// <returns>Expresion que se logra parsear o null</returns>
     private HulkExpression TryEquality(string[] tokens, int start, int end)
     {
         for (int i = end; i >= start; i--)
@@ -153,6 +217,13 @@ public class HulkParser
         }
         return null;
     }
+    /// <summary>
+    /// Intenta parsear una comparacion
+    /// </summary>
+    /// <param name="tokens">Arreglo de tokens que representan la entrada</param>
+    /// <param name="start">Puntero que representa el punto de inicio de la expresion a parsear</param>
+    /// <param name="end">Puntero que representa el punto final de la expresion a parsear</param>
+    /// <returns>Expresion que se logra parsear o null</returns>
     private HulkExpression TryRelational(string[] tokens, int start, int end)
     {
         for (int i = end; i >= start; i--)
@@ -176,6 +247,13 @@ public class HulkParser
         }
         return null;
     }
+    /// <summary>
+    /// Intenta parsear una concatenacion
+    /// </summary>
+    /// <param name="tokens">Arreglo de tokens que representan la entrada</param>
+    /// <param name="start">Puntero que representa el punto de inicio de la expresion a parsear</param>
+    /// <param name="end">Puntero que representa el punto final de la expresion a parsear</param>
+    /// <returns>Expresion que se logra parsear o null</returns>
     private HulkExpression TryConcatenation(string[] tokens, int start, int end)
     {
         for (int i = end; i >= start; i--)
@@ -197,6 +275,13 @@ public class HulkParser
         }
         return null;
     }
+    /// <summary>
+    /// Intenta parsear una expresion aditiva (suma o resta)
+    /// </summary>
+    /// <param name="tokens">Arreglo de tokens que representan la entrada</param>
+    /// <param name="start">Puntero que representa el punto de inicio de la expresion a parsear</param>
+    /// <param name="end">Puntero que representa el punto final de la expresion a parsear</param>
+    /// <returns>Expresion que se logra parsear o null</returns>
     private HulkExpression TryAdditive(string[] tokens, int start, int end)
     {
         for (int i = end; i >= start; i--)
@@ -218,6 +303,13 @@ public class HulkParser
         }
         return null;
     }
+    /// <summary>
+    /// Intenta parsear una expresion multiplicativa (multiplicacion, division o modulo)
+    /// </summary>
+    /// <param name="tokens">Arreglo de tokens que representan la entrada</param>
+    /// <param name="start">Puntero que representa el punto de inicio de la expresion a parsear</param>
+    /// <param name="end">Puntero que representa el punto final de la expresion a parsear</param>
+    /// <returns>Expresion que se logra parsear o null</returns>
     private HulkExpression TryMultiplicative(string[] tokens, int start, int end)
     {
         for (int i = end; i >= start; i--)
@@ -239,6 +331,13 @@ public class HulkParser
         }
         return null;
     }
+    /// <summary>
+    /// Intenta parsear una potenciacion
+    /// </summary>
+    /// <param name="tokens">Arreglo de tokens que representan la entrada</param>
+    /// <param name="start">Puntero que representa el punto de inicio de la expresion a parsear</param>
+    /// <param name="end">Puntero que representa el punto final de la expresion a parsear</param>
+    /// <returns>Expresion que se logra parsear o null</returns>
     private HulkExpression TryPower(string[] tokens, int start, int end)
     {
         for (int i = start; i <= end; i++)
@@ -256,6 +355,13 @@ public class HulkParser
         }
         return null;
     }
+    /// <summary>
+    /// Intenta parsear una expresion unaria (negacion, positivo o negativo)
+    /// </summary>
+    /// <param name="tokens">Arreglo de tokens que representan la entrada</param>
+    /// <param name="start">Puntero que representa el punto de inicio de la expresion a parsear</param>
+    /// <param name="end">Puntero que representa el punto final de la expresion a parsear</param>
+    /// <returns>Expresion que se logra parsear o null</returns>
     private HulkExpression TryUnary(string[] tokens, int start, int end)
     {
         switch (tokens[start])
@@ -274,6 +380,13 @@ public class HulkParser
         }
         return null;
     }
+    /// <summary>
+    /// Intenta parsear una expresion principal (variable, funcion, numero, etc)
+    /// </summary>
+    /// <param name="tokens">Arreglo de tokens que representan la entrada</param>
+    /// <param name="start">Puntero que representa el punto de inicio de la expresion a parsear</param>
+    /// <param name="end">Puntero que representa el punto final de la expresion a parsear</param>
+    /// <returns>Expresion que se logra parsear o null</returns>
     private HulkExpression TryPrincipal(string[] tokens, int start, int end)
     {
         if (start == end)
@@ -316,6 +429,13 @@ public class HulkParser
     }
     #endregion
     #region Statements Parsing
+    /// <summary>
+    /// Intenta parsear una declaracion de variables
+    /// </summary>
+    /// <param name="tokens">Arreglo de tokens que representan la entrada</param>
+    /// <param name="start">Puntero que representa el punto de inicio de la expresion a parsear</param>
+    /// <param name="end">Puntero que representa el punto final de la expresion a parsear</param>
+    /// <returns>Expresion que se logra parsear o null</returns>
     private HulkExpression ParseVarDeclaration(string[] tokens, int start, int end)
     {
         HulkExpression result;
@@ -351,6 +471,13 @@ public class HulkParser
         result = new VariableDeclaration(names, type, ValueExp);
         return result;
     }
+    /// <summary>
+    /// Intenta parsear una declaracion de argumentos de let-in
+    /// </summary>
+    /// <param name="tokens">Arreglo de tokens que representan la entrada</param>
+    /// <param name="start">Puntero que representa el punto de inicio de la expresion a parsear</param>
+    /// <param name="end">Puntero que representa el punto final de la expresion a parsear</param>
+    /// <returns>Expresion que se logra parsear o null</returns>
     private HulkExpression ParseLetInArgs(string[] tokens, int start, int end)
     {
         string type = null;
@@ -384,6 +511,13 @@ public class HulkParser
             throw new SyntaxError("value expression", "variable declaration");
         return type == null ? new VariableDeclaration(VariableName, ValueExp) : new VariableDeclaration(VariableName, type, ValueExp);
     }
+    /// <summary>
+    /// Intenta parsear una declaracion funcion
+    /// </summary>
+    /// <param name="tokens">Arreglo de tokens que representan la entrada</param>
+    /// <param name="start">Puntero que representa el punto de inicio de la expresion a parsear</param>
+    /// <param name="end">Puntero que representa el punto final de la expresion a parsear</param>
+    /// <returns>Expresion que se logra parsear o null</returns>
     public HulkExpression ParseFunctionDeclaration(string[] tokens, int start, int end)
     {
         int declarationEnd = Tokenizer.GetNameLimit(tokens, start, end, "=>");
@@ -429,6 +563,13 @@ public class HulkParser
         }
         return result;
     }
+    /// <summary>
+    /// Intenta parsear una expresion let-in (declaracion de variables locales)
+    /// </summary>
+    /// <param name="tokens">Arreglo de tokens que representan la entrada</param>
+    /// <param name="start">Puntero que representa el punto de inicio de la expresion a parsear</param>
+    /// <param name="end">Puntero que representa el punto final de la expresion a parsear</param>
+    /// <returns>Expresion que se logra parsear o null</returns>
     private HulkExpression ParseLetInExpression(string[] tokens, int start, int end)
     {
         LetInStatement result;
@@ -462,6 +603,13 @@ public class HulkParser
         result.Define(DefExpression);
         return result;
     }
+    /// <summary>
+    /// Intenta parsear una expresion if-else (condicional)
+    /// </summary>
+    /// <param name="tokens">Arreglo de tokens que representan la entrada</param>
+    /// <param name="start">Puntero que representa el punto de inicio de la expresion a parsear</param>
+    /// <param name="end">Puntero que representa el punto final de la expresion a parsear</param>
+    /// <returns>Expresion que se logra parsear o null</returns>
     private HulkExpression ParseIfElseStatement(string[] tokens, int start, int end)
     {
         HulkExpression result;
@@ -492,6 +640,13 @@ public class HulkParser
     }
     #endregion
     #region Operands Parsing templates
+    /// <summary>
+    /// Intenta parsear un llamado a funcion
+    /// </summary>
+    /// <param name="tokens">Arreglo de tokens que representan la entrada</param>
+    /// <param name="start">Puntero que representa el punto de inicio de la expresion a parsear</param>
+    /// <param name="end">Puntero que representa el punto final de la expresion a parsear</param>
+    /// <returns>Expresion que se logra parsear o null</returns>
     private HulkExpression TryFunctionCall(string[] tokens, int start, int end)
     {
         HulkExpression result = null;
@@ -499,9 +654,7 @@ public class HulkParser
         {
             if (tokens[end] != ")")
                 throw new SyntaxError(")", "function call");
-            //la siguiente linea tiene cara de que me van a romper el programa
             FunctionDeclaration Definition;
-
             if (Memoria.FunctionsStorage.ContainsKey(tokens[start]))
                 Definition = Memoria.FunctionsStorage[tokens[start]];
             else
@@ -523,6 +676,11 @@ public class HulkParser
         }
         return result;
     }
+    /// <summary>
+    /// Intenta parsear una variable
+    /// </summary>
+    /// <param name="varName">Token que representa la variable</param>
+    /// <returns>Expresion que se logra parsear o null</returns>
     private HulkExpression TryVariable(string varName)
     {
         switch (varName)
@@ -550,6 +708,16 @@ public class HulkParser
         }
         return Location.ContainsKey(varName) ? (HulkExpression)Location[varName] : throw new DefaultError($"variable {varName} not found", "reference");
     }
+    /// <summary>
+    /// Funcion que factoriza la creacion de expresiones binarias
+    /// </summary>
+    /// <param name="tokens">Arreglo de tokens que representan la entrada</param>
+    /// <param name="start">Puntero que representa el punto de inicio de la expresion a parsear</param>
+    /// <param name="end">Puntero que representa el punto final de la expresion a parsear</param>
+    /// <param name="opPos">Posicion del token de la operacion</param>
+    /// <param name="type">Tipo de operacion instanciar</param>
+    /// <returns>Expresion binaria</returns>
+    /// <exception cref="SyntaxError"></exception>
     private HulkExpression BinaryFunctionMaker(string[] tokens, int start, int end, int opPos, Type type)
     {
         HulkExpression left = opPos != start ? ParseInner(tokens, start, opPos - 1) : throw new SyntaxError("left argument", $"\"{tokens[opPos]}\" expression");
@@ -558,6 +726,16 @@ public class HulkParser
         object[] args = new object[] { left, right };
         return (HulkExpression)Activator.CreateInstance(type, args);
     }
+    /// <summary>
+    /// Funcion que factoriza la creacion de expresiones unarias
+    /// </summary>
+    /// <param name="tokens">Arreglo de tokens que representan la entrada</param>
+    /// <param name="start">Puntero que representa el punto de inicio de la expresion a parsear</param>
+    /// <param name="end">Puntero que representa el punto final de la expresion a parsear</param>
+    /// <param name="opPos">Posicion del token de la operacion</param>
+    /// <param name="type">Tipo de operacion instanciar</param>
+    /// <returns>Expresion unaria</returns>
+    /// <exception cref="SyntaxError"></exception>
     private HulkExpression UnaryFunctionMaker(string[] tokens, int start, int end, int opPos, Type type)
     {
         HulkExpression argument = start != end ? ParseInner(tokens, start + 1, end) : throw new SyntaxError("left argument", $"\"{tokens[opPos]}\" expression");
@@ -565,6 +743,15 @@ public class HulkParser
         object[] args = new object[] { argument };
         return (HulkExpression)Activator.CreateInstance(type, args);
     }
+    /// <summary>
+    /// Funcion que factoriza llamados de funciones predefinidas del lenguaje
+    /// </summary>
+    /// <param name="tokens">Arreglo de tokens que representan la entrada</param>
+    /// <param name="start">Puntero que representa el punto de inicio de la expresion a parsear</param>
+    /// <param name="end">Puntero que representa el punto final de la expresion a parsear</param>
+    /// <param name="opPos">Posicion del token de la operacion</param>
+    /// <param name="type">Tipo de operacion instanciar</param>
+    /// <returns>LLamado a funcion predefinida de lenguaje</returns>
     private HulkExpression FunctionCallMaker(string[] tokens, int start, int end, Type type)
     {
         if (tokens[start + 1] != "(" || tokens[end] != ")")
@@ -598,6 +785,11 @@ public class HulkParser
     }
     #endregion
     #region Auxiliar Parsing Functions
+    /// <summary>
+    /// Trata un token que representa un string y lo convierte en un string valido
+    /// </summary>
+    /// <param name="str">Token que representa al string</param>
+    /// <returns>Cadena valida</returns>
     private string TreatStringRepresentation(string str)
     {
         //este metodo trata los caracteres escapados y elimina las comillas al final del string
@@ -612,6 +804,14 @@ public class HulkParser
         str = str[1..^1];
         return str;
     }
+    /// <summary>
+    /// Obtiene expresiones separadas por comas
+    /// </summary>
+    /// <param name="tokens">Arreglo de tokens que representan la entrada</param>
+    /// <param name="start">Puntero que representa el punto de inicio de la expresion a parsear</param>
+    /// <param name="end">Puntero que representa el punto final de la expresion a parsear</param>
+    /// <returns>Lista de expresiones obtenidas</returns>
+    /// <exception cref="DefaultError"></exception>
     private List<HulkExpression> GetComaSeparatedExpressions(string[] tokens, int start, int end)
     {
         List<HulkExpression> result = new();
@@ -643,6 +843,15 @@ public class HulkParser
         }
         return result;
     }
+    /// <summary>
+    /// Obtiene declaraciones de variables separadas por comas
+    /// </summary>
+    /// <param name="tokens">Arreglo de tokens que representan la entrada</param>
+    /// <param name="start">Puntero que representa el punto de inicio de la expresion a parsear</param>
+    /// <param name="end">Puntero que representa el punto final de la expresion a parsear</param>
+    /// <returns>Lista de declaraciones de variables</returns>
+    /// <exception cref="DefaultError"></exception>
+    /// <exception cref="SemanticError"></exception>
     private List<HulkExpression> GetComaSeparatedDeclarations(string[] tokens, int start, int end)
     {
         List<HulkExpression> result = new();
