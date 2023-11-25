@@ -21,12 +21,12 @@ public class IfElseStatement : HulkExpression
     }
     #region Methods
     public override object GetValue(bool execute) => Result(Condition, IfExpression, ElseExpression, execute);
-    public override Types CheckType()
+    public override HulkTypes CheckType()
     {
         Condition.CheckType();
-        Types ifType = IfExpression.CheckType();
-        Types elseType = ElseExpression.CheckType();
-        return ifType == elseType ? ifType : Types.dynamic;
+        HulkTypes ifType = IfExpression.CheckType();
+        HulkTypes elseType = ElseExpression.CheckType();
+        return ifType == elseType ? ifType : HulkTypes.Undetermined;
     }
     /// <summary>
     /// Funcion que retorna el valor resultante de evaluar la expresion
@@ -94,13 +94,13 @@ public class LetInStatement : HulkExpression
                 val = Exp.GetValue(false);
                 if (val != null)
                 {
-                    if (V.Type == Types.boolean && val is bool)
+                    if (V.Type == HulkTypes.boolean && val is bool)
                         isOK = true;
-                    else if (V.Type == Types.hstring && val is string)
+                    else if (V.Type == HulkTypes.hstring && val is string)
                         isOK = true;
-                    else if (V.Type == Types.number && val is double)
+                    else if (V.Type == HulkTypes.number && val is double)
                         isOK = true;
-                    else if (V.Type == Types.dynamic)
+                    else if (V.Type == HulkTypes.Undetermined)
                         isOK = true;
                 }
                 if (!isOK)
@@ -108,7 +108,7 @@ public class LetInStatement : HulkExpression
             }            
         }
     }
-    public override Types CheckType() => Body.CheckType();
+    public override HulkTypes CheckType() => Body.CheckType();
     /// <summary>
     /// Asigna el cuerpo de la expresion let-in
     /// </summary>

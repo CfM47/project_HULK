@@ -21,15 +21,15 @@ public abstract class BinaryFunction : HulkExpression
     }
     #region Methods
     public override object GetValue(bool execute) => Evaluate(LeftArgument.GetValue(execute), RightArgument.GetValue(execute));
-    public override Types CheckType()
+    public override HulkTypes CheckType()
     {
-        if (EnteredType == Types.dynamic)
+        if (EnteredType == HulkTypes.Undetermined)
             return ReturnedType;
         var leftType = LeftArgument.CheckType();
         var rightType = RightArgument.CheckType();
-        if (leftType != EnteredType && leftType != Types.dynamic)
+        if (leftType != EnteredType && leftType != HulkTypes.Undetermined)
             throw new SemanticError($"Operator `{OperationToken}`", EnteredType.ToString(), leftType.ToString());
-        if (rightType != EnteredType && rightType != Types.dynamic)
+        if (rightType != EnteredType && rightType != HulkTypes.Undetermined)
             throw new SemanticError($"Operator `{OperationToken}`", EnteredType.ToString(), rightType.ToString());
         return ReturnedType;
     }
@@ -60,11 +60,11 @@ public abstract class BinaryFunction : HulkExpression
     /// <summary>
     /// Tipo de retorno aceptado
     /// </summary>
-    public Types ReturnedType { get; protected set; }
+    public HulkTypes ReturnedType { get; protected set; }
     /// <summary>
     /// Tipo de extrada aceptado
     /// </summary>
-    public Types EnteredType { get; protected set; }
+    public HulkTypes EnteredType { get; protected set; }
     /// <summary>
     /// Tipo aceptado del objeto que devuelven los argumentos
     /// </summary>
@@ -84,8 +84,8 @@ public class Conjunction : BinaryFunction
     {
         LeftArgument = leftArgument;
         RightArgument = rightArgument;
-        ReturnedType = Types.boolean;
-        EnteredType = Types.boolean;
+        ReturnedType = HulkTypes.boolean;
+        EnteredType = HulkTypes.boolean;
         AcceptedType = typeof(bool);
         OperationToken = "&";
         object func(object a, object b) => (bool)a && (bool)b;
@@ -101,8 +101,8 @@ public class Disjunction : BinaryFunction
     {
         LeftArgument = leftArgument;
         RightArgument = rightArgument;
-        ReturnedType = Types.boolean;
-        EnteredType = Types.boolean;
+        ReturnedType = HulkTypes.boolean;
+        EnteredType = HulkTypes.boolean;
         AcceptedType = typeof(bool);
         OperationToken = "|";
         object func(object a, object b) => (bool)a || (bool)b;
@@ -120,8 +120,8 @@ public class LowerThan : BinaryFunction
     {
         LeftArgument = leftArgument;
         RightArgument = rightArgument;
-        ReturnedType = Types.boolean;
-        EnteredType = Types.number;
+        ReturnedType = HulkTypes.boolean;
+        EnteredType = HulkTypes.number;
         AcceptedType = typeof(double);
         OperationToken = "<";
         object func(object a, object b) => (double)a < (double)b;
@@ -137,8 +137,8 @@ public class GreaterThan : BinaryFunction
     {
         LeftArgument = leftArgument;
         RightArgument = rightArgument;
-        ReturnedType = Types.boolean;
-        EnteredType = Types.number;
+        ReturnedType = HulkTypes.boolean;
+        EnteredType = HulkTypes.number;
         AcceptedType = typeof(double);
         OperationToken = ">";
         object func(object a, object b) => (double)a > (double)b;
@@ -154,8 +154,8 @@ public class LowerEqualThan : BinaryFunction
     {
         LeftArgument = leftArgument;
         RightArgument = rightArgument;
-        ReturnedType = Types.boolean;
-        EnteredType = Types.number;
+        ReturnedType = HulkTypes.boolean;
+        EnteredType = HulkTypes.number;
         AcceptedType = typeof(double);
         OperationToken = "<=";
         object func(object a, object b) => (double)a <= (double)b;
@@ -171,8 +171,8 @@ public class GreaterEqualThan : BinaryFunction
     {
         LeftArgument = leftArgument;
         RightArgument = rightArgument;
-        ReturnedType = Types.boolean;
-        EnteredType = Types.number;
+        ReturnedType = HulkTypes.boolean;
+        EnteredType = HulkTypes.number;
         AcceptedType = typeof(double);
         OperationToken = ">=";
         object func(object a, object b) => (double)a >= (double)b;
@@ -188,8 +188,8 @@ public class Equal : BinaryFunction
     {
         LeftArgument = leftArgument;
         RightArgument = rightArgument;
-        ReturnedType = Types.boolean;
-        EnteredType = Types.dynamic;
+        ReturnedType = HulkTypes.boolean;
+        EnteredType = HulkTypes.Undetermined;
         AcceptedType = typeof(object);
         OperationToken = "==";
         object func(object a, object b)
@@ -220,8 +220,8 @@ public class UnEqual : BinaryFunction
     {
         LeftArgument = leftArgument;
         RightArgument = rightArgument;
-        ReturnedType = Types.boolean;
-        EnteredType = Types.dynamic;
+        ReturnedType = HulkTypes.boolean;
+        EnteredType = HulkTypes.Undetermined;
         AcceptedType = typeof(object);
         OperationToken = "!=";
         object func(object a, object b)
@@ -254,8 +254,8 @@ public class Addition : BinaryFunction
     {
         LeftArgument = leftArgument;
         RightArgument = rightArgument;
-        ReturnedType = Types.number;
-        EnteredType = Types.number;
+        ReturnedType = HulkTypes.number;
+        EnteredType = HulkTypes.number;
         AcceptedType = typeof(double);
         OperationToken = "+";
         object func(object a, object b) => (double)a + (double)b;
@@ -271,8 +271,8 @@ public class Subtraction : BinaryFunction
     {
         LeftArgument = leftArgument;
         RightArgument = rightArgument;
-        ReturnedType = Types.number;
-        EnteredType = Types.number;
+        ReturnedType = HulkTypes.number;
+        EnteredType = HulkTypes.number;
         AcceptedType = typeof(double);
         OperationToken = "-";
         object func(object a, object b) => (double)a - (double)b;
@@ -288,8 +288,8 @@ public class Multiplication : BinaryFunction
     {
         LeftArgument = leftArgument;
         RightArgument = rightArgument;
-        ReturnedType = Types.number;
-        EnteredType = Types.number;
+        ReturnedType = HulkTypes.number;
+        EnteredType = HulkTypes.number;
         AcceptedType = typeof(double);
         OperationToken = "*";
         object func(object a, object b) => (double)a * (double)b;
@@ -305,8 +305,8 @@ public class Division : BinaryFunction
     {
         LeftArgument = leftArgument;
         RightArgument = rightArgument;
-        ReturnedType = Types.number;
-        EnteredType = Types.number;
+        ReturnedType = HulkTypes.number;
+        EnteredType = HulkTypes.number;
         AcceptedType = typeof(double);
         OperationToken = "/";
         object func(object a, object b) => (double)b == 0 ? throw new DefaultError("Atempted to divide by 0", "arithmetic") : (double)a / (double)b;
@@ -322,8 +322,8 @@ public class Module : BinaryFunction
     {
         LeftArgument = leftArgument;
         RightArgument = rightArgument;
-        ReturnedType = Types.number;
-        EnteredType = Types.number;
+        ReturnedType = HulkTypes.number;
+        EnteredType = HulkTypes.number;
         AcceptedType = typeof(double);
         OperationToken = "%";
         object func(object a, object b) => (double)b == 0 ? throw new DefaultError("Atempted to divide by 0", "arithmetic") : (double)a % (double)b;
@@ -339,8 +339,8 @@ public class Power : BinaryFunction
     {
         LeftArgument = leftArgument;
         RightArgument = rightArgument;
-        ReturnedType = Types.number;
-        EnteredType = Types.number;
+        ReturnedType = HulkTypes.number;
+        EnteredType = HulkTypes.number;
         AcceptedType = typeof(double);
         OperationToken = "^";
         object func(object a, object b) => Math.Pow((double)a, (double)b);
@@ -356,8 +356,8 @@ public class Logarithm : BinaryFunction
     {
         LeftArgument = leftArgument;
         RightArgument = rightArgument;
-        ReturnedType = Types.number;
-        EnteredType = Types.number;
+        ReturnedType = HulkTypes.number;
+        EnteredType = HulkTypes.number;
         AcceptedType = typeof(double);
         OperationToken = "log";
         object func(object a, object b) => Math.Log((dynamic)a, (dynamic)b);
@@ -375,8 +375,8 @@ public class SimpleConcatenation : BinaryFunction
     {
         LeftArgument = leftArgument;
         RightArgument = rightArgument;
-        ReturnedType = Types.hstring;
-        EnteredType = Types.dynamic;
+        ReturnedType = HulkTypes.hstring;
+        EnteredType = HulkTypes.Undetermined;
         AcceptedType = typeof(object);
         OperationToken = "@";
         object func(object a, object b) => (dynamic)a.ToString() + (dynamic)b.ToString();
@@ -392,8 +392,8 @@ public class WhiteSpaceConcatenation : BinaryFunction
     {
         LeftArgument = leftArgument;
         RightArgument = rightArgument;
-        ReturnedType = Types.hstring;
-        EnteredType = Types.dynamic;
+        ReturnedType = HulkTypes.hstring;
+        EnteredType = HulkTypes.Undetermined;
         AcceptedType = typeof(object);
         OperationToken = "@@";
         object func(object a, object b) => (dynamic)a.ToString() + " " + (dynamic)b.ToString();

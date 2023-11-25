@@ -17,8 +17,8 @@ public class VariableDeclaration : HulkExpression
     {
         Names = names;
         SetType(type);
-        Types enteredType = ValueExp.CheckType();
-        if(!(Type == enteredType || enteredType == Types.dynamic))
+        HulkTypes enteredType = ValueExp.CheckType();
+        if(!(Type == enteredType || enteredType == HulkTypes.Undetermined))
             throw new SemanticError("Variable declaration", Type.ToString(), enteredType.ToString());
         ValueExpression = ValueExp;
     }
@@ -44,14 +44,14 @@ public class VariableDeclaration : HulkExpression
     {
         Type = type switch
         {
-            "number" => Types.number,
-            "boolean" => Types.boolean,
-            "string" => Types.hstring,
+            "number" => HulkTypes.number,
+            "boolean" => HulkTypes.boolean,
+            "string" => HulkTypes.hstring,
             _ => throw new DefaultError("Invalid variable type"),
         };
     }
     public override object GetValue(bool execute) => new EmptyReturn();
-    public override Types CheckType() => Types.Void;
+    public override HulkTypes CheckType() => HulkTypes.Void;
     #endregion
     #region Properties
     /// <summary>
@@ -69,7 +69,7 @@ public class VariableDeclaration : HulkExpression
     /// <summary>
     /// Tipo de las variables que se declaran
     /// </summary>
-    public Types Type { get; private set; }
+    public HulkTypes Type { get; private set; }
     #endregion
 }
 /// <summary>
@@ -88,7 +88,7 @@ public class FunctionDeclaration : HulkExpression
         ArgumentNames = argNames;
         Arguments = new Dictionary<string, Variable>();
         SetArgs(ArgumentNames);
-        ReturnedType = Types.dynamic;
+        ReturnedType = HulkTypes.Undetermined;
     }
     #region Methods
     /// <summary>
@@ -146,7 +146,7 @@ public class FunctionDeclaration : HulkExpression
     /// </summary>
     /// <returns></returns>
     /// <exception cref="DefaultError"></exception>
-    public Types CheckDefinition()
+    public HulkTypes CheckDefinition()
     {
         try
         {
@@ -154,7 +154,7 @@ public class FunctionDeclaration : HulkExpression
                 throw new OverFlowError(FunctionName);
             else
                 stackNumber++;
-            Types result = Definition.CheckType();
+            HulkTypes result = Definition.CheckType();
             stackNumber--;
             return result;
         }
@@ -177,7 +177,7 @@ public class FunctionDeclaration : HulkExpression
         foreach (string arg in argNames)
         {
             object val = default;
-            if (!Arguments.TryAdd(arg, new Variable(arg, val, Types.dynamic, Variable.VariableOptions.FunctionArgument)))
+            if (!Arguments.TryAdd(arg, new Variable(arg, val, HulkTypes.Undetermined, Variable.VariableOptions.FunctionArgument)))
                 throw new DefaultError("Function arguments must have diferent names", "declaration");
         }
     }
@@ -187,7 +187,7 @@ public class FunctionDeclaration : HulkExpression
     /// <param name="Memoria"></param>
     public void AddToMemory(HulkMemory Memoria) => Memoria.AddNewFunction(FunctionName, this);
     public override object GetValue(bool execute) => new EmptyReturn();
-    public override Types CheckType() => Types.Void;
+    public override HulkTypes CheckType() => HulkTypes.Void;
     #endregion
     #region Properties
     /// <summary>
@@ -209,6 +209,6 @@ public class FunctionDeclaration : HulkExpression
     /// <summary>
     /// Tipo de retorno de la funcion
     /// </summary>
-    public Types ReturnedType { get; private set; }
+    public HulkTypes ReturnedType { get; private set; }
     #endregion
 }

@@ -24,7 +24,7 @@ public class Asignment : HulkExpression
     /// <exception cref="DefaultError"></exception>
     private void CheckValue(HulkExpression ValueExp)
     {
-        Types type = ValueExp.CheckType();
+        HulkTypes type = ValueExp.CheckType();
         foreach (Variable v in Variables)
         {
             if (v.Type != type)
@@ -49,7 +49,7 @@ public class Asignment : HulkExpression
             ChangeValues();
         return ValueExpression.GetValue(execute);
     }
-    public override Types CheckType() => ValueExpression.CheckType();
+    public override HulkTypes CheckType() => ValueExpression.CheckType();
     #endregion
     #region Propierties
     /// <summary>
@@ -108,7 +108,7 @@ public class FunctionCall : HulkExpression
             throw new SemanticError($"Function `{Name}`", ex.ExpressionExpected, ex.ExpressionReceived);
         }
     }
-    public override Types CheckType() => Definition.ReturnedType;
+    public override HulkTypes CheckType() => Definition.ReturnedType;
     #endregion
     #region Properties
     /// <summary>
@@ -146,7 +146,7 @@ public class PrintFunc : HulkExpression
             PrintHandler(Argument.GetValue(execute));
         return Argument.GetValue(false);
     }
-    public override Types CheckType() => Argument.CheckType();
+    public override HulkTypes CheckType() => Argument.CheckType();
     /// <summary>
     /// Funcion encargada de mostrar la salida en la interfaz
     /// </summary>
@@ -192,26 +192,26 @@ public class Variable : HulkExpression
     /// <param name="type">Tipo de la variable</param>
     /// <param name="options">Opciones para la declaracion de la variable</param>
     /// <exception cref="SemanticError"></exception>
-    public Variable(string name, object value, Types type, VariableOptions options)
+    public Variable(string name, object value, HulkTypes type, VariableOptions options)
     {
         Name = name;
         Options = options;
         if (options is VariableOptions.Dependent or VariableOptions.FunctionArgument)
             IsDependent = true;
-        Types enteredType;
+        HulkTypes enteredType;
         if (value is HulkExpression expression)
         {
             enteredType = expression.CheckType();
         }
         else if (value is double)
-            enteredType = Types.number;
+            enteredType = HulkTypes.number;
         else if (value is bool)
-            enteredType = Types.number;
+            enteredType = HulkTypes.number;
         else if (value is string)
-            enteredType = Types.hstring;
+            enteredType = HulkTypes.hstring;
         else
-            enteredType = Types.dynamic;
-        if(type == enteredType || type == Types.dynamic || enteredType == Types.dynamic)
+            enteredType = HulkTypes.Undetermined;
+        if(type == enteredType || type == HulkTypes.Undetermined || enteredType == HulkTypes.Undetermined)
         {
             Value = value;
             Type = type;
@@ -237,15 +237,15 @@ public class Variable : HulkExpression
     private void SetType()
     {
         if (Value is double)
-            Type = Types.number;
+            Type = HulkTypes.number;
         else if (Value is bool)
-            Type = Types.boolean;
+            Type = HulkTypes.boolean;
         else if (Value is string)
-            Type = Types.hstring;
+            Type = HulkTypes.hstring;
         //else
         //    Type = null;
     }
-    public override Types CheckType() => Type;
+    public override HulkTypes CheckType() => Type;
     #endregion
     #region Properties
     /// <summary>
@@ -255,7 +255,7 @@ public class Variable : HulkExpression
     /// <summary>
     /// Tipo de la variable
     /// </summary>
-    public Types Type { get; protected set; }
+    public HulkTypes Type { get; protected set; }
     /// <summary>
     /// Opciones para establecer caracteristicas de las variable
     /// </summary>

@@ -15,7 +15,7 @@ public abstract class HulkExpression
     /// Chequea que no existan errores semanticos en la expresion y devuelve el tipo de retorno de la misma
     /// </summary>
     /// <returns>Tipo de retorno de la expresion</returns>
-    public abstract Types CheckType();
+    public abstract HulkTypes CheckType();
     /// <summary>
     /// Especificacion de si la expresion depende de un parametro (argumento de funcion) o no
     /// </summary>
@@ -53,4 +53,4 @@ public class EmptyReturn
 /// <summary>
 /// Tipos de los valores que se pueden devolver en HULK
 /// </summary>
-public enum Types { Void, number, boolean, hstring, dynamic }
+public enum HulkTypes { Void, number, boolean, hstring, Undetermined }
