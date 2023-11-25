@@ -13,6 +13,8 @@
         <Editor Grid.ColumnSpan="3"
                 Grid.RowSpan="1"
                 IsReadOnly="True"
+                IsSpellCheckEnabled="False"
+                IsTextPredictionEnabled="False"
                 BackgroundColor="{StaticResource Gray900}"
                 Text="{Binding OutputText}">
         </Editor>
@@ -20,6 +22,8 @@
                Placeholder="Enter command"
                Grid.ColumnSpan="2"
                Grid.Row="1"
+               IsSpellCheckEnabled="False"
+               IsTextPredictionEnabled="False"
                BackgroundColor="{StaticResource Gray900}"
                Text="{Binding InputText}"
                FontFamily="CascadiaCode"

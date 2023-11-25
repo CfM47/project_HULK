@@ -12,7 +12,9 @@
           ColumnSpacing="10">
         <Editor Grid.ColumnSpan="2"
                 Grid.RowSpan="2"
-                IsReadOnly="True"
+                IsSpellCheckEnabled="False"
+                IsTextPredictionEnabled="False"
+                IsReadOnly="True"                
                 BackgroundColor="{StaticResource Gray900}"
                 Text="{Binding OutputText}">
         </Editor>
@@ -39,6 +41,8 @@
         <Entry x:Name="inputEntry"
                Placeholder="Enter command"
                Grid.Row="3"
+               IsSpellCheckEnabled="False"
+               IsTextPredictionEnabled="False"
                BackgroundColor="{StaticResource Gray900}"
                Text="{Binding InputText}"
                FontFamily="CascadiaCode"

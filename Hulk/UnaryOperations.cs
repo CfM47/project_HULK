@@ -20,11 +20,11 @@ public abstract class UnaryFunction : HulkExpression
     /// <summary>
     /// Tipo de retorno de la operacion
     /// </summary>
-    public Types ReturnedType { get; protected set; }
+    public HulkTypes ReturnedType { get; protected set; }
     /// <summary>
     /// Tipo de entrada de la operacion aceptado
     /// </summary>
-    public Types EnteredType { get; protected set; }
+    public HulkTypes EnteredType { get; protected set; }
     /// <summary>
     /// Tipo de valor aceptado para el valor del argumento 
     /// </summary>
@@ -55,10 +55,10 @@ public abstract class UnaryFunction : HulkExpression
             ? Operation(arg)
             : throw new SemanticError($"Operator `{OperationToken}`", EnteredType.ToString(), arg.GetHulkTypeAsString());
     }
-    public override Types CheckType()
+    public override HulkTypes CheckType()
     {
-        Types argType = Argument.CheckType();
-        return argType != Types.dynamic && argType != EnteredType
+        HulkTypes argType = Argument.CheckType();
+        return argType != HulkTypes.Undetermined && argType != EnteredType
             ? throw new SemanticError($"Operator `{OperationToken}`", EnteredType.ToString(), argType.ToString())
             : ReturnedType;
     }
@@ -72,8 +72,8 @@ public class Negation : UnaryFunction
     public Negation(HulkExpression Arg) : base(Arg)
     {
         Argument = Arg;
-        ReturnedType = Types.boolean;
-        EnteredType = Types.boolean;
+        ReturnedType = HulkTypes.boolean;
+        EnteredType = HulkTypes.boolean;
         AcceptedType = typeof(bool);
         OperationToken = "!";
         object func(object a) => !(bool)a;
@@ -90,8 +90,8 @@ public class Positive : UnaryFunction
     public Positive(HulkExpression Arg) : base(Arg)
     {
         Argument = Arg;
-        ReturnedType = Types.number;
-        EnteredType = Types.number;
+        ReturnedType = HulkTypes.number;
+        EnteredType = HulkTypes.number;
         AcceptedType = typeof(double);
         OperationToken = "+";
         object func(object a) => a;
@@ -106,8 +106,8 @@ public class Negative : UnaryFunction
     public Negative(HulkExpression Arg) : base(Arg)
     {
         Argument = Arg;
-        ReturnedType = Types.number;
-        EnteredType = Types.number;
+        ReturnedType = HulkTypes.number;
+        EnteredType = HulkTypes.number;
         AcceptedType = typeof(double);
         OperationToken = "-";
         object func(object a) => -(double)a;
@@ -122,8 +122,8 @@ public class SquaredRoot : UnaryFunction
     public SquaredRoot(HulkExpression Arg) : base(Arg)
     {
         Argument = Arg;
-        ReturnedType = Types.number;
-        EnteredType = Types.number;
+        ReturnedType = HulkTypes.number;
+        EnteredType = HulkTypes.number;
         AcceptedType = typeof(double);
         OperationToken = "sqrt";
         object func(object a) => Math.Sqrt((double)a);
@@ -138,8 +138,8 @@ public class Sine : UnaryFunction
     public Sine(HulkExpression Arg) : base(Arg)
     {
         Argument = Arg;
-        ReturnedType = Types.number;
-        EnteredType = Types.number;
+        ReturnedType = HulkTypes.number;
+        EnteredType = HulkTypes.number;
         AcceptedType = typeof(double);
         OperationToken = "sin";
         object func(object a) => Math.Sin((double)a);
@@ -154,8 +154,8 @@ public class Cosine : UnaryFunction
     public Cosine(HulkExpression Arg) : base(Arg)
     {
         Argument = Arg;
-        ReturnedType = Types.number;
-        EnteredType = Types.number;
+        ReturnedType = HulkTypes.number;
+        EnteredType = HulkTypes.number;
         AcceptedType = typeof(double);
         OperationToken = "cos";
         object func(object a) => Math.Cos((double)a);
@@ -170,8 +170,8 @@ public class ERaised : UnaryFunction
     public ERaised(HulkExpression Arg) : base(Arg)
     {
         Argument = Arg;
-        ReturnedType = Types.number;
-        EnteredType = Types.number;
+        ReturnedType = HulkTypes.number;
+        EnteredType = HulkTypes.number;
         AcceptedType = typeof(double);
         OperationToken = "exp";
         object func(object a) => Math.Exp((double)a);
@@ -187,7 +187,7 @@ public class Rand : HulkExpression
     {
     }
 
-    public override Types CheckType() => Types.number;
+    public override HulkTypes CheckType() => HulkTypes.number;
 
     public override object GetValue(bool execute)
     {
