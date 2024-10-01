@@ -1,18 +1,58 @@
 ﻿# project_H.U.L.K.
 Segundo proyecto de programación de 1er año de Ciencias de la Computación en Matcom.
 
-Contexto:
+## Context
 
-Para encontrar la orientación del proyecto ir a https://github.com/matcom/programming/blob/main/projects/hulk Ahi se define el conjunto del lenguaje que se implementa. Para encontrar la documentacion completa del lenguaje (el lenguaje completo, no el subconjunto), ir a https://github.com/matcom/hulk 
+For project orientation, go to [this link](https://github.com/matcom/programming/blob/main/projects/hulk). It defines the subset of the language being implemented. For the complete language documentation (the full language, not the subset), go to [this link](https://github.com/matcom/hulk).
 
-Cómo ejecutar el proyecto:
+## Installation
 
-El .sln se encuentra dentro de la carpeta Hulk. Esta solución consta de tres proyectos:
+1. Clone the repository:
+  ```bash
+  git clone https://github.com/matcom/hulk.git
+  cd hulk
+  ```
 
-Hulk: una libreria de clases que contiene la logica del compilador.
+2. Restore the NuGet packages:
+  ```bash
+  dotnet restore
+  ```
 
-Interface: la interfaz del lenguaje en forma de aplicacion de consola.
+## How to Run the Project
 
-AppInterface: una interfaz en forma de aplicacion .net MAUI. Mucho más atractiva que la consola. Por ahora solo ha Sido probada en Windows, pero debería poder ejecutarse en MacOs. Es recomendable ejecutar este proyecto si se tiene instalado el framework de . net MAUI
+This solution consists of three projects:
 
-FormInterface: la interfaz en forma de aplicacion de Windows Form, es la interfaz precursora de la anterior. Aunque es mucho menos bonita que AppInterface es recomendable ejecutar este proyecto si se está en Windows y no se tiene instalado .net MAUI.
+### Hulk
+
+A class library that contains the compiler logic.
+
+### Interface
+
+A .NET Console Application. This is the project to run if you are not on Windows.
+
+To run the console application:
+```bash
+cd Interface
+dotnet run
+```
+
+### FormInterface
+
+A .NET Windows Form Application, which performs the same functionality as Interface but in a slightly more user-friendly way. It is recommended to start this project if you are using Windows.
+
+To run the Windows Form application:
+```bash
+cd FormInterface
+dotnet run
+```
+
+### AppInterface
+
+A .NET MAUI cross-platform application.
+
+To run the MAUI application:
+```bash
+cd AppInterface
+dotnet build
+dotnet run
+```
