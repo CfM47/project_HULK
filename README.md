@@ -1,5 +1,5 @@
-﻿# project_H.U.L.K.
-Segundo proyecto de programación de 1er año de Ciencias de la Computación en Matcom.
+﻿# Project_H.U.L.K.
+Second project of Programming course of 1st year of Computer Science at Faculty of Math and Computers, University of Havana.
 
 ## Context
 
