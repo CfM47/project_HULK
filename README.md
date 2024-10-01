@@ -20,9 +20,9 @@ For project orientation, go to [this link](https://github.com/matcom/programming
 
 ## How to Run the Project
 
-This solution consists of three projects:
+This solution consists of four projects:
 
-### Hulk
+### - Hulk
 
 A class library that contains the compiler logic.
 
