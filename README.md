@@ -5,6 +5,10 @@ Segundo proyecto de programación de 1er año de Ciencias de la Computación en 
 
 For project orientation, go to [this link](https://github.com/matcom/programming/blob/main/projects/hulk). It defines the subset of the language being implemented. For the complete language documentation (the full language, not the subset), go to [this link](https://github.com/matcom/hulk).
 
+## Requirements
+- .Net Core 6.0
+- MAUI for building AppInterface project
+
 ## Installation
 
 1. Clone the repository:
