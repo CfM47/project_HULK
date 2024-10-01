@@ -56,4 +56,3 @@ cd AppInterface
 dotnet build
 dotnet run
 ```
-
